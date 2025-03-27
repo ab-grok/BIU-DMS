@@ -14,9 +14,10 @@ type sideContextType = {
   database: string;
   sidebarClicked: boolean;
   dbExpanded: boolean;
+  sbExpanded: boolean;
 };
 
-type sideContextState = {
+export type sideContextState = {
   sidebarState: sideContextType;
   setSidebarState: Dispatch<SetStateAction<sideContextType>>;
 };

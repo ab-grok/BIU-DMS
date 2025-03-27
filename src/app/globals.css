@@ -54,6 +54,27 @@
     }
   }
 
+  @keyframes menuarrow {
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(6px);
+    }
+    70% {
+      transform: translateX(0px);
+    }
+    80% {
+      transform: translateX(6px);
+    }
+    90% {
+      transform: translateX(0px);
+    }
+    100% {
+      transform: translateX(6px);
+    }
+  }
+
   @keyframes loading {
     0% {
       scale: 1;
@@ -67,6 +88,9 @@
       scale: 1;
       transform: translateY(0px);
     }
+  }
+  .animate-menuarrow {
+    animation: menuarrow 4s ease-out infinite;
   }
   .animate-logo-pulse {
     animation: logopulse 0.1s ease-out 1;
@@ -96,13 +120,15 @@
   /* --background: rgb(80, 80, 80); */
   /* --background: rgb(126, 122, 150); */
   --background: rgb(46, 45, 44);
-  --bw: rgb(63, 62, 62);
+  --bw: rgb(255, 255, 255);
   --foreground: oklch(0.129 0.042 264.695);
   --card-background: rgb(168, 172, 179);
-  --card-foreground: rgba(235, 239, 245);
-  --card-section-foreground: rgb(207, 220, 240);
-  --card-section-background: rgba(235, 239, 245);
+  --card-foreground: rgb(229, 225, 225);
+  --card-section-foreground: rgb(89, 89, 89);
+  --db-foreground: rgb(255, 255, 255);
+  --card-section-background: rgb(251, 251, 252);
   --card-text: rgb(255, 245, 245);
+  --tb-foreground: rgb(247, 187, 104);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
   --primary: oklch(0.208 0.042 265.755);
@@ -135,7 +161,7 @@
 }
 
 .dark {
-  --bw: rgb(211, 208, 208);
+  --bw: rgb(62, 62, 62);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.129 0.042 264.695);
@@ -143,6 +169,8 @@
   --card-background: rgb(49, 52, 89);
   --card-section-foreground: rgb(10, 17, 26);
   --card-section-background: rgb(116, 117, 120);
+  --db-foreground: rgb(141, 140, 229);
+  --tb-foreground: rgb(145, 109, 59);
   --card-text: rgb(233, 223, 223);
   --popover: oklch(0.129 0.042 264.695);
   --popover-foreground: oklch(0.984 0.003 247.858);
@@ -184,6 +212,8 @@
   --color-card-section-background: var(--card-section-background);
   --color-card-section-foreground: var(--card-section-foreground);
   --color-popover: var(--popover);
+  --color-db-foreground: var(--db-foreground);
+  --color-tb-foreground: var(--tb-foreground);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);

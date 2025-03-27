@@ -24,23 +24,12 @@ export async function signUser(
         password: hashedPass,
       }),
     });
-    const { emailExists, userId }: userCreated = await res?.json();
-    console.log(
-      `await res.json(): ${JSON.stringify({ emailExists: emailExists, userId: userId })}`,
-    );
-    if (!userId) {
-      if (emailExists) return { signError: true, errMessage: "User exists" };
-      else {
-        return {
-          signError: true,
-          errMessage: `Some error occured; but Email can be used.`,
-        };
-      }
-    }
+    if (!res.ok) return { signError: true, errMessage: await res?.json() };
+    const user: { email: string } = await res?.json();
+    console.log(`await res.json(): ${user}`);
 
-    console.log(`userid: ${userId}`);
     //create new session
-    const { sessionCreated, token32 } = await createSession({ userid: userId });
+    const { sessionCreated, token32 } = await createSession({ email });
     if (!sessionCreated)
       return {
         signError: true,
@@ -57,7 +46,7 @@ export async function signUser(
   }
 }
 
-type userCreated = {
-  emailExists: string | null;
-  userId: number | null;
-};
+// type userCreated = {
+//   emailExists: string | null;
+//   userId: number | null;
+// };

@@ -1,12 +1,15 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useSideContext } from "../layoutcontext";
 import { Suspense, useEffect, useState } from "react";
 
 export default function Database() {
-  const params = useParams().database;
+  let params = useParams().database as string;
   const { setSidebarState } = useSideContext().context;
-  setSidebarState((prev) => ({ ...prev, database: "something" }));
+
+  useEffect(() => {
+    setSidebarState((prev) => ({ ...prev, database: params }));
+  }, []);
 
   return (
     <div className="bg-amber-400">this is the datab ddd sssase: {params}</div>

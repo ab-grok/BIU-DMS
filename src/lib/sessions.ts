@@ -9,13 +9,15 @@ import { revalidateTag, unstable_cache } from "next/cache";
 
 type session = {
   id: string;
-  userId: number;
   expiresAt: Date;
 };
 type sessionValidation =
   | {
       session: session;
       username: string;
+      firstname: string;
+      lastname: string;
+      email: string;
     }
   | { session: null; username: null };
 
@@ -27,11 +29,11 @@ export async function generateSessionToken(): Promise<string> {
   return token;
 }
 
-//have to create a user first, then use id as userid
+//have to create a user first, then pass email
 export async function createSession({
-  userid,
+  email, //safe? use email instead?
 }: {
-  userid: number;
+  email: string;
 }): Promise<{ sessionCreated: Boolean; token32: string }> {
   //converts token to Uint8Array, hashes it, and encodes that in hex
   //need to create session cookie
@@ -39,18 +41,16 @@ export async function createSession({
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session: session = {
     id: sessionId,
-    userId: userid,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   };
   const res = await fetch("http://127.0.0.1:8001/session/create", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ session }),
+    body: JSON.stringify({ session, email }),
   });
 
-  const { created } = await res.json();
-  if (created) return { sessionCreated: created, token32: token };
-  return { sessionCreated: false, token32: "" };
+  if (!res.ok) return { sessionCreated: false, token32: token };
+  return { sessionCreated: true, token32: token };
 }
 
 export async function getCookie() {
@@ -80,7 +80,7 @@ export async function createSessionCookie({
 
 export async function deleteSessionCookie(): Promise<boolean> {
   const token32 = (await cookies()).get("session");
-  if (!token32) console.log("No cookies found.");
+  if (!token32) console.log("No cookies.");
   (await cookies()).set("session", "", {
     maxAge: 0,
     path: "/",
@@ -88,34 +88,35 @@ export async function deleteSessionCookie(): Promise<boolean> {
   return true;
 }
 
-export async function getCookieandValidate() {
+export async function validateSession() {
   const { token32 } = await getCookie();
   if (!token32) return { session: null, username: null };
-  const validateSession = unstable_cache(
-    //revalidate with revalidateTag(tag)
+  const getCookieandValidate = unstable_cache(
+    //delete with revalidateTag(tag)
     async (): Promise<sessionValidation> => {
-      if (!token32) return { session: null, username: null };
       const sessionId = encodeHexLowerCase(
         sha256(new TextEncoder().encode(token32)),
       );
-      console.log(`sessionId:${sessionId}`);
+      // console.log(`sessionId:${sessionId}`);
       const res = await fetch("http://127.0.0.1:8001/session", {
         method: "GET",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id: sessionId }),
       });
       // if (!res.ok) //session exists; not deleted or updated; return something?
+
       const row = await res.json();
-      if (!row && typeof row != "object")
-        return { session: null, username: null };
+      if (!row.ok) return { session: null, username: null };
       const session: session = {
-        id: row[0],
-        userId: row[1],
-        expiresAt: row[2],
+        id: row.id,
+        expiresAt: row.expires_at,
       };
-      const username = row[3];
+      const username = row.username;
+      const firstname = row.firstname;
+      const lastname = row.lastname;
+      const email = row.email;
       console.log(`session and username?: ${{ session, username }}`);
-      return { session, username };
+      return { session, username, firstname, lastname, email };
     },
     [token32],
     {
@@ -123,8 +124,8 @@ export async function getCookieandValidate() {
       revalidate: 3600, //
     },
   );
-  const sessionAndUser = await validateSession();
-  return sessionAndUser;
+  const user = await getCookieandValidate();
+  return user;
 }
 
 // export async function validateSession(): Promise<sessionValidation> {
