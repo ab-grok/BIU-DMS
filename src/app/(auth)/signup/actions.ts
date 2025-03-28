@@ -37,7 +37,10 @@ export async function signUser(
       };
     const cookieSet = await createSessionCookie({ token32 });
     if (!cookieSet)
-      return { signError: true, errMessage: "Cookie not set; Session created" };
+      return {
+        signError: true,
+        errMessage: "Cookies not set; Session created",
+      };
     return { signError: false, errMessage: "User created" };
   } catch (e) {
     if (isRedirectError(e)) throw e;
