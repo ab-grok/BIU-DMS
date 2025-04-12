@@ -34,7 +34,7 @@ export default function NotificationBar({}: {}) {
     setTimeout(() => {
       setMsg((prev) => ({ ...prev, end: true }));
       setTimeout(() => {
-        setMsg((prev) => ({ ...prev, start: false, msg: "", end: false }));
+        setMsg((prev) => ({ start: false, msg: "", end: false }));
         setNotify((prev) => ({ ...prev, message: "" })); //might need to delay this to prevent scaling  issue on repeat notifications,, use this value to set redirect
       }, 800);
     }, 100);
@@ -72,7 +72,7 @@ export default function NotificationBar({}: {}) {
           className="relative left-0 h-20 w-20 object-contain p-[5px]"
         />
         <div
-          className={`text-foreground ${msg} relative flex h-full w-full flex-col overflow-hidden p-0 pr-4 transition-all duration-[0s]`}
+          className={`text-foreground relative flex h-full w-full flex-col overflow-hidden p-0 pr-4 transition-all duration-[0s]`}
         >
           <div
             className={`relative top-4 h-8 w-full max-w-full overflow-hidden rounded-full bg-white/40 px-2 leading-8 shadow-2xs ${danger ? "text-destructive" : "text-foreground"} `}

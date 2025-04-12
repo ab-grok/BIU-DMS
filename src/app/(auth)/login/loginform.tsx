@@ -17,8 +17,9 @@ import { useContext, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { logUser } from "./actions";
 import PasswordInput from "@/components/password";
-import { useLoading } from "../layoutcall";
+import { useLoading } from "../../layoutcall";
 import { useNotifyContext } from "../layout";
+import Loading from "@/components/loading";
 
 export default function LoginForm() {
   const fields: fields[] = [
@@ -49,13 +50,13 @@ export default function LoginForm() {
   }
   const [errMsg, setErrMsg] = useState({ err1: "", err2: "" });
   const [isPending, startTransition] = useTransition();
-  const { setIsLoading } = useLoading();
+  const { setIsLoading, isLoading } = useLoading();
 
   const { setNotify } = useNotifyContext();
 
   async function logSubmit(values: loginType) {
     setErrMsg({ err1: "", err2: "" });
-    setIsLoading(true);
+    setIsLoading(isLoading + ",login");
     startTransition(async () => {
       const { error } = await logUser(values);
       if (error) {
@@ -67,7 +68,7 @@ export default function LoginForm() {
       } else {
         setErrMsg({ err1: "", err2: "" });
       }
-      setIsLoading(false);
+      setIsLoading(isLoading.replace(",login", ""));
       setNotify({
         message: "Test message, should be as long as this...",
         danger: false,
@@ -78,6 +79,7 @@ export default function LoginForm() {
 
   return (
     <Form {...logform}>
+      {isLoading.includes("login") && <Loading />}
       <form
         onSubmit={logform.handleSubmit(logSubmit)}
         className="flex h-[30rem] w-[25rem] flex-col justify-center space-y-5"

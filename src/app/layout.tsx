@@ -3,6 +3,7 @@ import "./globals.css";
 import icon from "../assets/images/biu-trans.png";
 
 import localFont from "next/font/local";
+import MainLayout from "./layoutcall";
 
 export const montserrat = localFont({
   src: "../../public/fonts/Montserrat-VariableFont_wght.ttf",
@@ -19,7 +20,7 @@ export const geist = localFont({
 export const metadata: Metadata = {
   title: {
     template: "%s | BIU ",
-    default: "Students Records Management System",
+    default: "Department Records Management",
   },
   description: "Computer Science records management system",
   icons: { icon: "/biu-trans.png" },
@@ -32,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className} antialiased`}>{children}</body>
+      <body className={`${montserrat.className} antialiased`}>
+        <MainLayout children={children} />
+      </body>
     </html>
   );
 }

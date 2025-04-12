@@ -1,3 +1,4 @@
+"use client";
 import customForm from "@/components/form";
 import React, { useEffect } from "react";
 import { getCookie, validateSession } from "@/lib/sessions";

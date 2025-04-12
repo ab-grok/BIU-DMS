@@ -17,7 +17,7 @@ type sessionValidation =
       username: string;
       firstname: string;
       lastname: string;
-      email: string;
+      userId: string;
     }
   | { session: null; username: null };
 
@@ -29,11 +29,11 @@ export async function generateSessionToken(): Promise<string> {
   return token;
 }
 
-//have to create a user first, then pass email
+//have to create a user first, then pass userId
 export async function createSession({
-  email, //safe? use email instead?
+  userId, //safe? use email instead?
 }: {
-  email: string;
+  userId: string;
 }): Promise<{ sessionCreated: Boolean; token32: string }> {
   //converts token to Uint8Array, hashes it, and encodes that in hex
   //need to create session cookie
@@ -43,10 +43,10 @@ export async function createSession({
     id: sessionId,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   };
-  const res = await fetch("http://127.0.0.1:8001/session/create", {
+  const res = await fetch(`${process.env.SERVER}/session`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ session, email }),
+    body: JSON.stringify({ session, userId }),
   });
 
   if (!res.ok) return { sessionCreated: false, token32: token };
@@ -55,7 +55,6 @@ export async function createSession({
 
 export async function getCookie() {
   const token32 = (await cookies()).get("session")?.value;
-  if (!token32) return { token32: "" };
   return { token32 }; //token32 = {value: token}
 }
 
@@ -88,35 +87,39 @@ export async function deleteSessionCookie(): Promise<boolean> {
   return true;
 }
 
+//delete with revalidateTag(tag) on logout
 export async function validateSession() {
+  console.log("here in validate session");
   const { token32 } = await getCookie();
+  console.log("this is token32: " + token32);
   if (!token32) return { session: null, username: null };
   const getCookieandValidate = unstable_cache(
-    //delete with revalidateTag(tag)
     async (): Promise<sessionValidation> => {
       const sessionId = encodeHexLowerCase(
         sha256(new TextEncoder().encode(token32)),
       );
       // console.log(`sessionId:${sessionId}`);
-      const res = await fetch("http://127.0.0.1:8001/session", {
+      const res = await fetch(`${process.env.SERVER}/session`, {
         method: "GET",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ id: sessionId }),
+        headers: {
+          "content-type": "application/json",
+          "user-session": sessionId,
+        },
       });
       // if (!res.ok) //session exists; not deleted or updated; return something?
 
+      if (!res.ok) return { session: null, username: null };
       const row = await res.json();
-      if (!row.ok) return { session: null, username: null };
       const session: session = {
-        id: row.id,
+        id: token32,
         expiresAt: row.expires_at,
       };
       const username = row.username;
       const firstname = row.firstname;
       const lastname = row.lastname;
-      const email = row.email;
+      const userId = row.userId;
       console.log(`session and username?: ${{ session, username }}`);
-      return { session, username, firstname, lastname, email };
+      return { session, username, firstname, lastname, userId };
     },
     [token32],
     {

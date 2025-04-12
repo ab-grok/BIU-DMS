@@ -5,10 +5,13 @@ import React, {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import Navbar from "./(components)/navbar";
 import SideBar from "./(components)/sidebar";
+import { useRouter } from "next/navigation";
+import { validateSession } from "@/lib/sessions";
 
 type sideContextType = {
   database: string;

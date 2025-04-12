@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sideContextState, useSideContext } from "../layoutcontext";
-import DbCard from "@/app/(main)/(components)/dbcard";
+import DbCard from "@/app/(main)/(components)/sidedbcard";
 import {
   ArrowBigDown,
   ArrowRight,
@@ -13,6 +13,9 @@ import {
   MenuSquareIcon,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Loading from "@/components/loading";
+import { useLoading } from "@/app/layoutcall";
+import DbItems from "./sidedbitems";
 
 export default function SideBar() {
   const { sidebarState, setSidebarState } = useSideContext().context;
@@ -21,10 +24,14 @@ export default function SideBar() {
     setExpand(!expand);
     setSidebarState((prev) => ({ ...prev, sbExpanded: !expand }));
   }
+
+  const { isLoading, sidebarEditable } = useLoading();
+
   return (
     <div
       className={` ${expand && sidebarState.database ? "relative left-[5%] w-[15rem] max-w-[15rem]" : sidebarState.database ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:w-[15rem] lg:max-w-[15rem]" : "absolute left-[5%] w-[30rem] md:left-[25%] lg:left-[33.3%]"} bg-card-background z-5 flex h-[40rem] max-h-[100%] items-center justify-center overflow-hidden rounded-[5px] shadow-xl shadow-black/50 transition-all duration-500`}
     >
+      {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
       <main className="bg-card-foreground relative flex h-[99%] w-[98%] flex-col overflow-hidden rounded-[5px]">
         <section className="group relative top-0 h-[15%] w-full bg-red-500/20">
           <div
@@ -41,7 +48,7 @@ export default function SideBar() {
 
         <section className="relative top-0 h-[60%] w-full flex-none">
           {" "}
-          <DbCard />{" "}
+          <DbCard />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
         <section className="relative top-0 h-[25%] w-full bg-amber-500/20">

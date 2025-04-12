@@ -16,9 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import React, { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { useLoading } from "../layoutcall";
 import { signUser } from "./actions";
 import { redirect } from "next/navigation";
+import { useLoading } from "@/app/layoutcall";
+import Loading from "@/components/loading";
 
 type name = {};
 
@@ -57,18 +58,16 @@ export default function SignupForm({ className }: { className?: string }) {
 
   const [msg, setMsg] = useState({ err: false, msg1: "", msg2: "" });
   const [isPending, startTransition] = useTransition();
-  const { setIsLoading } = useLoading();
+  const { isLoading, setIsLoading } = useLoading();
 
   async function signSubmit(values: signupType) {
     setMsg({ err: false, msg1: "", msg2: "" });
-    setIsLoading(true);
+    setIsLoading(isLoading + ",signup");
     startTransition(async () => {
       const { signError, errMessage } = await signUser(values);
-      console.log(`this is the signError: ${errMessage}`);
       if (signError) {
         let error1 = errMessage;
         const index = errMessage.indexOf(";");
-        console.log(index);
         let error2 = "";
         if (index > 0) {
           error2 = ". " + errMessage.slice(index + 1);
@@ -85,7 +84,7 @@ export default function SignupForm({ className }: { className?: string }) {
           redirect("/");
         }, 3000);
       }
-      setIsLoading(false);
+      setIsLoading(isLoading.replace(",signup", ""));
     });
   }
   function mouseEntered() {
@@ -94,6 +93,7 @@ export default function SignupForm({ className }: { className?: string }) {
 
   return (
     <Form {...signform}>
+      {isLoading.includes("signup") && <Loading />}
       <form
         onMouseDown={mouseEntered}
         onSubmit={signform.handleSubmit(signSubmit)}

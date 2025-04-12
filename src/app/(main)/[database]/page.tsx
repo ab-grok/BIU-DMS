@@ -1,6 +1,7 @@
 "use client";
 import { useParams, usePathname } from "next/navigation";
 import { useSideContext } from "../layoutcontext";
+import DbMain from "./(components)/dbmain";
 import { Suspense, useEffect, useState } from "react";
 
 export default function Database() {
@@ -12,6 +13,8 @@ export default function Database() {
   }, []);
 
   return (
-    <div className="bg-amber-400">this is the datab ddd sssase: {params}</div>
+    <div className="relative flex h-full w-full bg-red-400">
+      <DbMain />
+    </div>
   );
 }

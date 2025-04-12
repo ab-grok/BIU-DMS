@@ -75,20 +75,31 @@
     }
   }
 
-  @keyframes loading {
+  @keyframes loading1 {
     0% {
-      scale: 1;
-      transform: translateY(0px);
+      transform: rotate(0deg);
     }
-    50% {
-      scale: 1.5;
-      transform: translateY(15px);
+    35% {
+      transform: rotate(70deg);
     }
+    50%,
     100% {
-      scale: 1;
-      transform: translateY(0px);
+      transform: rotate(0deg);
     }
   }
+  @keyframes loading3 {
+    0% {
+      transform: rotate(0deg);
+    }
+    35% {
+      transform: rotate(-70deg);
+    }
+    50%,
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
   .animate-menuarrow {
     animation: menuarrow 4s ease-out infinite;
   }
@@ -98,21 +109,49 @@
   .animate-logoExit {
     animation: logoExit 2s ease-out infinite 4s;
   }
+
   .animate-loading1 {
-    animation: loading 1s ease-out 0s infinite;
-  }
-  .animate-loading2 {
-    animation: loading 1s ease-out 0.3s infinite;
+    animation: loading1 1.5s ease-in 1s infinite;
+    transform-origin: top center;
   }
   .animate-loading3 {
-    animation: loading 1s ease-out 0.6s infinite;
+    animation: loading3 1.5s ease-in 1.75s infinite;
+    transform-origin: top center;
   }
+
   .animate-logoslide {
     animation: logoslide 1s ease-out;
   }
-
   .animate-logospin {
     animation: spin 10s ease-in-out infinite;
+  }
+  .bg-radial-gradient {
+    background-image: radial-gradient(ellipse at center, #acb0ed, #dedede);
+  }
+  .bg-card-gradient-light {
+    background-image: radial-gradient(
+      ellipse at center,
+      rgb(116, 133, 138),
+      rgb(10, 177, 228),
+      rgb(10, 177, 228)
+    );
+  }
+  .bg-card-gradient-light-r {
+    background-image: radial-gradient(
+      ellipse at center,
+      rgb(41, 118, 142),
+      rgb(41, 118, 142),
+      rgb(116, 133, 138)
+    );
+  }
+
+  .font-geist-pro {
+    font-family: var(--font-geist-pro);
+    font-size: 100 900;
+  }
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
   }
 }
 
@@ -120,10 +159,10 @@
   /* --background: rgb(80, 80, 80); */
   /* --background: rgb(126, 122, 150); */
   --background: rgb(46, 45, 44);
-  --bw: rgb(255, 255, 255);
+  --bw: rgb(1, 1, 1);
   --foreground: oklch(0.129 0.042 264.695);
   --card-background: rgb(168, 172, 179);
-  --card-foreground: rgb(229, 225, 225);
+  --card-foreground: rgb(255, 255, 255);
   --card-section-foreground: rgb(89, 89, 89);
   --db-foreground: rgb(255, 255, 255);
   --card-section-background: rgb(251, 251, 252);
@@ -161,7 +200,7 @@
 }
 
 .dark {
-  --bw: rgb(62, 62, 62);
+  --bw: rgb(255, 255, 255);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.129 0.042 264.695);

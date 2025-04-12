@@ -3,6 +3,7 @@ import { Divide } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSideContext } from "../layoutcontext";
 import { useParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { sidebarState } = useSideContext().context;
@@ -12,7 +13,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       {" "}
       <div className="bg-card-foreground h-[99%] w-[99%] overflow-hidden rounded-[5px]">
-        {children}
+        <section className="h-full max-h-[6rem] min-h-[6rem] bg-indigo-600"></section>
+        <Separator className="bg-card-background w-99% h-2" />
+        <section className="bg-radial-gradient h-full w-full">
+          {children}
+        </section>
       </div>
     </div>
   );
