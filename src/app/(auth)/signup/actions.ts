@@ -1,41 +1,45 @@
 "use server";
 
 import { signupSchema, signupType } from "@/lib/authschema";
-import bcrypt from "bcryptjs";
-import { redirect } from "next/navigation";
-import { createSession, createSessionCookie } from "../../../lib/sessions";
+import {
+  createSessionCookie,
+  encryptText,
+  generateSessionToken,
+} from "@/lib/sessions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export async function signUser(
   signUp: signupType,
 ): Promise<{ signError: boolean; errMessage: string }> {
   try {
-    const { firstname, lastname, email, password } = signupSchema.parse(signUp);
-    const salt = await bcrypt.genSalt(11);
-    const hashedPass = await bcrypt.hash(password, salt);
+    const { firstname, lastname, email, password, gender, title } =
+      signupSchema.parse(signUp);
     //create new user
-    const res = await fetch("http://127.0.0.1:8001/user/create", {
+    const token32 = await generateSessionToken();
+    const res = await fetch(`${process.env.SERVER}/user/create`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        password: hashedPass,
+        firstname,
+        lastname,
+        email,
+        password: await encryptText(password),
+        gender,
+        title,
+        session: await encryptText(token32),
       }),
     });
-    if (!res.ok) return { signError: true, errMessage: await res?.json() };
-    const user: { email: string } = await res?.json();
-    console.log(`await res.json(): ${user}`);
+    if (!res.ok) {
+      const error = await res.json();
+      return { signError: true, errMessage: error.customMessage };
+    }
+    const { expiresAt } = await res?.json();
+    console.log(`await res.json().expiresAt: ${expiresAt}`);
 
-    //create new session
-    const { sessionCreated, token32 } = await createSession({ email });
-    if (!sessionCreated)
-      return {
-        signError: true,
-        errMessage: "Session not created; User added!",
-      };
-    const cookieSet = await createSessionCookie({ token32 });
+    const cookieSet = await createSessionCookie({
+      token32,
+      expiresAt,
+    });
     if (!cookieSet)
       return {
         signError: true,

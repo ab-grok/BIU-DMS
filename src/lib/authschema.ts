@@ -15,6 +15,8 @@ export const signupSchema = z.object({
       /^(?=.*[A-Z])(?=.*[0-9])(?=.*[`!"£$%^&*()_+{}\[\]@;:'#?/.,><|]).+$/i,
       "Password should contain at least one number and one special character that is not '\\' ",
     ),
+  title: z.number().min(1, "Required"),
+  gender: z.number().min(1, "Required"),
 });
 
 export const loginSchema = z.object({

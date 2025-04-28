@@ -10,13 +10,12 @@ import React, {
 } from "react";
 import Navbar from "./(components)/navbar";
 import SideBar from "./(components)/sidebar";
-import { useRouter } from "next/navigation";
-import { validateSession } from "@/lib/sessions";
+import { usePathname } from "next/navigation";
 
 type sideContextType = {
   database: string;
   sidebarClicked: boolean;
-  dbExpanded: boolean;
+  route: string;
   sbExpanded: boolean;
 };
 

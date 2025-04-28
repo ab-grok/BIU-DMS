@@ -13,25 +13,14 @@ import { Input } from "@/components/ui/input";
 import { loginSchema, loginType } from "@/lib/authschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useContext, useState, useTransition } from "react";
+import { useContext, useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { logUser } from "./actions";
 import PasswordInput from "@/components/password";
-import { useLoading } from "../../layoutcall";
-import { useNotifyContext } from "../layout";
+import { useLoading, useNotifyContext } from "@/app/layoutcall";
 import Loading from "@/components/loading";
 
 export default function LoginForm() {
-  const fields: fields[] = [
-    { name: "username", type: "text", placeholder: "Username or Email" },
-    { name: "password", type: "password", placeholder: "Password" },
-  ];
-
-  type fields = {
-    name: "username" | "password";
-    type: string;
-    placeholder: string;
-  };
   const logform = useForm<loginType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,51 +30,63 @@ export default function LoginForm() {
   });
 
   const [clicked, setClicked] = useState(false);
-
-  function handleClicked() {
+  async function handleClicked() {
     setClicked(true);
     setTimeout(() => {
       setClicked(false);
     }, 60);
   }
+
+  function mouseEntered() {
+    setErrMsg({ err1: "", err2: "" });
+  }
+
   const [errMsg, setErrMsg] = useState({ err1: "", err2: "" });
   const [isPending, startTransition] = useTransition();
   const { setIsLoading, isLoading } = useLoading();
-
   const { setNotify } = useNotifyContext();
 
-  async function logSubmit(values: loginType) {
+  function logSubmit(values: loginType) {
     setErrMsg({ err1: "", err2: "" });
     setIsLoading(isLoading + ",login");
-    startTransition(async () => {
+    (async () => {
       const { error } = await logUser(values);
+      // will get redirected here when there's no error (loading never ends)
       if (error) {
-        const index = error.indexOf(";");
-        let error2 = ", " + error.slice(index + 1);
-        setErrMsg((prev) => ({ ...prev, err2: error2 }));
-        let error1 = error.substring(0, index);
-        setErrMsg((prev) => ({ ...prev, err1: error1 }));
+        if (error.includes(";")) {
+          const index = error.indexOf(";");
+          let error2 = ". " + error.slice(index + 1);
+          let error1 = error.substring(0, index);
+          setErrMsg({ err1: error1, err2: error2 });
+        } else setErrMsg({ err1: error, err2: "" });
       } else {
         setErrMsg({ err1: "", err2: "" });
+
+        //set on main page
+        setNotify({
+          message: "Welcome ${session.firstname}, You have 3 view requests",
+          danger: false,
+          exitable: false,
+        });
       }
-      setIsLoading(isLoading.replace(",login", ""));
-      setNotify({
-        message: "Test message, should be as long as this...",
-        danger: false,
-        exitable: false,
-      });
-    });
+      setIsLoading(isLoading.replaceAll(",login", ""));
+    })();
   }
+
+  useEffect(() => {
+    setIsLoading(isLoading.replace(",login", ""));
+  }, []);
 
   return (
     <Form {...logform}>
       {isLoading.includes("login") && <Loading />}
       <form
+        onMouseUp={() => mouseEntered()}
         onSubmit={logform.handleSubmit(logSubmit)}
         className="flex h-[30rem] w-[25rem] flex-col justify-center space-y-5"
       >
         <div
-          className={`absolute top-5 transition-all ${errMsg.err1 ? "flex scale-100" : "hidden scale-0"} h-[4rem] w-[95%] items-center justify-center place-self-center rounded-2xl border-2 border-red-600 text-center shadow-2xl shadow-black`}
+          className={`absolute top-5 transition-all ${errMsg.err1 ? "flex scale-100" : "hidden scale-0"} h-[4rem] w-[95%] items-center justify-center place-self-center rounded-full border-2 border-red-600 text-center shadow-xl shadow-black/40`}
         >
           <div className="text-destructive"> {errMsg.err1}</div>
           <div>{errMsg.err2}</div>
@@ -101,10 +102,11 @@ export default function LoginForm() {
                   <Input
                     {...field}
                     type="text"
+                    className="rounded-full"
                     placeholder="Username or Email"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-destructive" />
               </FormItem>
             );
           }}
@@ -117,21 +119,28 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel> Password</FormLabel>
                 <FormControl>
-                  <PasswordInput {...field} placeholder="Password" />
+                  <PasswordInput
+                    className="rounded-full"
+                    {...field}
+                    placeholder="Password"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-destructive" />
               </FormItem>
             );
           }}
         ></FormField>
 
-        <Link href="/signup" className="self-center hover:underline">
+        <Link
+          href="/signup"
+          className="self-center hover:text-blue-400 hover:underline"
+        >
           Create an account Instead.{" "}
         </Link>
         <Button
-          onClick={() => handleClicked()}
+          onMouseDown={() => handleClicked()}
           type="submit"
-          className={`${clicked && "scale-95"} justify-content flex h-[50px] w-full items-center rounded-3xl transition-all ${clicked && "hover:shadow-none"} hover:shadow-lg`}
+          className={`${clicked ? "scale-95" : ""} flex h-[50px] w-full items-center rounded-3xl bg-green-600 transition-all hover:bg-green-500 ${clicked && ""} hover:shadow-xs`}
         >
           {" "}
           Log in{" "}

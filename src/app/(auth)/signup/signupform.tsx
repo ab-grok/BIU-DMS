@@ -37,6 +37,34 @@ export default function SignupForm({ className }: { className?: string }) {
     type: string;
     placeholder: string;
   };
+  type subForm = {
+    name: "title" | "gender";
+  }[];
+
+  const subFormArr: subForm = [{ name: "title" }, { name: "gender" }];
+
+  const [subForm, setSubForm] = useState(false);
+  const [buttonAnim, setButtonAnim] = useState(0);
+  function handleClicked(i: number) {
+    setSubForm(!subForm);
+    setButtonAnim(i);
+    setTimeout(() => {
+      setButtonAnim(0);
+    }, 60);
+  }
+
+  function handleFocus(e: React.FocusEvent<HTMLDivElement>) {
+    if (e.target === e.currentTarget) {
+      console.log(
+        "e.target: " + e.target + "\n e.currentTarget: " + e.currentTarget,
+      );
+      setSubForm(false);
+    }
+  }
+
+  const [msg, setMsg] = useState({ err: false, msg1: "", msg2: "" });
+  const [isPending, startTransition] = useTransition();
+  const { isLoading, setIsLoading } = useLoading();
 
   const signform = useForm<signupType>({
     resolver: zodResolver(signupSchema),
@@ -45,25 +73,16 @@ export default function SignupForm({ className }: { className?: string }) {
       lastname: "",
       email: "",
       password: "",
+      title: 1,
+      gender: 1,
     },
   });
 
-  const [clicked, setClicked] = useState(false);
-  function handleClicked() {
-    setClicked(true);
-    setTimeout(() => {
-      setClicked(false);
-    }, 100);
-  }
-
-  const [msg, setMsg] = useState({ err: false, msg1: "", msg2: "" });
-  const [isPending, startTransition] = useTransition();
-  const { isLoading, setIsLoading } = useLoading();
-
-  async function signSubmit(values: signupType) {
-    setMsg({ err: false, msg1: "", msg2: "" });
+  function signSubmit(values: signupType) {
+    console.log("got to signSubmit");
     setIsLoading(isLoading + ",signup");
     startTransition(async () => {
+      setMsg({ err: false, msg1: "", msg2: "" });
       const { signError, errMessage } = await signUser(values);
       if (signError) {
         let error1 = errMessage;
@@ -87,6 +106,7 @@ export default function SignupForm({ className }: { className?: string }) {
       setIsLoading(isLoading.replace(",signup", ""));
     });
   }
+
   function mouseEntered() {
     setMsg({ err: false, msg1: "", msg2: "" });
   }
@@ -95,22 +115,19 @@ export default function SignupForm({ className }: { className?: string }) {
     <Form {...signform}>
       {isLoading.includes("signup") && <Loading />}
       <form
-        onMouseDown={mouseEntered}
+        onMouseUp={mouseEntered}
         onSubmit={signform.handleSubmit(signSubmit)}
-        className="flex h-[30rem] w-[25rem] flex-col justify-center space-y-5"
+        className="flex w-[25rem] flex-col justify-center space-y-4"
       >
         <div
-          className={`absolute top-2 transition-all ${msg.msg1 ? "animate-logo-pulse flex scale-100" : "hidden scale-0"} h-[4rem] w-[95%] items-center justify-center place-self-center rounded-2xl border-2 ${msg.err ? "border-red-600" : "border-green-500"} text-center shadow-2xl shadow-black backdrop-blur-2xl duration-700`}
+          id="form error"
+          className={`absolute top-2 transition-all ${msg.msg1 ? "animate-logo-pulse flex scale-100" : "hidden scale-0"} h-[4rem] w-[95%] items-center justify-center place-self-center rounded-full border-2 ${msg.err ? "border-red-600" : "border-green-500"} text-center shadow-xl shadow-black/40 backdrop-blur-2xl duration-700`}
         >
-          <div
-            className={`${msg.err ? "text-destructive" : "text-card-foreground"}`}
-          >
+          <div className={`${msg.err ? "text-destructive" : "text-bw"}`}>
             {" "}
             {msg.msg1}
           </div>
-          <div
-            className={`${msg.err ? "text-card-foreground" : "text-green-700"}`}
-          >
+          <div className={`${msg.err ? "text-bw" : "text-green-700"}`}>
             {msg.msg2}
           </div>
         </div>
@@ -129,15 +146,57 @@ export default function SignupForm({ className }: { className?: string }) {
                     <Input
                       {...field}
                       type={Item.type}
+                      className="rounded-full"
                       placeholder={Item.placeholder}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-destructive" />
                 </FormItem>
               )}
             ></FormField>
           );
         })}
+        <div
+          tabIndex={0}
+          onFocus={(e) => handleFocus(e)}
+          className={`${subForm ? "absolute" : "hidden"} top-0 right-0 z-5 flex h-full w-full items-center justify-center rounded-3xl backdrop-blur-xs`}
+        >
+          <div
+            tabIndex={1}
+            className="bg-main-fg ring-main-bg flex h-[80%] w-[80%] flex-col items-center justify-center space-y-5 rounded-3xl p-10 shadow-lg ring-2 shadow-black"
+          >
+            {subFormArr.map((a, i) => (
+              <FormField
+                control={signform.control}
+                name={a.name}
+                key={i}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {a.name.charAt(0).toUpperCase() + a.name.slice(1)}
+                    </FormLabel>
+                    <FormControl>
+                      <Title
+                        name={a.name}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
+            ))}
+            <Button
+              onClick={() => handleClicked(2)}
+              type="submit"
+              className={`${buttonAnim == 2 ? "scale-95 shadow-2xs" : ""} justify-content mt-2 flex h-[50px] w-full items-center rounded-3xl bg-green-600 transition-all hover:bg-green-500 hover:shadow-xs`}
+            >
+              {" "}
+              Create account{" "}
+            </Button>
+          </div>
+        </div>
         <FormField
           control={signform.control}
           name="password"
@@ -145,25 +204,71 @@ export default function SignupForm({ className }: { className?: string }) {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput {...field} />
+                <PasswordInput className="rounded-full" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-destructive" />
             </FormItem>
           )}
         />
-        <Link href="/login" className="self-center hover:underline">
+        <Link
+          href="/login"
+          className="self-center hover:text-blue-600 hover:underline"
+        >
           {" "}
           Already have an account? Log in{" "}
         </Link>
         <Button
-          onClick={() => handleClicked()}
-          type="submit"
-          className={`${clicked && "scale-95"} justify-content flex h-[50px] w-full items-center rounded-3xl transition-all ${clicked && "hover:shadow-none"} hover:shadow-lg`}
+          onMouseDown={() => handleClicked(1)}
+          type="button"
+          className={`${buttonAnim == 1 ? "scale-95 hover:shadow-none" : ""} justify-content flex h-[50px] w-full items-center rounded-3xl bg-green-600 transition-all hover:bg-green-500 hover:shadow-xs`}
         >
           {" "}
-          Create Account{" "}
+          Next{" "}
         </Button>
       </form>
     </Form>
   );
 }
+
+function Title({ value, onChange, name }: customField) {
+  const title = ["Mr", "Ms", "Mrs", "Dr", "Prof"];
+  const gender = ["Male", "Female"];
+  const [tab, setTab] = useState(0);
+
+  const arr = name == "title" ? title : gender;
+  function tabClick(e: number) {
+    setTab(e);
+    onChange(e);
+  }
+  return (
+    <div
+      tabIndex={1}
+      className={`relative h-[2.5rem] w-[15rem] cursor-pointer overflow-hidden rounded-full border-2 ring-blue-300/50 focus:ring-2 ${""} `}
+    >
+      <div
+        className={`bg-bw/50 h-full w-full transition-all duration-200 ease-out ${name == "title" ? `max-w-[20%] ${tab == 5 ? "translate-x-[400%]" : tab == 4 ? "translate-x-[300%]" : tab == 3 ? "translate-x-[200%]" : tab == 2 ? "translate-x-[100%]" : ""}` : `max-w-[50%] ${tab == 2 ? "translate-x-[100%]" : ""} `} `}
+      >
+        {" "}
+      </div>
+
+      <div className="absolute top-0 flex h-full w-full">
+        {arr &&
+          arr.map((a, i) => (
+            <div
+              key={a}
+              onClick={() => tabClick(i + 1)}
+              className={`${name == "title" ? "w-[20%]" : "w-[50%]"} ${tab == i + 1 ? "font-bold text-white" : ""} hover:bg-bw/20 flex items-center justify-center text-sm hover:shadow-xs`}
+            >
+              {a}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+type customField = {
+  value: number;
+  onChange: (e: any) => void;
+  name: string;
+};

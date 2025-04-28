@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import icon from "../assets/images/biu-trans.png";
-
+import dotenv from "dotenv";
 import localFont from "next/font/local";
 import MainLayout from "./layoutcall";
+import { ThemeProvider } from "next-themes";
+
+dotenv.config();
 
 export const montserrat = localFont({
   src: "../../public/fonts/Montserrat-VariableFont_wght.ttf",
@@ -34,7 +37,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <MainLayout children={children} />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <MainLayout children={children} />
+        </ThemeProvider>
       </body>
     </html>
   );

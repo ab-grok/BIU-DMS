@@ -9,34 +9,60 @@ import {
 } from "react";
 
 import Loading from "@/components/loading";
+import NotificationBar from "@/components/notificationbar";
 
-type isLoading = string;
-type loadingType = {
-  isLoading: isLoading;
-  setIsLoading: Dispatch<SetStateAction<isLoading>>;
+//loading context
+type loadingAndNotifyType = {
+  isLoading: string; //comma separated string including all loading components
+  setIsLoading: Dispatch<SetStateAction<string>>;
   sidebarEditable: boolean;
-  setSidebarEditable: Dispatch<SetStateAction<boolean>>;
+  setSidebarEdit: Dispatch<SetStateAction<boolean>>;
+  notify: notificationStateType;
+  setNotify: Dispatch<SetStateAction<notificationStateType>>;
 };
-export const loadingContext = createContext({} as loadingType);
 
-export function useLoading() {
-  const context = useContext(loadingContext);
-  console.log("isLoading from loading function: " + context.isLoading);
-  return context;
-}
+const loadingContext = createContext({} as loadingAndNotifyType);
+
+export const useLoading = () => {
+  const { isLoading, setIsLoading, sidebarEditable, setSidebarEdit } =
+    useContext(loadingContext);
+  return { isLoading, setIsLoading, sidebarEditable, setSidebarEdit };
+};
+
+type notificationStateType = {
+  message: string;
+  danger?: boolean;
+  exitable?: boolean;
+};
+
+export const useNotifyContext = () => {
+  const { notify, setNotify } = useContext(loadingContext);
+  return { notify, setNotify };
+};
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [notify, setNotify] = useState({} as notificationStateType);
   const [isLoading, setIsLoading] = useState("");
-  const [sidebarEditable, setSidebarEditable] = useState(false);
+  const [sidebarEditable, setSidebarEdit] = useState(false);
   return (
     <loadingContext.Provider
-      value={{ isLoading, setIsLoading, sidebarEditable, setSidebarEditable }}
+      value={{
+        isLoading,
+        setIsLoading,
+        sidebarEditable,
+        setSidebarEdit,
+        notify,
+        setNotify,
+      }}
     >
-      {children}
+      <div className="flex justify-center">
+        <NotificationBar />
+        {children}
+      </div>
     </loadingContext.Provider>
   );
 }

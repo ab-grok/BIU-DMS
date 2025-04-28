@@ -4,22 +4,26 @@ import {
   encodeHexLowerCase,
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { cookies } from "next/headers";
+import cookie from "cookie";
 import { revalidateTag, unstable_cache } from "next/cache";
+import { createCipheriv, randomBytes } from "crypto";
+import { cookies } from "next/headers";
 
-type session = {
-  id: string;
-  expiresAt: Date;
-};
-type sessionValidation =
-  | {
-      session: session;
-      username: string;
-      firstname: string;
-      lastname: string;
-      userId: string;
-    }
-  | { session: null; username: null };
+// type session = {
+//   token: string;
+//   expiresAt: Date;
+// };
+type sessionValidation = {
+  email: string | undefined;
+  username: string;
+  firstname: string;
+  level: string;
+  avatarUrl: string | undefined;
+  joined: string;
+  title: string;
+  bio: string;
+  userId: string;
+} | null;
 
 export async function generateSessionToken(): Promise<string> {
   //upon logging or signing up
@@ -29,44 +33,29 @@ export async function generateSessionToken(): Promise<string> {
   return token;
 }
 
-//have to create a user first, then pass userId
-export async function createSession({
-  userId, //safe? use email instead?
-}: {
-  userId: string;
-}): Promise<{ sessionCreated: Boolean; token32: string }> {
-  //converts token to Uint8Array, hashes it, and encodes that in hex
-  //need to create session cookie
-  const token = await generateSessionToken();
-  const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-  const session: session = {
-    id: sessionId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-  };
-  const res = await fetch(`${process.env.SERVER}/session`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ session, userId }),
-  });
-
-  if (!res.ok) return { sessionCreated: false, token32: token };
-  return { sessionCreated: true, token32: token };
-}
-
-export async function getCookie() {
-  const token32 = (await cookies()).get("session")?.value;
-  return { token32 }; //token32 = {value: token}
+export async function getCookie(c?: any) {
+  if (c) {
+    console.log("cookie from getCookie fn: " + JSON.stringify(c));
+    const token32 = cookie.parse(c);
+    return token32;
+  } else {
+    const token32 = (await cookies()).get("session")?.value;
+    return { token32 }; //token32 = {value: token}
+  }
 }
 
 export async function createSessionCookie({
   token32,
+  expiresAt,
 }: {
   token32: string;
+  expiresAt: string;
 }): Promise<boolean> {
   try {
+    const expires = new Date(expiresAt);
     (await cookies()).set("session", token32, {
       httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      expires,
       sameSite: "lax",
       path: "/",
       secure: process.env.NODE_ENV == "production",
@@ -79,7 +68,10 @@ export async function createSessionCookie({
 
 export async function deleteSessionCookie(): Promise<boolean> {
   const token32 = (await cookies()).get("session");
-  if (!token32) console.log("No cookies.");
+  if (!token32) {
+    console.log("No cookies.");
+    return false;
+  }
   (await cookies()).set("session", "", {
     maxAge: 0,
     path: "/",
@@ -88,90 +80,77 @@ export async function deleteSessionCookie(): Promise<boolean> {
 }
 
 //delete with revalidateTag(tag) on logout
-export async function validateSession() {
-  console.log("here in validate session");
-  const { token32 } = await getCookie();
-  console.log("this is token32: " + token32);
-  if (!token32) return { session: null, username: null };
-  const getCookieandValidate = unstable_cache(
+export async function validateSession(token32: string | undefined) {
+  if (!token32) return null;
+  const validateWithCookies = unstable_cache(
     async (): Promise<sessionValidation> => {
-      const sessionId = encodeHexLowerCase(
-        sha256(new TextEncoder().encode(token32)),
-      );
-      // console.log(`sessionId:${sessionId}`);
+      console.log("+++++++++++++gets inside unstable_cache's function");
       const res = await fetch(`${process.env.SERVER}/session`, {
         method: "GET",
         headers: {
           "content-type": "application/json",
-          "user-session": sessionId,
+          "enc-token": (await encryptText(token32)) ?? "",
         },
       });
-      // if (!res.ok) //session exists; not deleted or updated; return something?
+      console.log("res.status: " + res.status);
+      if (!res.ok) return null;
+      const user = await res.json();
 
-      if (!res.ok) return { session: null, username: null };
-      const row = await res.json();
-      const session: session = {
-        id: token32,
-        expiresAt: row.expires_at,
+      console.log(`Got from sessionValidate: ${user}`);
+
+      return {
+        email: user.email,
+        username: user.username,
+        firstname: user.firstname,
+        level: user.lvl,
+        avatarUrl: user.avatarUrl,
+        joined: user.joined,
+        title: user.title,
+        bio: user.bio,
+        userId: user.userId,
       };
-      const username = row.username;
-      const firstname = row.firstname;
-      const lastname = row.lastname;
-      const userId = row.userId;
-      console.log(`session and username?: ${{ session, username }}`);
-      return { session, username, firstname, lastname, userId };
     },
     [token32],
     {
-      tags: [token32],
+      tags: [token32, "session"],
       revalidate: 3600, //
     },
   );
-  const user = await getCookieandValidate();
+  const user = await validateWithCookies();
   return user;
 }
 
-// export async function validateSession(): Promise<sessionValidation> {
-//   //from getCookie function on page load
-//   //token is base32 string from browser , sessionId is its hex
-//   type cookie = { name: string; value: string };
-//   const token32 = ((await getCookie()).token32 as cookie).value;
-
-//   if (!token32) return { session: null, username: null };
-//   const sessionId = encodeHexLowerCase(
-//     sha256(new TextEncoder().encode(token32)),
-//   );
-//   console.log(`sessionId:${sessionId}`);
-//   const res = await fetch("http://127.0.0.1:8001/session", {
-//     method: "GET",
-//     headers: { "content-type": "application/json" },
-//     body: JSON.stringify({ id: sessionId }),
-//   });
-//   // if (!res.ok) //session exists; not deleted or updated; return something?
-//   const row = await res.json();
-//   if (!row && typeof row != "object") return { session: null, username: null };
-//   const session: session = { id: row[0], userId: row[1], expiresAt: row[2] };
-//   const username = row[3];
-//   console.log(`session and username?: ${{ session, username }}`);
-//   return { session, username };
-// }
-
 export async function deleteSession(): Promise<{
-  error: Boolean;
-  message: string;
+  error: string;
 }> {
   const token32 = (await cookies()).get("session")?.value;
-  if (!token32) return { error: true, message: "Session not found!" };
-  const sessionId = encodeHexLowerCase(
-    sha256(new TextEncoder().encode(token32)),
-  );
-  const res = await fetch("http://127.0.0.1/8001/session", {
+  if (!token32) return { error: "Session not found!" };
+  const res = await fetch(`${process.env.SERVER}/session`, {
     method: "DELETE",
-    body: JSON.stringify({ sessionId }),
+    headers: {
+      enc_token: (await encryptText(token32)) ?? "",
+    },
   });
+  if (!res.ok) return { error: "Could not connect to server." };
   const deleted = await res.json();
-  if (!deleted)
-    return { error: true, message: "Couldn't delete session; Session found." };
+  if (!deleted) return { error: "The server gave an error." };
   revalidateTag(token32);
-  return { error: false, message: "Session deleted" };
+  await deleteSessionCookie();
+  return { error: "" };
+}
+
+export async function encryptText(text: string) {
+  if (!text) return null;
+  const key = Buffer.from(process.env.UPKEY as string, "hex");
+  const iv = randomBytes(16);
+  const cipher = createCipheriv("aes-256-cbc", key, iv);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return `${iv.toString("hex")}#${encrypted}`;
+}
+
+export async function useRevalidate(name: string) {
+  const { token32 } = await getCookie();
+  revalidateTag(`${name}-${token32}`);
+  return true;
 }
