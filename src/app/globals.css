@@ -203,13 +203,7 @@
       var(--sub-grad-end)
     );
   }
-  .bg-sub-grad-hover {
-    background-image: linear-gradient(
-      to bottom,
-      var(--sub-grad-start),
-      var(--sub-grad-start)
-    );
-  }
+
   .bg-card-grad {
     background-image: linear-gradient(
       to right,
@@ -217,12 +211,11 @@
       var(--card-grad-end)
     );
   }
-  .bcard-grad {
-    background-image: linear-gradient(
-      to right,
-      var(--card-border-grad-start),
-      var(--card-border-grad-end)
-    );
+  .bg-row-grad1 {
+    background-image: linear-gradient(to right, var(--row-bg1), var(--row-bg2));
+  }
+  .bg-row-grad2 {
+    background-image: linear-gradient(to right, var(--tb-row1), var(--tb-row2));
   }
 }
 
@@ -260,10 +253,10 @@
   --radius: 0.625rem;
   --background: rgb(247, 247, 247);
   --bw: rgb(1, 1, 1);
-  --destructive: rgb(75, 0, 0);
+  --destructive: rgb(255, 0, 0);
   --main-bg: rgb(168, 172, 179);
   --main-fg: rgb(168, 124, 124);
-  --sub-bg: rgb(224, 224, 224);
+  --sub-bg: rgb(161, 161, 161);
   --sub-fg: rgb(255, 255, 255);
   --card-section-background: rgb(251, 251, 252);
   --sub-grad-start: rgb(255, 255, 255);
@@ -271,14 +264,14 @@
   --sub-grad-hover-start: rgb(198, 228, 191);
   --sub-grad-hover-end: rgb(126, 130, 81);
   --shadow-bw: rgb(60, 60, 60);
-  --row-bg1: rgb(168, 124, 124);
-  --row-bg2: rgb(164, 149, 149);
-  --tb-row1: rgb(91, 49, 49);
-  --tb-row2: rgb(255, 255, 255);
+  --row-bg1: rgb(236, 232, 232);
+  --row-bg2: rgb(178, 177, 177);
+  --tb-row1: rgb(185, 185, 185);
+  --tb-row2: rgb(235, 140, 140);
   --sub-text: rgb(54, 54, 54);
   --card-selection: rgb(76, 182, 72);
 
-  --card-grad-start: rgb(35, 42, 249);
+  ---grad-start: rgb(35, 42, 249);
   --card-grad-end: rgba(14, 182, 211, 0.973);
   --card-border-grad-start: rgb(121, 255, 25);
   --card-border-grad-end: rgb(11, 184, 144);
@@ -292,15 +285,15 @@
   --main-bg: rgb(168, 172, 179);
   --main-fg: rgb(0, 0, 0);
   --sub-bg: rgb(56, 56, 56);
-  --sub-fg: rgb(55, 3, 50);
+  --sub-fg: rgb(96, 96, 96);
   --card-section-background: rgb(251, 251, 252);
   --ring: oklch(0.704 0.04 256.788);
   --sub-grad-start: rgb(75, 75, 75);
   --sub-grad-end: rgb(42, 41, 41);
   --sub-grad-hover-end: rgb(126, 130, 81);
   --shadow-bw: rgb(71, 71, 71);
-  --row-bg1: rgb(10, 2, 26);
-  --row-bg2: rgb(26, 6, 41);
+  --row-bg1: rgb(30, 30, 30);
+  --row-bg2: rgb(58, 58, 58);
   --sub-text: rgb(229, 229, 229);
   --card-selection: rgb(25, 60, 24);
   --tb-row1: rgb(46, 43, 43);
@@ -328,6 +321,7 @@
   --color-tb-row2: var(--tb-row2);
   --color-sub-text: var(--sub-text);
   --color-card-selection: var(--card-selection);
+  --color-sub-grad-forced: var(--sub-grad-start);
 
   /* --color-background: var(--background);
   --color-foreground: var(--foreground);

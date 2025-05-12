@@ -1,18 +1,40 @@
-import * as React from "react"
+//customized to get onchange
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
+import { UseFormSetValue } from "react-hook-form";
 
-function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+function Textarea({ className, setter, onChange, ...props }: fieldSetter) {
+  function fieldSetter(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setter && setter("name", "Desc_setter");
+    onChange && onChange(e);
+  }
+
   return (
     <textarea
       data-slot="textarea"
       className={cn(
         "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
+        className,
       )}
       {...props}
+      onChange={(e) => fieldSetter(e)}
     />
-  )
+  );
 }
 
-export { Textarea }
+export { Textarea };
+
+interface fieldSetter extends React.ComponentProps<"textarea"> {
+  setter?: UseFormSetValue<{
+    name: string;
+    type: number;
+    unique: number;
+    primary: number;
+    notnull: number;
+    ai: number;
+    desc?: string | undefined;
+    defaultStr?: string | undefined;
+    defaultNum?: number | undefined;
+  }>;
+}

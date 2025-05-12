@@ -7,46 +7,63 @@ import { RiShieldUserFill } from "react-icons/ri";
 import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
 import {
+  ChevronDown,
   Divide,
   Edit,
   Key,
   KeyRound,
+  LockIcon,
   LogIn,
   Timer,
   UserCheck,
   UserPen,
 } from "lucide-react";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import Count from "@/components/count";
+import Count, { useButtonAnim } from "@/components/count";
 import { QuickActions } from "../../(components)/quickactions";
 import Marker from "@/components/marker";
 import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
 import { Tb } from "@/lib/actions";
+import { useNotifyContext } from "@/app/dialogcontext";
 
 type tbType = {
   i: number;
   Tb: Tb;
+  u: string;
+  db: string;
 };
-export default function TableCard({ Tb, i }: tbType) {
+export default function TableCard({ Tb, i, u, db }: tbType) {
   const router = useRouter();
 
+  const { pressAnim, setPressAnim } = useButtonAnim();
+  const userAllowed = useRef(false);
   const [metaHover, setMetaHover] = useState(0);
-  const [viewerHover, setViewerHover] = useState(0);
-  const [editHover, setEditHover] = useState(0);
-  const [cardClicked, setCardClick] = useState(false);
-  const [viewerSel, setViewerSel] = useState("");
-  const [editorSel, setEditorSel] = useState("");
+  const [viewersHover, setViewersHover] = useState(0);
+  const [editorsHover, setEditorsHover] = useState(0);
+  const [cardExpand, setCardExpand] = useState(false);
   const [btnClicked, setBtnClicked] = useState("");
+  const [expandUsers, setExpandusers] = useState("");
   const hoverTime = useRef<NodeJS.Timeout | undefined>(undefined);
-  const { setSelectedUsers, selectedUsers, selectedTb, setSelectedTb } =
-    useSelection();
-
-  let userAllowed = false;
+  const { notify, setNotify } = useNotifyContext();
+  const {
+    setSelectedTbUsers,
+    selectedTbUsers,
+    selectedTb,
+    setSelectedTb,
+    create,
+  } = useSelection();
 
   useEffect(() => {
-    for (let i = 0; i < Math.max(Tb.editors?.length, Tb.viewers?.length); i++) {
-      if (Tb.viewers[i].id == "" || Tb.editors[i]) {
+    // console.log("u from tbcard: ", u);
+    let currTbV = Tb.viewers ?? "";
+    let CurrTbE = Tb.editors ?? "";
+    for (let i = 0; i < Math.max(currTbV.length, CurrTbE.length); i++) {
+      // console.log("for loop hit..", i);
+      if ((currTbV && currTbV[i].id == u) || (CurrTbE && CurrTbE[i].id == u)) {
+        userAllowed.current = true;
+        break;
+        //set logic for locks on databse without view -- you cant view this table.
       }
     }
   }, []);
@@ -63,39 +80,55 @@ export default function TableCard({ Tb, i }: tbType) {
   }
 
   function handleCardClicked(e: React.UIEvent<HTMLElement>) {
+    selectedTb != Tb.tbName && setSelectedTb(Tb.tbName);
     const trigger = (e.target as HTMLElement).id;
     if (
       e.target == e.currentTarget ||
       trigger == "viewers" ||
       trigger == "editors"
     ) {
-      setCardClick(!cardClicked);
+      Tb.tbName == selectedTb && setCardExpand(!cardExpand);
     }
   }
 
-  function handleViewerSel(a: string) {
-    let user = a + "!?" + Tb.tbName + ",";
+  //replacing a user (complex): sameTable - userid1?db1/tb1, userid2?db1/tb1. otherTable - userid1?db2/tb2
+  function handleViewerSel(id: string) {
+    const user = `${id}?${db}/${Tb.tbName},`;
     setSelectedTb(Tb.tbName);
-    if (selectedUsers.includes(user)) {
-      setSelectedUsers(selectedUsers.replace(user, ""));
+    if (selectedTbUsers.viewers.includes(user)) {
+      setSelectedTbUsers((p) => ({
+        ...p,
+        viewers: p.viewers.replace(user, ""),
+      }));
     } else {
-      setSelectedUsers(selectedUsers + user);
+      setSelectedTbUsers((p) => ({ ...p, viewers: p.viewers + user }));
     }
   }
 
-  function handleEditorSel(a: string) {
-    let user = a + "?" + Tb.tbName + ",";
+  function handleEditorSel(id: string) {
+    const user = `${id}?${db}/${Tb.tbName},`;
     setSelectedTb(Tb.tbName);
-    if (editorSel.includes(user)) {
-      setSelectedUsers(selectedUsers.replace(user, ""));
-      setEditorSel(editorSel.replace(user, ""));
+    if (selectedTbUsers.editors.includes(user)) {
+      setSelectedTbUsers((p) => ({
+        ...p,
+        editors: p.editors.replace(user, ""),
+      }));
     } else {
-      setEditorSel(editorSel + user);
-      setSelectedUsers(selectedUsers + user);
+      setSelectedTbUsers((p) => ({ ...p, editors: p.editors + user }));
     }
+
+    // let user1 = id + "?" + Tb.tbName + ",";
+    // setSelectedTb(Tb.tbName);
+    // if (selectedTbUsers.includes(user)) {
+    //   setSelectedTbUsers(selectedTbUsers.replace(user, ""));
+    //   // setEditorSel(editorSel.replace(user, ""));
+    // } else {
+    //   // setEditorSel(editorSel + user);
+    //   setSelectedTbUsers(selectedTbUsers + user);
+    // }
   }
 
-  function handleTableSel(a: string) {
+  function handleMultiTables(a: string) {
     if (selectedTb.includes(a)) {
       setSelectedTb(selectedTb.replace(a + ",", ""));
     } else {
@@ -108,50 +141,66 @@ export default function TableCard({ Tb, i }: tbType) {
     setTimeout(() => {
       setBtnClicked("");
     }, 60);
-    if (a == "door") {
+    if (a == "door" && userAllowed.current) {
       router.push(`/databases${Tb.tbName}`);
+    } else {
+      setNotify({
+        message: "You do not have access to this table",
+        danger: true,
+      });
+    }
+  }
+
+  function handleExpand(m: string, n: number) {
+    if (m == "view") {
+      n == 1 ? setExpandusers("view") : setExpandusers("");
+    } else {
+      n == 1 ? setExpandusers("edit") : setExpandusers("");
     }
   }
 
   const items = ["Author", "Created on", "Last updated", "Editor"];
   const names = ["Jacobs", "Apr 14 25", "May 15 25", "Michael"];
-  const views = [
-    "Mr.jacobs",
-    "Prof.Mark",
-    "Dr.Wyatt",
-    "Mr.Popenums",
-    "Mr.jacobs",
-  ];
-  const edits = [
-    "Mr.jacobs",
-    "Prof.Mark",
-    "Dr.Wyatt",
-    "Mr.Popenums",
-    "Mr.jacobs",
-    "Prof.Mark",
-    "Dr.Wyatt",
-    "Mr.Popenums",
-    "Mr.jacobs",
-    "Prof.Mark",
-    "Dr.Wyatt",
-    "Mr.Popenums",
-    "Mr.jacobs",
-    "Prof.Mark",
-    "Dr.Wyatt",
-    "Mr.Popenums",
-  ];
+  // const views = [
+  //   "Mr.jacobs",
+  //   "Prof.Mark",
+  //   "Dr.Wyatt",
+  //   "Mr.Popenums",
+  //   "Mr.jacobs",
+  // ];
+  // const edits = [
+  //   "Mr.jacobs",
+  //   "Prof.Mark",
+  //   "Dr.Wyatt",
+  //   "Mr.Popenums",
+  //   "Mr.jacobs",
+  //   "Prof.Mark",
+  //   "Dr.Wyatt",
+  //   "Mr.Popenums",
+  //   "Mr.jacobs",
+  //   "Prof.Mark",
+  //   "Dr.Wyatt",
+  //   "Mr.Popenums",
+  //   "Mr.jacobs",
+  //   "Prof.Mark",
+  //   "Dr.Wyatt",
+  //   "Mr.Popenums",
+  // ];
 
   return (
     <div
-      className={`${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row1/50"} group flex min-h-[10rem] w-full min-w-fit`}
+      className={`${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row1/50"} group relative flex min-h-[10rem] w-full min-w-fit transition-all`}
     >
-      <Index i={i} className="h-[12.2rem] min-h-[11rem] self-center" />
+      <Index
+        i={i}
+        className="group-hover:bg-sub-grad-forced sticky h-[11rem] self-center"
+      />
       <div
         id="main"
         onClick={(e) => {
           handleCardClicked(e);
         }}
-        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} bg-tb-row2 border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
+        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} bg-tb-row1 border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
       >
         <section
           id="table"
@@ -176,9 +225,15 @@ export default function TableCard({ Tb, i }: tbType) {
               onClick={() => handleEnter("door")}
               className="group/enter flex h-full w-1/3 cursor-pointer items-center justify-end pr-3"
             >
-              <LogIn
-                className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 hidden group-hover:flex group-hover/enter:stroke-green-600`}
-              />
+              {!userAllowed.current ? (
+                <LockIcon
+                  className={`${btnClicked == "door" ? "scale-[0.97] animate-ping" : ""} hidden stroke-red-900 stroke-3 duration-50 group-hover:flex group-hover/enter:animate-bounce group-hover/enter:stroke-red-600`}
+                />
+              ) : (
+                <KeyRound
+                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 hidden group-hover:flex group-hover/enter:stroke-green-600`}
+                />
+              )}
             </div>
           </header>
           <div
@@ -216,47 +271,58 @@ export default function TableCard({ Tb, i }: tbType) {
         >
           <div
             id="viewers"
-            className={` ${cardClicked ? `max-h-full` : "max-h-[10rem]"} min-w-[48%] space-y-0.5 overflow-hidden transition-all`}
+            className={` ${cardExpand ? `max-h-full` : "max-h-[10rem]"} min-w-[48%] space-y-0.5 overflow-hidden transition-all`}
           >
             <div
               id="viewers"
+              title="Click to expand"
+              onClick={() => setPressAnim("view")}
+              onMouseEnter={() => handleExpand("view", 1)}
+              onMouseLeave={() => handleExpand("view", 0)}
               className="text-bw/70 flex min-h-[2rem] w-full cursor-pointer items-center justify-center gap-x-2 font-normal select-none"
             >
               Viewers
-              <FaEye className="size-6 stroke-pink-800 opacity-80" />
+              {expandUsers == "view" ? (
+                <ChevronDown
+                  className={`${pressAnim == "view" ? "scale-[0.90]" : "drop-shadow-sm"} translate-y-3 animate-bounce`}
+                />
+              ) : (
+                <FaEye className="size-6 stroke-pink-800 opacity-80" />
+              )}
             </div>
-            <div className="bg-bw/10 relative flex min-h-[7.7rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
+            <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
               {Tb.viewers ? (
                 Tb.viewers.map((a, i) => (
                   <div
                     key={i}
-                    onMouseEnter={() => setViewerHover(i + 1)}
-                    onMouseLeave={() => setViewerHover(0)}
-                    className="relative flex h-fit cursor-pointer items-center gap-0.5"
+                    onMouseEnter={() => setViewersHover(i + 1)}
+                    onMouseLeave={() => setViewersHover(0)}
+                    className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                   >
+                    {" "}
                     <span onClick={() => handleViewerSel(a.id)}>
                       <Index
                         size={4}
                         i={i + 1}
-                        className="bg-transparent text-xs"
-                        hover={viewerHover}
+                        className="w-fit bg-transparent text-[10px] backdrop-blur-none"
+                        hovered={viewersHover}
                       />
                     </span>
                     <UserTag
-                      name={"jogddfffffffffdddddddddh"}
-                      title="prof."
+                      name={a.username || a.firstname}
+                      title={!a.username ? a.title : ""}
                       className="w-fit justify-start text-xs font-normal"
-                      hovered={viewerHover}
+                      hovered={viewersHover}
                       n={i + 1}
-                      cap={5}
                     />
                     <span
                       onClick={() => handleViewerSel(a.id)}
-                      className="absolute right-[2rem] flex h-fit w-[15%] items-center justify-center bg-white py-1"
+                      className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
                     >
                       <Marker
-                        hovered={viewerHover}
-                        context={selectedUsers}
+                        hovered={viewersHover}
+                        selected={selectedTbUsers.viewers}
+                        path={db + "/" + Tb.tbName}
                         id={a.id}
                         n={i + 1}
                       />
@@ -264,9 +330,9 @@ export default function TableCard({ Tb, i }: tbType) {
                   </div>
                 ))
               ) : (
-                <div className="relative top-1/2 self-center text-xs font-light italic">
+                <div className="top-1/2 self-center text-xs font-light italic">
                   {" "}
-                  No viewers yet{" "}
+                  No Viewers yet{" "}
                 </div>
               )}
             </div>
@@ -274,39 +340,50 @@ export default function TableCard({ Tb, i }: tbType) {
           <Separator orientation="vertical" className="bg-main-bg/10" />
           <div
             id="editors"
-            className={`${cardClicked ? `max-h-full` : "max-h-[10rem]"} min-w-[48%] space-y-0.5 overflow-hidden transition-all`}
+            className={`${cardExpand ? `max-h-full` : "max-h-[10rem]"} min-w-[48%] space-y-0.5 overflow-hidden transition-all`}
           >
             <div
               title="Click to expand"
+              onClick={() => setPressAnim("edit")}
+              onMouseEnter={() => handleExpand("edit", 1)}
+              onMouseLeave={() => handleExpand("edit", 0)}
               id="editors"
               className="text-bw/70 flex min-h-[2rem] w-full cursor-pointer items-center justify-center gap-x-2 text-sm font-medium select-none"
             >
               Editors
-              <Edit className="stroke-bw/50 fill-red-900/70" />
+              {expandUsers == "edit" ? (
+                <ChevronDown
+                  className={`${pressAnim == "edit" ? "scale-[0.90]" : "drop-shadow-xs"} translate-y-3 animate-bounce`}
+                />
+              ) : (
+                <Edit
+                  className={`stroke-bw/50 ${selectedTb.includes(Tb.tbName) ? "fill-red-900/80" : ""}`}
+                />
+              )}
             </div>
-            <div className="bg-bw/10 relative flex min-h-[7.7rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
+            <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
               {Tb.editors ? (
                 Tb.editors.map((a, i) => (
                   <div
                     key={i}
-                    onMouseEnter={() => setEditHover(i + 1)}
-                    onMouseLeave={() => setEditHover(0)}
-                    className="flex h-fit cursor-pointer items-center gap-0.5"
+                    onMouseEnter={() => setEditorsHover(i + 1)}
+                    onMouseLeave={() => setEditorsHover(0)}
+                    className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                   >
                     {" "}
                     <span onClick={() => handleEditorSel(a.id)}>
                       <Index
                         size={4}
                         i={i + 1}
-                        className="bg-transparent text-xs"
-                        hover={editHover}
+                        className="w-fit bg-transparent text-[10px] backdrop-blur-none"
+                        hovered={editorsHover}
                       />
                     </span>
                     <UserTag
                       name={a.username || a.firstname}
                       title={!a.username ? a.title : ""}
                       className="w-fit justify-start text-xs font-normal"
-                      hovered={editHover}
+                      hovered={editorsHover}
                       n={i + 1}
                     />
                     <span
@@ -314,8 +391,9 @@ export default function TableCard({ Tb, i }: tbType) {
                       className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
                     >
                       <Marker
-                        hovered={editHover}
-                        context={selectedUsers}
+                        hovered={editorsHover}
+                        selected={selectedTbUsers.editors}
+                        path={db + "/" + Tb.tbName}
                         id={a.id}
                         n={i + 1}
                       />
@@ -323,7 +401,7 @@ export default function TableCard({ Tb, i }: tbType) {
                   </div>
                 ))
               ) : (
-                <div className="relative top-1/2 self-center text-xs font-light italic">
+                <div className="top-1/2 self-center text-xs font-light italic">
                   {" "}
                   No editors yet{" "}
                 </div>

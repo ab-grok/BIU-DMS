@@ -53,6 +53,7 @@ export function QuickActions({
     >
       {actions.map((a, i) => (
         <div
+          key={i}
           onClick={() => handleClicked(i + 1)}
           className={` ${button == i + 1 ? "scale-95" : ""} ${group(i)} ${hoverColor(i) ?? "hover:text-black"} hover:bg-bw/50 shadow-shadow-bw flex w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
         >

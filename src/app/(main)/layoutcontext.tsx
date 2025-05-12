@@ -36,7 +36,9 @@ export default function LayoutContext({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarState, setSidebarState] = useState({} as sideContextType);
+  const [sidebarState, setSidebarState] = useState({
+    sbExpanded: true,
+  } as sideContextType);
   return (
     <sideContext.Provider value={{ sidebarState, setSidebarState }}>
       <Navbar />
@@ -48,3 +50,5 @@ export default function LayoutContext({
     </sideContext.Provider>
   );
 }
+
+//client calls not secure -- safe: calls are clients themselves

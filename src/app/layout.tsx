@@ -3,8 +3,8 @@ import "./globals.css";
 import icon from "../assets/images/biu-trans.png";
 import dotenv from "dotenv";
 import localFont from "next/font/local";
-import MainLayout from "./layoutcall";
 import { ThemeProvider } from "next-themes";
+import DialogContexts from "./dialogcontext";
 
 dotenv.config();
 
@@ -38,7 +38,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <MainLayout children={children} />
+          <DialogContexts children={children} />
         </ThemeProvider>
       </body>
     </html>

@@ -5,7 +5,7 @@
 import Image from "next/image";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import logo from "@/assets/images/biu_blue_round.png";
-import { useNotifyContext } from "@/app/layoutcall";
+import { useNotifyContext } from "@/app/dialogcontext";
 
 type contextType = {
   notify: string;
@@ -52,7 +52,7 @@ export default function NotificationBar({}: {}) {
             }, 5000);
           }
         }, 700);
-      }, 2000);
+      }, 1000);
       if (exitable) {
         setExit(true);
       }
@@ -64,7 +64,7 @@ export default function NotificationBar({}: {}) {
       className={`absolute top-2 z-10 flex max-w-full justify-center self-center ${msg.end ? "scale-50" : "scale-100"} transition-all delay-700 duration-200`}
     >
       <div
-        className={` ${msg.start ? "animate-logo-pulse flex" : "hidden"} relative h-20 self-center ${msg.msg && !msg.end ? "w-full" : "w-20"} items-center overflow-hidden rounded-full border-2 shadow-lg shadow-black/50 backdrop-blur-3xl transition-all ${danger ? "border-main-bg bg-red-700/80" : "border-green-500 bg-blue-700/40"} backdrop-blur-2xl duration-[0.7s]`}
+        className={` ${msg.start ? "animate-logo-pulse flex" : "hidden"} relative h-20 self-center ${msg.msg && !msg.end ? "w-full" : "w-20"} bg-main-fg items-center overflow-hidden rounded-full border-2 shadow-lg shadow-black/50 backdrop-blur-2xl transition-all duration-[0.7s]`}
       >
         <Image
           src={logo}
@@ -75,7 +75,7 @@ export default function NotificationBar({}: {}) {
           className={`text-bw relative flex h-full w-full flex-col overflow-hidden p-0 pr-4 transition-all duration-[0s]`}
         >
           <div
-            className={`bg-main-fg/90 relative top-4 h-8 w-full max-w-full overflow-hidden rounded-full px-2 leading-8 font-medium shadow-2xs ${danger ? "text-destructive" : "text-bw"} `}
+            className={`relative top-4 h-8 w-full max-w-full overflow-hidden rounded-full px-2 leading-8 font-medium shadow-2xs ${danger ? "bg-red-600" : "bg-green-600"} `}
           >
             {msg.msg}
           </div>
@@ -83,7 +83,7 @@ export default function NotificationBar({}: {}) {
           {exitable && (
             <div
               onMouseDown={() => exitEffect()}
-              className="animate-logoExit absolute right-10 bottom-1 w-6 cursor-pointer rounded-2xl text-center underline drop-shadow-2xl transition-colors hover:scale-[1.2] hover:animate-none hover:text-green-700"
+              className="animate-logoExit absolute right-10 bottom-1 w-6 cursor-pointer rounded-2xl text-center underline drop-shadow-2xl transition-colors hover:scale-[1.1] hover:animate-none hover:underline"
             >
               {" "}
               Ok{" "}

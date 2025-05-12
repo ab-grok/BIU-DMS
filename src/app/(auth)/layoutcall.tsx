@@ -1,16 +1,8 @@
 "use client";
-import {
-  createContext,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-  Dispatch,
-} from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import signUpImage from "@/assets/images/biu_blue_round.png";
 import { usePathname } from "next/navigation";
-import { useLoading } from "../layoutcall";
 import { useTheme } from "next-themes";
 
 export default function LayoutCall({

@@ -1,6 +1,7 @@
 "use server";
 
-import { encryptText, getCookie } from "@/lib/sessions";
+import { createTbCol, createTbMeta } from "@/app/(main)/(pages)/selectcontext";
+import { encryptText, getCookie, validateSession } from "@/lib/sessions";
 import { revalidateTag, unstable_cache } from "next/cache";
 //types
 export type db = {
@@ -25,9 +26,8 @@ export type db = {
   }[];
 };
 
-export async function listDatabases(
-  token32: string | undefined,
-): Promise<Array<db> | null> {
+export async function listDatabases(): Promise<Array<db> | null> {
+  const { token32 } = await getCookie();
   if (!token32) return null;
   const dbList = unstable_cache(
     async () => {
@@ -62,7 +62,6 @@ export type Tb = {
   updatedBy: string;
   description: string;
   private: boolean;
-  topAdmin: string;
   viewers: {
     firstname: string;
     username: string;
@@ -76,10 +75,8 @@ export type Tb = {
     id: string;
   }[];
 };
-export async function ListTables(
-  db_name: string,
-  token32: string | null,
-): Promise<Array<Tb> | null> {
+export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
+  const { token32 } = await getCookie();
   if (!token32) return null;
   const Tables = unstable_cache(
     async () => {
@@ -105,18 +102,54 @@ export async function ListTables(
   return tbs;
 }
 
-async function getUser() {
-  const token32 = getCookie();
+export async function postTable(
+  cols: createTbCol,
+  meta: createTbMeta,
+): Promise<{ error: string }> {
+  //
+}
+
+//users: {userId, title, firstname, username, level, edits[], views[], created[]},, edits;{db:,tb:}
+
+type views = {
+  db: string;
+  tb: string;
+};
+export type allUsers = {
+  id: string;
+  title: string;
+  firstname: string;
+  lastname: string;
+  username: string;
+  level: number;
+  edits: views[];
+  views: views[];
+  created: views[];
+};
+
+export async function getUsers(): Promise<Array<allUsers> | null> {
+  const { token32 } = await getCookie();
+  if (!token32) return null;
+  console.log("getUsers ran but not unstable_cache token32: ", token32);
+
   const userData = unstable_cache(
     async () => {
-      const res = await fetch(`${process.env.SERVER}/database/users`);
+      console.log("getUsers unstable_cache ran as well. token32: ", token32);
+      const res = await fetch(`${process.env.SERVER}/users`, {
+        headers: {
+          enc_token: (await encryptText(token32)) ?? "",
+        },
+      });
+      if (!res.ok) return null;
+      return await res.json();
     },
-    [`userdata-${token32}`],
+    [`users-${token32}`],
     {
-      tags: [`userdata-${token32}`, `userdata`],
+      tags: [`users-${token32}`, `users`],
       revalidate: 3600,
     },
   );
+  return await userData();
 }
 
 export async function timeAgo(iso: string): Promise<string> {
@@ -140,4 +173,36 @@ export async function timeAgo(iso: string): Promise<string> {
   else if (hours > 0) return `${hours}h`;
   else if (minutes > 0) return `${minutes}min`;
   return `${seconds}s`;
+}
+
+export async function getUserAccess(db?: string, tb?: string): Promise<number> {
+  //0 - none, 1 - view, 2 - edit
+  const userId = (await validateSession())?.userId;
+  const level = (await validateSession())?.level;
+
+  if (!userId) return 0;
+  if (tb) {
+  } //can add rows
+  else if (db) {
+    const tbs = await ListTables(db);
+    tbs &&
+      tbs.forEach((a, i) => {
+        const length = Math.max(a.editors.length, a.viewers.length);
+        for (let j = 0; j < length; j++) {
+          if (a.editors[j]?.id == userId) return 2;
+          else if (a.viewers[j]?.id == userId) return 1;
+        }
+      });
+  } else {
+    const dbs = await listDatabases();
+    dbs &&
+      dbs.forEach((a, i) => {
+        a.editors.forEach((b, j) => {
+          if (b.id == userId) return 2;
+        });
+      });
+
+    //return 1 if level 2: user can view dbs
+  }
+  return 0;
 }

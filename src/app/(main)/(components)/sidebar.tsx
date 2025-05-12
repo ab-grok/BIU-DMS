@@ -1,31 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSideContext } from "../layoutcontext";
-import DbCard from "@/app/(main)/(components)/sidedbcard";
-import {
-  ArrowBigDown,
-  ArrowRight,
-  Box,
-  CircleArrowRight,
-  IndentDecrease,
-  LogOut,
-  MenuIcon,
-  MenuSquare,
-  MenuSquareIcon,
-  UserCog,
-  UserCog2,
-} from "lucide-react";
+import SideCard from "@/app/(main)/(components)/sidecard";
+import { LogOut, Sidebar, UserCog } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Loading from "@/components/loading";
-import { useLoading } from "@/app/layoutcall";
+import { useLoading } from "@/app/dialogcontext";
 import { usePathname } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { logOut } from "@/app/(auth)/actions";
 
 export default function SideBar() {
@@ -33,22 +14,8 @@ export default function SideBar() {
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
 
-  function clicked() {
-    setSidebarState((prev) => ({
-      ...prev,
-      sbExpanded:
-        typeof sidebarState.sbExpanded == "boolean"
-          ? !sidebarState.sbExpanded
-          : false,
-    }));
-    // console.log(`expand: ` + expand);
-    // console.log(`sidebarState.sbExpanded: ` + sidebarState.sbExpanded);
-    // console.log(
-    //   `typeof sidebarState.sbExpanded: ` + typeof sidebarState.sbExpanded,
-    // );
-  }
-  function showAvatar(a?: number) {
-    if (a) {
+  function showAvatar(n?: number) {
+    if (n) {
       quickActions == true && setQuickAtions(false);
     } else setQuickAtions(!quickActions);
   }
@@ -61,39 +28,30 @@ export default function SideBar() {
 
   useEffect(() => {
     console.log("isLoading in sidebar" + isLoading);
-    if (path == "/") setSidebarState((prev) => ({ ...prev, route: "" }));
+    if (path == "/") setSidebarState((p) => ({ ...p, route: "" }));
   }, [path]);
 
   return (
     <div
       onClick={() => showAvatar(1)}
-      className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg z-5 flex h-[40rem] max-h-[100%] items-center justify-center overflow-hidden rounded-[5px] shadow-xl shadow-black/50 transition-all duration-500`}
+      className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg shadow-black transition-all`}
     >
       {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
-      <main className="bg-main-fg relative flex h-[99.8%] w-[99.2%] flex-col overflow-hidden rounded-[5px]">
+      <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col overflow-hidden rounded-[5px] ring-2">
         <section
-          className={`group relative top-0 h-full max-h-[15%] min-h-[15%] w-full bg-red-500/20`}
+          className={`group relative top-0 h-full max-h-[15%] min-h-[15%] w-full bg-blue-500/20`}
         >
-          <div
-            onClick={() => clicked()}
-            className={`hover:bg-main-bg/10 ${path == "/" ? "hidden" : ""} absolute top-[2px] left-[4px] flex h-10 w-10 items-center justify-center rounded-4xl hover:shadow-2xl lg:hidden ${expand ? "scale-[1.1]" : ""} `}
-          >
-            <MenuIcon
-              className="hover:animate-menuarrow stroke-main-bg min-h-[30px] transition-all duration-500 hover:scale-[1.2]"
-              size={30}
-            />
-          </div>
-          <div className="relative flex h-full w-[100%] items-center bg-amber-300">
+          <div className="relative flex h-full w-[100%] items-center justify-center bg-amber-300">
             <div
-              onBlur={() => showAvatar()}
+              onBlur={() => showAvatar(1)}
               id="avatar"
-              className={`bg-main-fg ring-main-bg relative ring-2 ${quickActions ? (path == "/" ? "left-[39%] w-[6rem] rounded-2xl" : "left-[30%] w-[6rem] rounded-2xl") : path == "/" ? "left-[40%] w-[5rem] rounded-full" : "left-[32%] w-[5rem] rounded-full"} ${path == "/" ? "" : ""} shadow-shadow-bw text-bw h-[5rem] cursor-pointer overflow-hidden text-xs shadow-md transition-all duration-200`}
-              onClick={() => setQuickAtions(!quickActions)}
+              className={`ring-main-bg flex ring-2 ${quickActions ? "h-[5rem] w-[6rem] rounded-[5px]" : !sidebarState.sbExpanded ? "size-[3rem] rounded-full lg:size-[5rem]" : "size-[5rem] rounded-full"} ${!sidebarState.sbExpanded && ""} bg-main-fg shadow-shadow-bw text-bw cursor-pointer items-center self-center overflow-hidden text-xs shadow-md transition-all duration-200`}
+              onClick={() => showAvatar()}
             >
               {!quickActions ? (
-                <Avatar />
+                <Avatar expanded={sidebarState.sbExpanded} />
               ) : (
-                <QuickActions fn2={() => logOut()} />
+                <SBQuickActions fn2={() => logOut()} />
               )}
             </div>
           </div>
@@ -102,10 +60,11 @@ export default function SideBar() {
 
         <section className="bg-main-fg relative top-0 h-full max-h-[60%] w-full flex-none">
           {" "}
-          <DbCard name="Databases" route="databases" />
-          <DbCard name="Create a database" route="createdb" />
-          <DbCard name="View requests" route="requests" />
-          <DbCard name="Private message" route="chat" />
+          <SideCard name="Databases" route="databases" />
+          <SideCard name="Create a database" route="createdb" />
+          <SideCard name="View requests" route="requests" />
+          <SideCard name="Private message" route="chat" />
+          <SideCard name="Users" route="users" />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
         <section className="relative top-0 h-full max-h-[25%] w-full bg-amber-500/20">
@@ -117,17 +76,19 @@ export default function SideBar() {
   );
 }
 
-function Avatar() {
+function Avatar({ expanded }: { expanded: boolean }) {
+  const { setSidebarState } = useSideContext().context;
   return (
     <div
       title="Click to show actions"
       id="avatar"
-      className="bg-main-fg text-bw absolute size-[5rem] rounded-full p-4 text-xs"
+      onClick={() => setSidebarState((p) => ({ ...p, sbExpanded: true }))}
+      className={`${!expanded ? "size-[3rem] lg:size-[5rem]" : "size-[5rem]"} bg-main-bg text-bw absolute rounded-full p-1 text-xs transition-all`}
     >{`Avatar goes here`}</div>
   );
 }
 
-function QuickActions({ fn1, fn2 }: quickActions) {
+function SBQuickActions({ fn1, fn2 }: quickActions) {
   return (
     <div
       title="Click elsewhere to exit"

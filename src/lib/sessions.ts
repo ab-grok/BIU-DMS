@@ -14,15 +14,15 @@ import { cookies } from "next/headers";
 //   expiresAt: Date;
 // };
 type sessionValidation = {
-  email: string | undefined;
   username: string;
   firstname: string;
-  level: string;
-  avatarUrl: string | undefined;
-  joined: string;
+  level: number;
+  avatarUrl: string | null;
   title: string;
-  bio: string;
-  userId: string;
+  userId: string | null;
+  joined: string | null;
+  bio: string | null;
+  email: string | null;
 } | null;
 
 export async function generateSessionToken(): Promise<string> {
@@ -33,15 +33,9 @@ export async function generateSessionToken(): Promise<string> {
   return token;
 }
 
-export async function getCookie(c?: any) {
-  if (c) {
-    console.log("cookie from getCookie fn: " + JSON.stringify(c));
-    const token32 = cookie.parse(c);
-    return token32;
-  } else {
-    const token32 = (await cookies()).get("session")?.value;
-    return { token32 }; //token32 = {value: token}
-  }
+export async function getCookie() {
+  const token32 = (await cookies()).get("session")?.value;
+  return { token32 }; //token32 = {value: token}
 }
 
 export async function createSessionCookie({
@@ -80,8 +74,11 @@ export async function deleteSessionCookie(): Promise<boolean> {
 }
 
 //delete with revalidateTag(tag) on logout
-export async function validateSession(token32: string | undefined) {
+export async function validateSession(sensitive?: Boolean) {
+  const { token32 } = await getCookie();
   if (!token32) return null;
+  console.log("validateSession was hit, token32", token32);
+
   const validateWithCookies = unstable_cache(
     async (): Promise<sessionValidation> => {
       console.log("+++++++++++++gets inside unstable_cache's function");
@@ -96,23 +93,16 @@ export async function validateSession(token32: string | undefined) {
       if (!res.ok) return null;
       const user = await res.json();
 
-      console.log(`Got from sessionValidate: ${user}`);
-
-      return {
-        email: user.email,
-        username: user.username,
-        firstname: user.firstname,
-        level: user.lvl,
-        avatarUrl: user.avatarUrl,
-        joined: user.joined,
-        title: user.title,
-        bio: user.bio,
-        userId: user.userId,
-      };
+      // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
+      //handle expires at from updated session.
+      const { joined, bio, email, expiresAt, ...user1 } = user;
+      if (expiresAt) await createSessionCookie({ token32, expiresAt });
+      if (sensitive) return user;
+      return user1;
     },
     [token32],
     {
-      tags: [token32, "session"],
+      tags: ["session-" + token32, "session"],
       revalidate: 3600, //
     },
   );

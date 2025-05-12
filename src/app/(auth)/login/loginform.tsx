@@ -17,8 +17,9 @@ import { useContext, useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { logUser } from "./actions";
 import PasswordInput from "@/components/password";
-import { useLoading, useNotifyContext } from "@/app/layoutcall";
+import { useLoading, useNotifyContext } from "@/app/dialogcontext";
 import Loading from "@/components/loading";
+import { startupSnapshot } from "v8";
 
 export default function LoginForm() {
   const logform = useForm<loginType>({
@@ -42,40 +43,44 @@ export default function LoginForm() {
   }
 
   const [errMsg, setErrMsg] = useState({ err1: "", err2: "" });
-  const [isPending, startTransition] = useTransition();
   const { setIsLoading, isLoading } = useLoading();
   const { setNotify } = useNotifyContext();
+  const [isPending, startTransition] = useTransition();
 
   function logSubmit(values: loginType) {
     setErrMsg({ err1: "", err2: "" });
-    setIsLoading(isLoading + ",login");
-    (async () => {
-      const { error } = await logUser(values);
-      // will get redirected here when there's no error (loading never ends)
-      if (error) {
-        if (error.includes(";")) {
-          const index = error.indexOf(";");
-          let error2 = ". " + error.slice(index + 1);
-          let error1 = error.substring(0, index);
-          setErrMsg({ err1: error1, err2: error2 });
-        } else setErrMsg({ err1: error, err2: "" });
-      } else {
-        setErrMsg({ err1: "", err2: "" });
+    setIsLoading("login,");
+    startTransition(() => {
+      const done = new Promise((resolve, reject) => {
+        resolve(1);
+      });
+      (async () => {
+        const { error } = await logUser(values);
+        // will get redirected here when there's no error (loading never ends)
+        if (error) {
+          if (error.includes(";")) {
+            const index = error.indexOf(";");
+            let error2 = ". " + error.slice(index + 1);
+            let error1 = error.substring(0, index);
+            setErrMsg({ err1: error1, err2: error2 });
+          } else setErrMsg({ err1: error, err2: "" });
+        }
+      })();
 
-        //set on main page
-        setNotify({
-          message: "Welcome ${session.firstname}, You have 3 view requests",
-          danger: false,
-          exitable: false,
-        });
-      }
-      setIsLoading(isLoading.replaceAll(",login", ""));
-    })();
+      setErrMsg({ err1: "", err2: "" });
+      setNotify({
+        message: "Welcome ${session.firstname}, You have 3 view requests",
+        danger: false,
+        exitable: false,
+      });
+
+      setIsLoading((p) => p.replace("login,", ""));
+    });
   }
 
-  useEffect(() => {
-    setIsLoading(isLoading.replace(",login", ""));
-  }, []);
+  // useEffect(() => {
+  //   setIsLoading(isLoading.replace(",login", ""));
+  // }, []);
 
   return (
     <Form {...logform}>

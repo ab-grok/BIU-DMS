@@ -41,14 +41,13 @@ export default function RowHeader({
     else setdbClicked(i);
   }
   return (
-    <div className="flex min-h-full w-[100%] items-center select-none">
-      <div className="bg-sub-fg/60 border-main-fg/30 absolute h-[3rem] min-w-[2.53rem] border-r-1"></div>
-      <div className="ml-[3rem] flex">
+    <div className="z-5 flex h-[3rem] w-[100%] items-center p-1 select-none">
+      <div className="ml-[2.6rem] flex">
         {headerList.map((a, i) => (
           <div
             key={i}
             onClick={() => handleClick(i + 1)}
-            className={`${i % 2 == 0 ? "bg-sub-fg" : "bg-sub-fg/10"} ${i == 0 && "cursor-pointer"}text-md flex h-[3rem] min-w-[10.75rem] items-center justify-center space-x-3 font-medium`}
+            className={`${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg2"} ${i == 0 && "cursor-pointer"}text-md flex h-[3rem] min-w-[10.75rem] items-center justify-center space-x-3 font-medium`}
           >
             <Icon name={a} />
             <span>{a}</span>

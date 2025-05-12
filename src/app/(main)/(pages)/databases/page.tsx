@@ -2,54 +2,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import RowHeader from "./(components)/rowheader";
 import Row from "./(components)/row";
-import { useLoading, useNotifyContext } from "@/app/layoutcall";
-import { useRevalidate } from "@/lib/sessions";
-import { db } from "@/lib/actions";
+import { useLoading, useNotifyContext } from "@/app/dialogcontext";
+import { db, listDatabases } from "@/lib/actions";
+import Loading from "@/components/loading";
 
 export default function DbLayout({ children }: { children: React.ReactNode }) {
   const { notify, setNotify } = useNotifyContext();
   const { isLoading, setIsLoading } = useLoading();
   const [db, setDb] = useState([] as db[] | null);
 
+  console.log("current isLoading: ", isLoading);
   useEffect(() => {
-    setIsLoading(isLoading + ",databases");
+    setIsLoading((p) => p + "databases,");
     (async () => {
-      const res = await fetch("/api/database");
-      if (!res.ok) {
+      const res = await listDatabases();
+      if (!res) {
         setNotify({
           message: "Can't get to the server right now.",
           danger: true,
           exitable: true,
         });
         return;
-      }
-
-      const databases = await res.json();
-      if (!databases) {
-        useRevalidate("databases");
-        setNotify({
-          message: "Something's not right! Try reloading the page.",
-          danger: true,
-          exitable: true,
-        });
-        return;
       } else {
-        setDb(databases);
-        console.log("Database set: \n\n\n " + JSON.stringify(databases));
+        setDb(res);
+        // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
-      setIsLoading(isLoading.replace(",databases", ""));
+      setIsLoading((p) => p.replace("databases,", ""));
     })();
   }, []);
-
-  // function handleScroll() {
-  //   thisComp &&
-  //     setScrollPos((prev) => ({ ...prev, rowDb: thisComp.scrollLeft }));
-  // }
-  //scrolls from this component
-  // const scrollRef = useRef<HTMLDivElement>(null);
-  // const thisComp = scrollRef.current;
-  // thisComp?.addEventListener("scroll", handleScroll);
-  // let { setScrollPos, scrollPos } = useScroll();
 
   const headerList = [
     "Database",
@@ -70,15 +50,16 @@ export default function DbLayout({ children }: { children: React.ReactNode }) {
     <div className="">
       <div
         ref={headerRef}
-        className="scrollbar-custom bg-sub-bg overflow-x-scroll border-b-2"
+        className="scrollbar-custom bg-sub-bg relative overflow-x-scroll border-b-2"
       >
         <RowHeader headerList={headerList} />
       </div>
       <main
         ref={rowRef}
         onScroll={(e) => handleScroll(e)}
-        className="max-h-[90%] overflow-auto"
+        className="max-h-[43.2rem] overflow-auto pb-3"
       >
+        {isLoading.includes("databases") && <Loading />}
         {db && db.map((a, i) => <Row key={i + 2} db={a} i={i} />)}
       </main>
     </div>

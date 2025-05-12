@@ -4,25 +4,19 @@ import UserTag from "@/components/usertag";
 import { cn } from "@/lib/utils";
 import { RowItem } from "./rowitems";
 import { QuickActions } from "./quickactions";
-import { db } from "../../actions";
 import { Hexagon, LogIn } from "lucide-react";
 import Index from "@/components";
 import Count from "@/components/count";
+import { db } from "@/lib/actions";
 
 export default function Row({ db, i }: { db: db; i: number }) {
   return (
     <div
-      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg2"} hover:bg-bw/30`}
+      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-fg"} hover:bg-bw/30`}
     >
       {" "}
-      <Index i={i + 1} className="h-[5rem]" />
-      <RowItem
-        itemsStart
-        text="sm"
-        route={`/databases/${db.Database}`}
-        load={db.Database}
-        i={1}
-      >
+      <Index i={i + 1} className="sticky h-[5rem]" />
+      <RowItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
         {db.Database && db.Database.length > 17
           ? db.Database.slice(0, 14) + `...`
           : db.Database}

@@ -1,5 +1,5 @@
 "use client";
-import { useLoading } from "@/app/layoutcall";
+import { useLoading } from "@/app/dialogcontext";
 import { Icon } from "@/components/Icons";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -60,7 +60,7 @@ export function RowItem({
   function handleClicked() {
     setClicked(true);
     route && router.push(`${route}`);
-    load && setIsLoading(load);
+    load && setIsLoading((p) => p + load + ",");
   }
 
   // console.log(
@@ -72,7 +72,7 @@ export function RowItem({
       onClick={handleClicked}
       onMouseLeave={() => hover(1)}
       onMouseOver={() => hover(0)}
-      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i == 1 ? "bg-sub-fg/70" : "bg-sub-fg/50"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
+      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i == 1 ? "bg-row-bg1/40" : "bg-row-bg1"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
     >
       <div
         className={`${extend && clicked ? "min-h-[4rem]" : "min-h-[90%]"} flex h-full w-full items-center`}

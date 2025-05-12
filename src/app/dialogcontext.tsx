@@ -12,16 +12,27 @@ import Loading from "@/components/loading";
 import NotificationBar from "@/components/notificationbar";
 
 //loading context
-type loadingAndNotifyType = {
+type dialogTypes = {
   isLoading: string; //comma separated string including all loading components
   setIsLoading: Dispatch<SetStateAction<string>>;
   sidebarEditable: boolean;
   setSidebarEdit: Dispatch<SetStateAction<boolean>>;
   notify: notificationStateType;
   setNotify: Dispatch<SetStateAction<notificationStateType>>;
+  addUsers: addUsers;
+  setAddUsers: Dispatch<React.SetStateAction<addUsers>>;
+  // addUsersCategory: string; //viewers, editors
+  // setAddUsersCategory: Dispatch<React.SetStateAction<string>>;
 };
 
-const loadingContext = createContext({} as loadingAndNotifyType);
+type addUsers = {
+  editors: string; //id?db/tb, id?db  //newTB/Db - uid&title&firstname
+  viewers: string; //"new" for createTb
+  type: "newDb" | "newTb" | "db" | "tb" | ""; //you can use this to render the specific context - this is not done yet
+  category: "editors" | "viewers";
+};
+
+const loadingContext = createContext({} as dialogTypes);
 
 export const useLoading = () => {
   const { isLoading, setIsLoading, sidebarEditable, setSidebarEdit } =
@@ -40,7 +51,12 @@ export const useNotifyContext = () => {
   return { notify, setNotify };
 };
 
-export default function MainLayout({
+export function useAddUsers() {
+  const { addUsers, setAddUsers } = useContext(loadingContext);
+  return { addUsers, setAddUsers };
+}
+
+export default function DialogContexts({
   children,
 }: {
   children: React.ReactNode;
@@ -48,6 +64,8 @@ export default function MainLayout({
   const [notify, setNotify] = useState({} as notificationStateType);
   const [isLoading, setIsLoading] = useState("");
   const [sidebarEditable, setSidebarEdit] = useState(false);
+  const [addUsers, setAddUsers] = useState({} as addUsers);
+
   return (
     <loadingContext.Provider
       value={{
@@ -57,6 +75,8 @@ export default function MainLayout({
         setSidebarEdit,
         notify,
         setNotify,
+        addUsers,
+        setAddUsers,
       }}
     >
       <div className="flex justify-center">

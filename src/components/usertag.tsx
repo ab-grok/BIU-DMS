@@ -1,70 +1,92 @@
 "use Client";
-import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 import { timeAgo } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+import { Plus, PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 export default function UserTag({
   name,
-  author,
+  id,
   title,
   className,
   hovered,
   clicked,
   n,
   cap,
+  colorCode,
+  delFn,
+  route,
+  clickedColor,
 }: {
-  author?: boolean;
   name: string;
+  id?: string;
   title?: string;
   className?: string;
-  hovered?: number;
-  clicked?: number;
-  n?: number;
-  cap?: number;
+  hovered?: number; //shared context/state with the group
+  clicked?: boolean | number; //shared w group inline
+  colorCode?: number; //0-9 for the color array
+  delFn?: (a: any, b?: any) => void;
+  n?: number; //i
+  cap?: number; //word limit
+  route?: string;
+  clickedColor?: string;
 }) {
-  const { colorState, setColorState } = useSelection();
-  const [rand, setRand] = useState(Math.floor(Math.random() * 10));
+  const router = useRouter();
+  const [thisHover, setHover] = useState(0);
   const c = cap ?? 9;
 
-  useEffect(() => {
-    if (colorState.includes(name)) {
-      let colRef = colorState.indexOf(name);
-      let randStart = colorState.indexOf("%", colRef);
-      let thisRand = Number(
-        colorState.slice(randStart + 1, colorState.indexOf(",", randStart)),
-      );
-      setRand(thisRand);
-    } else {
-      setColorState(colorState + `${name}%${rand},`);
-    }
-  }, []);
-
-  const color = [
-    "bg-red-400",
-    "bg-blue-400",
-    "bg-stone-400",
-    "bg-yellow-400",
-    "bg-purple-400",
-    "bg-pink-400",
-    "bg-indigo-400",
-    "bg-teal-400",
-    "bg-orange-400",
-    "bg-rose-400",
+  const colorArr = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-stone-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+    "bg-teal-500",
+    "bg-orange-500",
+    "bg-rose-500",
   ];
+
+  const color = colorArr[colorCode ?? 1];
+  const colorHover = color + "/50";
+
+  function pushRoute() {
+    route && router.push(route);
+  }
+
   return (
     <div
+      onMouseEnter={() => setHover(1)}
+      onMouseLeave={() => setHover(0)}
+      onClick={pushRoute}
       className={cn(
-        `${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? "bg-blue-700/60" : n && hovered == n ? `ring-2 ${color[rand]}` : ""} ${color[rand] + "/70"} text-bw min flex h-full max-h-[1.3rem] min-h-[1.3rem] w-fit max-w-[6rem] min-w-[3rem] items-center justify-center rounded-[4px] px-1 shadow-2xs`,
+        `group/ut relative ${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? (clickedColor ?? colorHover) : n ? hovered == n && `ring-2` : hovered && "ring-2"} ${!hovered && thisHover && `${color} shadow-md`} text-bw min flex h-[1.3rem] w-fit max-w-[8rem] min-w-fit items-center justify-center rounded-[4px] px-1 shadow-2xs select-none`,
         className,
       )}
     >
       {title && (
-        <span className="mt-[3px] mr-1 flex items-end text-[10px]">
+        <span className="mr-1 flex h-full items-end text-[10px]">
           {" "}
           {title}{" "}
         </span>
       )}
-      {name ? (name.length > c ? name.slice(0, c) + "..." : name) : "N/A"}
+      {name ? (
+        <span className="flex h-full w-fit items-end overflow-hidden">
+          {name.length > c ? name.slice(0, c) + "..." : name}
+        </span>
+      ) : (
+        <span className="self-center text-xs italic">N/A</span>
+      )}
+      {delFn && (
+        <span
+          title="Delete"
+          onClick={() => delFn(name, "del")}
+          className={` ${clicked ? (clickedColor ?? colorHover) : n && hovered == n && `ring-2`} ${!hovered && thisHover && color} absolute -right-[15px] flex h-full w-fit translate-x-1 cursor-pointer items-center rounded-r-[5px] pr-0.5 opacity-0 shadow-2xs backdrop-blur-3xl transition-all group-hover/ut:translate-x-0 group-hover/ut:opacity-100`}
+        >
+          <PlusCircle className="size-4 rotate-45 stroke-red-600 stroke-3" />
+        </span>
+      )}
     </div>
   );
 }

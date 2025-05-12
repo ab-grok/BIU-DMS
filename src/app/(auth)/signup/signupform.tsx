@@ -14,12 +14,13 @@ import { Input } from "@/components/ui/input";
 import { signupSchema, signupType } from "@/lib/authschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import React, { useRef, useState, useTransition } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { signUser } from "./actions";
 import { redirect } from "next/navigation";
-import { useLoading } from "@/app/layoutcall";
+import { useLoading } from "@/app/dialogcontext";
 import Loading from "@/components/loading";
+import { cn } from "@/lib/utils";
 
 type name = {};
 
@@ -80,7 +81,7 @@ export default function SignupForm({ className }: { className?: string }) {
 
   function signSubmit(values: signupType) {
     console.log("got to signSubmit");
-    setIsLoading(isLoading + ",signup");
+    setIsLoading((p) => p + "signup,");
     startTransition(async () => {
       setMsg({ err: false, msg1: "", msg2: "" });
       const { signError, errMessage } = await signUser(values);
@@ -103,7 +104,7 @@ export default function SignupForm({ className }: { className?: string }) {
           redirect("/");
         }, 3000);
       }
-      setIsLoading(isLoading.replace(",signup", ""));
+      setIsLoading((p) => p.replace("signup,", ""));
     });
   }
 
@@ -176,7 +177,7 @@ export default function SignupForm({ className }: { className?: string }) {
                       {a.name.charAt(0).toUpperCase() + a.name.slice(1)}
                     </FormLabel>
                     <FormControl>
-                      <Title
+                      <SlideSelect
                         name={a.name}
                         value={field.value}
                         onChange={field.onChange}
@@ -230,23 +231,41 @@ export default function SignupForm({ className }: { className?: string }) {
   );
 }
 
-function Title({ value, onChange, name }: customField) {
+export function SlideSelect({
+  color,
+  onChange,
+  name,
+  value,
+  className,
+  typeChange,
+}: customField) {
   const title = ["Mr", "Ms", "Mrs", "Dr", "Prof"];
   const gender = ["Male", "Female"];
+  const type = ["Text", "Number", "Date", "Boolean", "File"];
   const [tab, setTab] = useState(0);
 
-  const arr = name == "title" ? title : gender;
+  const arr = name == "title" ? title : name == "type" ? type : gender;
+  const color1 = color ? color : "bg-bw/60";
   function tabClick(e: number) {
     setTab(e);
     onChange(e);
+    typeChange && typeChange(e);
   }
+
+  // useEffect(() => {
+  //   console.log("this is value from SlideSelect: ", value);
+  // }, [value]);
+
   return (
     <div
       tabIndex={1}
-      className={`relative h-[2.5rem] w-[15rem] cursor-pointer overflow-hidden rounded-full border-2 ring-blue-300/50 focus:ring-2 ${""} `}
+      className={cn(
+        `border-bw/40 relative h-[2.5rem] w-[15rem] cursor-pointer overflow-hidden rounded-full border-2 ring-blue-300/50 select-none focus:ring-2`,
+        className,
+      )}
     >
       <div
-        className={`bg-bw/50 h-full w-full transition-all duration-200 ease-out ${name == "title" ? `max-w-[20%] ${tab == 5 ? "translate-x-[400%]" : tab == 4 ? "translate-x-[300%]" : tab == 3 ? "translate-x-[200%]" : tab == 2 ? "translate-x-[100%]" : ""}` : `max-w-[50%] ${tab == 2 ? "translate-x-[100%]" : ""} `} `}
+        className={`${color1} h-full w-full transition-all duration-200 ease-out ${name != "gender" ? `max-w-[20%] ${tab == 5 ? "translate-x-[400%]" : tab == 4 ? "translate-x-[300%]" : tab == 3 ? "translate-x-[200%]" : tab == 2 ? "translate-x-[100%]" : ""}` : `max-w-[50%] ${tab == 2 ? "translate-x-[100%]" : ""} `} `}
       >
         {" "}
       </div>
@@ -257,7 +276,7 @@ function Title({ value, onChange, name }: customField) {
             <div
               key={a}
               onClick={() => tabClick(i + 1)}
-              className={`${name == "title" ? "w-[20%]" : "w-[50%]"} ${tab == i + 1 ? "font-bold text-white" : ""} hover:bg-bw/20 flex items-center justify-center text-sm hover:shadow-xs`}
+              className={`${name == "gender" ? "w-[50%]" : "w-[20%]"} ${tab == i + 1 ? "text-bw font-bold" : ""} hover:bg-bw/20 flex items-center justify-center text-sm hover:shadow-xs`}
             >
               {a}
             </div>
@@ -268,7 +287,10 @@ function Title({ value, onChange, name }: customField) {
 }
 
 type customField = {
-  value: number;
+  color?: string;
   onChange: (e: any) => void;
   name: string;
+  className?: string;
+  value?: number;
+  typeChange?: (e: any) => void;
 };

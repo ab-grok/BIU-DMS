@@ -2,7 +2,7 @@
 import { timeAgo } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { Hexagon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Count({
   n,
@@ -35,4 +35,13 @@ export default function Count({
       {time && <span className="text-bw/50 ml-1 text-xs">ago</span>}
     </div>
   );
+}
+
+export function useButtonAnim() {
+  const [pressAnim, setPressAnim] = useState("");
+  // const press = useRef<string>(a);
+  setTimeout(() => {
+    setPressAnim("");
+  }, 100);
+  return { pressAnim, setPressAnim };
 }
