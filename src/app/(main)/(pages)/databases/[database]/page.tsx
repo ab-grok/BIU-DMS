@@ -32,7 +32,7 @@ export default function Database() {
       //   useRevalidate("session");
       // }
 
-      const user = await validateSession(true);
+      const user = await validateSession();
       console.log("User from [database]'s validateSession call", user);
       const res = await ListTables(currDb);
       if (!res) {
