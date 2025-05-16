@@ -2,7 +2,8 @@
 
 import { createTbCol, createTbMeta } from "@/app/(main)/(pages)/selectcontext";
 import { encryptText, getCookie, validateSession } from "@/lib/sessions";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { unstable_cache } from "next/cache";
+import { getAllUsers, getDb, getSession, getTables } from "./server";
 //types
 export type db = {
   Database: string;
@@ -31,17 +32,18 @@ export async function listDatabases(): Promise<Array<db> | null> {
   if (!token32) return null;
   const dbList = unstable_cache(
     async () => {
-      const res = await fetch(`${process.env.SERVER}/databases`, {
-        method: "GET",
-        headers: {
-          enc_token: (await encryptText(token32)) ?? "",
-        },
-      });
-
-      if (res.ok) {
-        const items = await res.json();
-        console.log(items);
-        return items;
+      console.log("listDatabases token32: " + token32);
+      try {
+        const { userId } = await getSession({
+          token32,
+          getId: true,
+          update: false,
+        });
+        if (!userId) throw { message: "Session not found" };
+        const { dbWithMeta } = await getDb("getTbcount");
+        return dbWithMeta;
+      } catch (e) {
+        console.log(`Error in listDatabases: ${JSON.stringify(e)}`);
       }
       return null;
     },
@@ -50,6 +52,18 @@ export async function listDatabases(): Promise<Array<db> | null> {
   );
   const data = await dbList();
   return data;
+}
+
+export async function createDatabase(): Promise<Boolean> {
+  //can you get the creatDatabase() working right with sessionId validation and cleared authencation for users with levels not less than 2
+  return true;
+}
+
+export async function deleteDatabase(): Promise<Boolean> {
+  //can you get the deleteDatabase() working right with sessionId validation for users with levels not less than 2 and are editors or the creator(which should be an editor)  to
+  // const result = await delDb(dbName.toLowerCase());
+  // res.status(201).send({ message: `${dbName} deleted!` });
+  return true;
 }
 
 export type Tb = {
@@ -75,25 +89,30 @@ export type Tb = {
     id: string;
   }[];
 };
+
 export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
   const { token32 } = await getCookie();
   if (!token32) return null;
   const Tables = unstable_cache(
     async () => {
-      console.log("~~~~~~~~~~~~~~");
+      console.log("~~~~~~~~~~in ListTables");
       console.log("dbName: ", db_name);
-      const res = await fetch(`${process.env.SERVER}/tables`, {
-        method: "GET",
-        headers: {
-          enc_token: (await encryptText(token32)) ?? "",
-          db_name,
-        },
-      });
-      console.log("res status", res.status);
-      if (!res.ok) return null;
+      try {
+        //expiresAt, username, firstname, lastname, title, joined, level, userId, avatarUrl
+        const { userId } = await getSession({
+          token32,
+          getId: true,
+          update: false,
+        });
+        if (!userId) throw { customMessage: "Couldnt get session" };
 
-      const tables = await res.json();
-      return tables;
+        const { tableData } = await getTables(db_name, true);
+        // console.log("tableData: ", tableData);
+        return tableData;
+      } catch (e) {
+        console.log(`error in ListTables: ${e}`);
+      }
+      return null;
     },
     [`tables-${token32}`],
     { tags: [`tables-${token32}`, token32] },
@@ -107,6 +126,26 @@ export async function postTable(
   meta: createTbMeta,
 ): Promise<{ error: string }> {
   //
+  return { error: "couldn't create table" };
+}
+
+export async function getTableSchema() {
+  //get cookies and verify if user is a viewer, or editor which includes the creator in order to grant access -- see getUserAccess function in server.js
+  //works with getTableSchema from server.js
+  // format with return types
+}
+
+export async function getTableContent() {
+  //getTbData from server.js
+  // format with return types
+}
+
+export async function setTableContent() {
+  //works with insertData
+}
+
+export async function alterTable() {
+  //things like adding new columns, dropping old ones,
 }
 
 //users: {userId, title, firstname, username, level, edits[], views[], created[]},, edits;{db:,tb:}
@@ -134,14 +173,22 @@ export async function getUsers(): Promise<Array<allUsers> | null> {
 
   const userData = unstable_cache(
     async () => {
-      console.log("getUsers unstable_cache ran as well. token32: ", token32);
-      const res = await fetch(`${process.env.SERVER}/users`, {
-        headers: {
-          enc_token: (await encryptText(token32)) ?? "",
-        },
-      });
-      if (!res.ok) return null;
-      return await res.json();
+      console.log("getUsers unstable_cache ran. token32: ", token32);
+      try {
+        console.log("token32 from decryptText: ", token32);
+        const { userId } = await getSession({
+          token32,
+          update: false,
+          getId: true,
+        });
+        if (!userId) throw { customMessage: "Unauthorized." };
+        const users = await getAllUsers();
+        if (!users) throw { customMessage: "users not found" };
+        return users;
+      } catch (e: any) {
+        console.log("error in getUsers: " + e);
+        return null;
+      }
     },
     [`users-${token32}`],
     {

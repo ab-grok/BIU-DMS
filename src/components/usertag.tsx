@@ -1,9 +1,9 @@
 "use Client";
 import { timeAgo } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { Plus, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 export default function UserTag({
   name,
   id,

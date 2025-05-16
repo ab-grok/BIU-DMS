@@ -89,7 +89,7 @@ export function Toolbar() {
   function countTb() {}
   // add sortby: lastupdated (up,down), alphabetical(up,down), date created(up,down)
   useEffect(() => {
-    let currPath = path?.slice(path?.indexOf("databases")) ?? "";
+    const currPath = path?.slice(path?.indexOf("databases")) ?? "";
     console.log("this path: ", path);
     console.log("curr path: ", currPath);
     //db lists all tables, tb lists all records, record lists a single record

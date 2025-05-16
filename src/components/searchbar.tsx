@@ -1,6 +1,6 @@
 "use client ";
 import { cn } from "@/lib/utils";
-import { Eye, EyeClosed, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import React, { useState } from "react";
 
 export default function SearchBar({

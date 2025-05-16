@@ -1,10 +1,8 @@
 "use client";
-import { useParams, usePathname } from "next/navigation";
-import DbMain from "./(components)/dbmain";
-import { Suspense, useEffect, useRef, useState } from "react";
-import RowHeader from "../(components)/rowheader";
+import { useParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import TableCard from "./(components)/tbcard";
-import { useRevalidate, validateSession } from "@/lib/sessions";
+import { validateSession } from "@/lib/sessions";
 import Loading from "@/components/loading";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
 import { ListTables, Tb } from "@/lib/actions";
@@ -13,7 +11,7 @@ import { useSelection } from "../../selectcontext";
 import AddUsers from "@/app/(main)/(components)/addusers";
 
 export default function Database() {
-  let currDb = useParams()?.database as string;
+  const currDb = useParams()?.database as string;
   const [tbData, setTbData] = useState([] as Tb[] | null);
   const userId = useRef<string>("");
   const { isLoading, setIsLoading } = useLoading();

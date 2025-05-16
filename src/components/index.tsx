@@ -1,7 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ChevronDown, CircleCheck, PlusCircle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 export default function Index({
   i,
@@ -20,7 +19,7 @@ export default function Index({
   circleColor?: string;
   selected?: boolean;
 }) {
-  let sz = size && `size-${size}`;
+  const sz = size && `size-${size}`;
 
   return (
     <div

@@ -3,12 +3,10 @@ import {
   createContext,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
   Dispatch,
 } from "react";
 
-import Loading from "@/components/loading";
 import NotificationBar from "@/components/notificationbar";
 
 //loading context

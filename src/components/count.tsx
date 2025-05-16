@@ -2,7 +2,7 @@
 import { timeAgo } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { Hexagon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Count({
   n,

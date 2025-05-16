@@ -36,7 +36,7 @@ export function QuickActions({
   }
   const actions = [action1, action2, action3, action4].filter(Boolean);
   function group(i: number) {
-    let g = ["group/a", "group/b", "group/c", "group/d"];
+    const g = ["group/a", "group/b", "group/c", "group/d"];
     return g[i];
   }
   function hoverColor(i: number) {

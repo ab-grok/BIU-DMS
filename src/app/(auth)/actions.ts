@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteSession, deleteSessionCookie } from "@/lib/sessions";
+import { deleteSession } from "@/lib/sessions";
 
 export async function logOut(): Promise<{ error: string }> {
   try {

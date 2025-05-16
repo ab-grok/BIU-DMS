@@ -5,8 +5,7 @@ import { useButtonAnim } from "@/components/count";
 import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
 import { getUsers, Users } from "@/lib/actions";
-import { userAgent } from "next/server";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AllUsers() {
   const [users, setUsers] = useState([] as Users[]);

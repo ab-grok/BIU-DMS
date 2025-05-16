@@ -1,7 +1,7 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import Count, { useButtonAnim } from "@/components/count";
+import { useEffect, useRef, useState } from "react";
+import { useButtonAnim } from "@/components/count";
 import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
 import Index from "@/components";
@@ -23,10 +23,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { SlideSelect } from "@/app/(auth)/signup/signupform";
 import { Button } from "@/components/ui/button";
 import UserTag from "@/components/usertag";
-import { allUsers, getUsers, postTable } from "@/lib/actions";
+import { postTable } from "@/lib/actions";
 import Loading from "@/components/loading";
 import { KeysButton } from "@/components/keysbutton";
-import { PlusCircle, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 
 type tbType = {
   i: number;
@@ -220,7 +220,7 @@ export default function CreateTb({ i, u, db }: tbType) {
         if (a.primary) {
           if (del) {
             setCreateTbCol((p) => {
-              let newCols = [...p];
+              const newCols = [...p];
               newCols[i].primary = 0;
               return newCols;
             });
@@ -503,11 +503,11 @@ function LiveTable({
   }, [createTbCol.length]);
 
   function onKeysChange(colName: string, keyName: string, keyVal: number) {
-    let key = keyName.toLowerCase().replace(" ", "");
+    const key = keyName.toLowerCase().replace(" ", "");
     for (const [i, a] of createTbCol.entries()) {
       if (a.name == colName) {
         setCreateTbCol((p) => {
-          let updCol = [...p];
+          const updCol = [...p];
           if (key == "primary") updCol[i].primary = keyVal;
           if (key == "unique") updCol[i].unique = keyVal;
           if (key == "notnull") updCol[i].notnull = keyVal;

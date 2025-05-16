@@ -6,18 +6,7 @@ import { TbClockHour4Filled } from "react-icons/tb";
 import { RiShieldUserFill } from "react-icons/ri";
 import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
-import {
-  ChevronDown,
-  Divide,
-  Edit,
-  Key,
-  KeyRound,
-  LockIcon,
-  LogIn,
-  Timer,
-  UserCheck,
-  UserPen,
-} from "lucide-react";
+import { ChevronDown, Edit, KeyRound, LockIcon, UserPen } from "lucide-react";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import Count, { useButtonAnim } from "@/components/count";
 import { QuickActions } from "../../(components)/quickactions";
@@ -56,8 +45,8 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
 
   useEffect(() => {
     // console.log("u from tbcard: ", u);
-    let currTbV = Tb.viewers ?? "";
-    let CurrTbE = Tb.editors ?? "";
+    const currTbV = Tb.viewers ?? "";
+    const CurrTbE = Tb.editors ?? "";
     for (let i = 0; i < Math.max(currTbV.length, CurrTbE.length); i++) {
       // console.log("for loop hit..", i);
       if ((currTbV && currTbV[i].id == u) || (CurrTbE && CurrTbE[i].id == u)) {
@@ -445,7 +434,7 @@ function TableAttr({
     }, 100 * i);
   }
 
-  let iconColor =
+  const iconColor =
     i == 1
       ? "text-green-800"
       : i == 2

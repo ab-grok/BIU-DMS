@@ -5,12 +5,10 @@ import React, {
   SetStateAction,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import Navbar from "./(components)/navbar";
 import SideBar from "./(components)/sidebar";
-import { usePathname } from "next/navigation";
 
 type sideContextType = {
   database: string;

@@ -1,8 +1,6 @@
 "use client";
 import { useSideContext } from "../layoutcontext";
 import { Separator } from "@/components/ui/separator";
-import Loading from "@/components/loading";
-import { useLoading } from "@/app/dialogcontext";
 import SelectionContext from "./selectcontext";
 import { Toolbar } from "@/components/toolbar";
 

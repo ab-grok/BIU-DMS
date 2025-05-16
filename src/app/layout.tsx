@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import icon from "../assets/images/biu-trans.png";
 import dotenv from "dotenv";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";

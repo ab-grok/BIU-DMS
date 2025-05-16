@@ -1,6 +1,3 @@
-import { validateSession } from "@/lib/sessions";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { NextResponse, NextRequest } from "next/server";
 // import type { NextRequest } from "next/server";
 

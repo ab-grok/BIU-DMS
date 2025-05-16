@@ -1,8 +1,7 @@
 "use client";
 import { Icon } from "@/components/Icons";
 import { ChevronDown } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { arrayOutputType } from "zod";
+import React, { useState } from "react";
 
 export default function RowHeader({
   headerList,

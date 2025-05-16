@@ -3,7 +3,6 @@ import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { createCipheriv, randomBytes } from "crypto";
 import { cookies } from "next/headers";
-import { delSession, getSession } from "./server";
 
 // type session = {
 //   token: string;
@@ -13,13 +12,12 @@ type sessionValidation = {
   username: string;
   firstname: string;
   level: number;
-  avatarUrl: string;
+  avatarUrl: string | null;
   title: string;
-  userId: string;
-  joined: string;
+  userId: string | null;
+  joined: string | null;
   bio: string | null;
-  email: string;
-  expiresAt: Date;
+  email: string | null;
 } | null;
 
 export async function generateSessionToken(): Promise<string> {
@@ -40,13 +38,13 @@ export async function createSessionCookie({
   expiresAt,
 }: {
   token32: string;
-  expiresAt: Date;
+  expiresAt: string;
 }): Promise<boolean> {
   try {
-    // const expires = new Date(expiresAt);
+    const expires = new Date(expiresAt);
     (await cookies()).set("session", token32, {
       httpOnly: true,
-      expires: expiresAt,
+      expires,
       sameSite: "lax",
       path: "/",
       secure: process.env.NODE_ENV == "production",
@@ -70,7 +68,8 @@ export async function deleteSessionCookie(): Promise<boolean> {
   return true;
 }
 
-export async function validateSession() {
+//delete with revalidateTag(tag) on logout
+export async function validateSession(sensitive?: boolean) {
   const { token32 } = await getCookie();
   if (!token32) return null;
   console.log("validateSession was hit, token32", token32);
@@ -78,20 +77,23 @@ export async function validateSession() {
   const validateWithCookies = unstable_cache(
     async (): Promise<sessionValidation> => {
       console.log("+++++++++++++gets inside unstable_cache's function");
-      let user: sessionValidation = null;
-      try {
-        user = await getSession({ token32, update: true, getId: true });
-        if (!user) throw { customMessage: "User not found!" };
-        console.log("got session, user: ", user);
-      } catch (e: any) {
-        console.log(e.customMessage);
-      }
-      if (!user) return null;
+      const res = await fetch(`${process.env.SERVER}/session`, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          "enc-token": (await encryptText(token32)) ?? "",
+        },
+      });
+      console.log("res.status: " + res.status);
+      if (!res.ok) return null;
+      const user = await res.json();
+
       // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
       //handle expires at from updated session.
-      const { expiresAt } = user;
+      const { joined, bio, email, expiresAt, ...user1 } = user;
       if (expiresAt) await createSessionCookie({ token32, expiresAt });
-      return user;
+      if (sensitive) return user;
+      return user1;
     },
     [token32],
     {
@@ -108,23 +110,18 @@ export async function deleteSession(): Promise<{
 }> {
   const token32 = (await cookies()).get("session")?.value;
   if (!token32) return { error: "Session not found!" };
-  try {
-    console.log("in delete session");
-    const user = await validateSession();
-    if (!user) return { error: "User not logged in" };
-    await delSession({ userId: user.userId });
-  } catch (e: any) {
-    return { error: e.customMessage };
-  }
-  revalidateTag("session-" + token32);
+  const res = await fetch(`${process.env.SERVER}/session`, {
+    method: "DELETE",
+    headers: {
+      enc_token: (await encryptText(token32)) ?? "",
+    },
+  });
+  if (!res.ok) return { error: "Could not connect to server." };
+  const deleted = await res.json();
+  if (!deleted) return { error: "The server gave an error." };
+  revalidateTag(token32);
   await deleteSessionCookie();
   return { error: "" };
-}
-
-export async function useRevalidate(name: string) {
-  const { token32 } = await getCookie();
-  revalidateTag(`${name}-${token32}`);
-  return true;
 }
 
 export async function encryptText(text: string) {
@@ -135,4 +132,10 @@ export async function encryptText(text: string) {
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
   return `${iv.toString("hex")}#${encrypted}`;
+}
+
+export async function useRevalidate(name: string) {
+  const { token32 } = await getCookie();
+  revalidateTag(`${name}-${token32}`);
+  return true;
 }

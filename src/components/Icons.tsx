@@ -5,10 +5,8 @@ import {
   Tags,
   IdCard,
   Settings2,
-  Ellipsis,
   Text,
 } from "lucide-react";
-import { GrUserAdmin } from "react-icons/gr";
 
 export function Icon({
   name,

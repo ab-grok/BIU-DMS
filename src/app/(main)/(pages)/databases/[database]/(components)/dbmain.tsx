@@ -1,11 +1,8 @@
 "use client";
 import {
-  IoCardSharp,
   IoPencilSharp,
   IoPricetag,
   IoPricetags,
-  IoPricetagSharp,
-  IoPricetagsSharp,
 } from "react-icons/io5";
 
 import { Separator } from "@/components/ui/separator";

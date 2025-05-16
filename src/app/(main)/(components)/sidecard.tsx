@@ -9,7 +9,6 @@ import {
   Users,
 } from "lucide-react";
 import { useSideContext } from "../layoutcontext";
-import { Separator } from "@/components/ui/separator";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function SideCard({

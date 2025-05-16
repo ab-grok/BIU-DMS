@@ -1,10 +1,8 @@
 "use client";
-import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
-import { cn } from "@/lib/utils";
 import { RowItem } from "./rowitems";
 import { QuickActions } from "./quickactions";
-import { Hexagon, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import Index from "@/components";
 import Count from "@/components/count";
 import { db } from "@/lib/actions";

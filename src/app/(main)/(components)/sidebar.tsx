@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSideContext } from "../layoutcontext";
 import SideCard from "@/app/(main)/(components)/sidecard";
-import { LogOut, Sidebar, UserCog } from "lucide-react";
+import { LogOut, UserCog } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Loading from "@/components/loading";
 import { useLoading } from "@/app/dialogcontext";

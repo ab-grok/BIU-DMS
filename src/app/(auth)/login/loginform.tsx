@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,13 +12,12 @@ import { Input } from "@/components/ui/input";
 import { loginSchema, loginType } from "@/lib/authschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useContext, useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { logUser } from "./actions";
 import PasswordInput from "@/components/password";
 import { useLoading, useNotifyContext } from "@/app/dialogcontext";
 import Loading from "@/components/loading";
-import { startupSnapshot } from "v8";
 
 export default function LoginForm() {
   const logform = useForm<loginType>({
@@ -60,8 +58,8 @@ export default function LoginForm() {
         if (error) {
           if (error.includes(";")) {
             const index = error.indexOf(";");
-            let error2 = ". " + error.slice(index + 1);
-            let error1 = error.substring(0, index);
+            const error2 = ". " + error.slice(index + 1);
+            const error1 = error.substring(0, index);
             setErrMsg({ err1: error1, err2: error2 });
           } else setErrMsg({ err1: error, err2: "" });
         }

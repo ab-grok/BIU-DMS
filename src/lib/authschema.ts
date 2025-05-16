@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { createTbSchema } from "./tableschema";
 
 const reqString = z.string().trim().min(1, "Required!");
 export const signupSchema = z.object({

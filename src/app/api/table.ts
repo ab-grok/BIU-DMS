@@ -1,7 +1,6 @@
 // move all actions.ts functions to this file.
 
 import { ListTables } from "@/lib/actions";
-import { encryptText, getCookie } from "@/lib/sessions";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function Tables(

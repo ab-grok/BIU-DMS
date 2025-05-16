@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import customForm from "@/components/form";
 import * as React from "react";
 import LoginForm from "./loginform";
 

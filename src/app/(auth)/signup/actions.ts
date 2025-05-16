@@ -1,12 +1,8 @@
 "use server";
 
 import { signupSchema, signupType } from "@/lib/authschema";
-import {
-  createSessionCookie,
-  encryptText,
-  generateSessionToken,
-} from "@/lib/sessions";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { createUser } from "@/lib/server";
+import { createSessionCookie, generateSessionToken } from "@/lib/sessions";
 
 export async function signUser(
   signUp: signupType,
@@ -16,25 +12,21 @@ export async function signUser(
       signupSchema.parse(signUp);
     //create new user
     const token32 = await generateSessionToken();
-    const res = await fetch(`${process.env.SERVER}/user/create`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        firstname,
-        lastname,
-        email,
-        password: await encryptText(password),
-        gender,
-        title,
-        session: await encryptText(token32),
-      }),
+    const { expiresAt } = await createUser({
+      firstname,
+      lastname,
+      email,
+      pass: password,
+      token32,
+      title,
+      gender,
     });
-    if (!res.ok) {
-      const error = await res.json();
-      return { signError: true, errMessage: error.customMessage };
-    }
-    const { expiresAt } = await res?.json();
-    console.log(`await res.json().expiresAt: ${expiresAt}`);
+
+    if (!expiresAt)
+      return {
+        signError: true,
+        errMessage: "An error occured; Try again later",
+      };
 
     const cookieSet = await createSessionCookie({
       token32,
@@ -47,8 +39,8 @@ export async function signUser(
       };
     return { signError: false, errMessage: "User created" };
   } catch (e) {
-    if (isRedirectError(e)) throw e;
-    console.log(e);
+    // if (isRedirectError(e)) throw e;
+    // console.log(e);
     return { signError: true, errMessage: "Something went wrong!" };
   }
 }
