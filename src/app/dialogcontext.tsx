@@ -11,6 +11,8 @@ import NotificationBar from "@/components/notificationbar";
 
 //loading context
 type dialogTypes = {
+  authPath: number; //signup, login
+  setAuthPath: Dispatch<SetStateAction<number>>;
   isLoading: string; //comma separated string including all loading components
   setIsLoading: Dispatch<SetStateAction<string>>;
   sidebarEditable: boolean;
@@ -33,9 +35,8 @@ type addUsers = {
 const loadingContext = createContext({} as dialogTypes);
 
 export const useLoading = () => {
-  const { isLoading, setIsLoading, sidebarEditable, setSidebarEdit } =
-    useContext(loadingContext);
-  return { isLoading, setIsLoading, sidebarEditable, setSidebarEdit };
+  const { notify, setNotify, ...rest } = useContext(loadingContext);
+  return { ...rest };
 };
 
 type notificationStateType = {
@@ -61,12 +62,15 @@ export default function DialogContexts({
 }) {
   const [notify, setNotify] = useState({} as notificationStateType);
   const [isLoading, setIsLoading] = useState("");
+  const [authPath, setAuthPath] = useState(0);
   const [sidebarEditable, setSidebarEdit] = useState(false);
   const [addUsers, setAddUsers] = useState({} as addUsers);
 
   return (
     <loadingContext.Provider
       value={{
+        authPath,
+        setAuthPath,
         isLoading,
         setIsLoading,
         sidebarEditable,

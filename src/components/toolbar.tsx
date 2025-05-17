@@ -95,11 +95,10 @@ export function Toolbar() {
     //db lists all tables, tb lists all records, record lists a single record
     const pages = currPath.split("/");
     if (pages.length > 3)
-      setPage((p) => ({ db: pages[1], tb: pages[2], record: pages[3] }));
+      setPage({ db: pages[1], tb: pages[2], record: pages[3] });
     else if (pages.length > 2)
-      setPage((p) => ({ db: pages[1], tb: pages[2], record: "" }));
-    else if (pages.length > 1)
-      setPage((p) => ({ db: pages[1], tb: "", record: "" }));
+      setPage({ db: pages[1], tb: pages[2], record: "" });
+    else if (pages.length > 1) setPage({ db: pages[1], tb: "", record: "" });
     else setPage({ db: "", tb: "", record: "" });
   }, [path]);
 

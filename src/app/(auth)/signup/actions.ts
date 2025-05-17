@@ -22,6 +22,7 @@ export async function signUser(
       gender,
     });
 
+    console.log("---------signup entered. got expiresAt ", expiresAt);
     if (!expiresAt)
       return {
         signError: true,
@@ -40,7 +41,7 @@ export async function signUser(
     return { signError: false, errMessage: "User created" };
   } catch (e) {
     // if (isRedirectError(e)) throw e;
-    // console.log(e);
+    console.log(e);
     return { signError: true, errMessage: "Something went wrong!" };
   }
 }

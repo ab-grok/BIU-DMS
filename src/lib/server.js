@@ -1,29 +1,32 @@
 "use server";
-//consolelog most of these errors instead
+//auth.array handles fragments (tagged) not raw stings
+//auth.array can escape array values as is
+//auth(column) for columns, auth`${values}` for values
+//auth`somethign ${value}` treats value as paramterized and something as string -- must use ${} to be parameterized
+//cant escape a value in the position of an identifier, have auth(value) for that.
 import { v4 as uuidv4 } from "uuid";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
-import { createDecipheriv } from "crypto";
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
 
 async function mainDb() {
-  return postgres(process.env.NODE_ENV.MAINDB);
+  return postgres(process.env.MAINDB);
 }
 async function authDb() {
-  return postgres(process.env.NODE_ENV.AUTHDB);
+  return postgres(process.env.AUTHDB);
 }
 
 export async function getDb(getTbCount) {
-  const dbConn = await mainDb();
+  const main = await mainDb();
   const rows =
-    await dbConn`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema) order by schema_name`;
+    await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema) order by schema_name`;
   const dbWithMeta = [];
 
   if (getTbCount) {
     const row2 = rows.map(async (a, i) => {
       const count =
-        await dbConn`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
+        await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
       //console.log(count)
       let dbMeta = await getMetadata({ dbName: a.schema_name });
       dbWithMeta.push({
@@ -34,7 +37,7 @@ export async function getDb(getTbCount) {
     });
     await Promise.all(row2);
   }
-  await dbConn.end();
+  await main.end();
   return { rows: rows.rows, dbWithMeta };
 }
 
@@ -61,12 +64,12 @@ function filterInput(cmt) {
 
 export async function delDb(dbName) {
   //getUser access
-  const dbConn = await mainDb();
+  const main = await mainDb();
   const dbFound = await checkDb(dbName);
   if (!dbFound) {
     throw "database does not exist";
   }
-  const res = await dbConn`drop schema ${dbName} cascade`;
+  const res = await main`drop schema ${dbName} cascade`;
   return res;
 }
 
@@ -93,36 +96,36 @@ async function addMetadata({
   const ndb = newDbName?.trim();
   const db = dbName.trim();
   const columns = [
-    auth`db_name`,
-    auth`,tb_name`,
-    updEditors ? auth`,editors` : "",
-    viewers ? auth`,viewers` : "",
-    desc ? auth`,description` : "",
-    createdBy ? auth`,created_by, created_at` : "",
-    updatedBy ? auth`,updated_by, updated_at` : "",
-    auth`,private`,
+    "db_name",
+    `tb_name`,
+    updEditors ? `editors` : null,
+    viewers ? `viewers` : null,
+    desc ? `description` : null,
+    createdBy ? `created_by, created_at` : null,
+    updatedBy ? `updated_by, updated_at` : null,
+    `private`,
   ].filter(Boolean);
 
   const values = [
-    db ? auth`${db}` : ndb ? auth`${ndb}` : "",
-    tb ? auth`${tb}` : ntb ? auth`${ntb}` : "",
-    updEditors ? auth`${updEditors}` : "",
-    viewers ? auth`${viewers}` : "",
-    desc ? auth`${desc}` : "",
-    createdBy ? auth`${createdBy}` : "",
-    updatedBy ? auth`${updatedBy}` : "",
-    now ? auth`${now}` : "",
-    prv ? auth`${prv}` : "",
+    db ? db : ndb ? ndb : "",
+    tb ? tb : ntb ? ntb : "",
+    updEditors ? updEditors : "",
+    viewers ? viewers : "",
+    desc ? desc : "",
+    createdBy ? createdBy : "",
+    updatedBy ? updatedBy : "",
+    now ? now : "",
+    prv ? prv : "",
   ].filter(Boolean);
 
-  const updWhere = auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`;
+  const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`];
 
   let row =
-    await auth`select * from metadata where db_name = ${db} and tb_name = ${tb ? tb : ""}`;
+    await await auth`select * from metadata where db_name = ${db} and tb_name = ${tb ? tb : ""}`;
 
   if (!row.rowCount) {
     let row2 =
-      await auth`Insert into metadata (${auth.join(columns, auth`,`)}) values (${auth.join(values, auth`,`)})`;
+      await auth`Insert into metadata (${auth.raw(columns.join(","))}) values (${auth.array(values)})`;
     if (!row2.count) return false;
   } else {
     const updClause = [];
@@ -138,7 +141,7 @@ async function addMetadata({
       updClause.push(auth`updated_by = ${updatedBy}, updated_at = ${now}`);
 
     const rowUpd =
-      await auth`update metadata set ${auth.join(updClause, auth`,`)} where ${updWhere}`;
+      await auth`update metadata set ${auth.array(updClause)} where ${auth.array(updWhere)}`;
     if (rowUpd.rowCount < 1) return false;
   }
   await auth.end();
@@ -147,14 +150,15 @@ async function addMetadata({
 
 export async function getMetadata({ dbName, tbName, asString }) {
   const auth = await authDb();
-  if (!dbName && !tbName) {
+  if (!dbName) {
     console.log({
       message: "Must specify a database to get meta.",
     });
     return;
   }
 
-  let rowSel = auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from metadata where ${auth`db_name = ${dbName} and tb_name = ${tbName ? tbName : ""}`} `;
+  let rowSel =
+    await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from metadata where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
   let viewers;
   let editors;
 
@@ -189,13 +193,13 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //   // users: [] when null
 //   // console.log("begining viewers: " + JSON.stringify(viewers));
 //   // console.log("begining editors: " + JSON.stringify(editors));
-//   const dbConn = await authDb();
+//   const main = await authDb();
 
 //   let viewers1 = [];
 //   let editors1 = [];
 
 //   function user(id) {
-//     return dbConn`select username, firstname, title from user where id = ${id}`;
+//     return main`select username, firstname, title from user where id = ${id}`;
 //   }
 
 //   if (editors) {
@@ -215,7 +219,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //       });
 //       editors1 = await Promise.all(editors1);
 //     } else {
-//       const [row] = await dbConn.query(sql, [editors]);
+//       const [row] = await main.query(sql, [editors]);
 //       if (row.length > 0) {
 //         editors1.push({
 //           username: row[0].username,
@@ -247,7 +251,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //           }
 //         }
 //         if (!inEditors) {
-//           const [res] = await dbConn.query(sql, [a]);
+//           const [res] = await main.query(sql, [a]);
 //           if (res.lenth < 1) {
 //             console.log({
 //               message:
@@ -274,7 +278,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //         }
 //       }
 //       if (!inEditors) {
-//         const [res] = await dbConn.query(sql, [viewers]);
+//         const [res] = await main.query(sql, [viewers]);
 //         viewers1.push({
 //           username: res[0].username,
 //           firstname: res[0].firstname,
@@ -290,7 +294,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //   // console.log("ending viewers: " + JSON.stringify(viewers1));
 //   // console.log("ending editors: " + JSON.stringify(editors1));
 
-//   await dbConn.end();
+//   await main.end();
 //   return { viewers1, editors1 };
 // }
 
@@ -309,7 +313,7 @@ async function getUserAccess({ dbName, tbName, userId }) {
     console.log("Tb not found!");
     return false;
   }
-  const dbConn = await authDb();
+  const main = await authDb();
   const { createdBy, viewers, editors } = await getMetadata({
     dbName,
     tbName,
@@ -328,7 +332,7 @@ async function getUserAccess({ dbName, tbName, userId }) {
   //   if (!tbName)
   //   view = true;
   // }
-  await dbConn.end();
+  await main.end();
   return { edit, view };
 }
 
@@ -352,8 +356,8 @@ export async function createDb({
     };
 
   if (await checkDb(dbName)) throw { customMessage: "Database already exists" };
-  const dbConn = await mainDb();
-  const res = await dbConn`Create schema ${dbConn.identifier([dbName])}`; //will throw own error
+  const main = await mainDb();
+  const res = await main`Create schema ${dbName}`; //will throw own error
 
   const metaAdded = await addMetadata({
     createdBy: userId,
@@ -374,20 +378,19 @@ export async function getTables(dbName, includeMeta) {
   if (!(await checkDb(dbName))) {
     throw { customMessage: "Database does not exist" };
   }
-  const dbConn = mainDb(dbName);
-  const res = dbConn`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
+  const main = mainDb(dbName);
+  const res = main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
 
   let tableDataPromise = res.rows.map(async (a, i) => {
     if (includeMeta) {
-      let rc =
-        await dbConn`select count(*) as rC from ${dbConn.identifier([dbName, a.tb])}`;
+      let rc = await main`select count(*) as rC from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
       return { tbName: a.tb, rowCount: rc.rows[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
   });
   const tableData = await Promise.all(tableDataPromise); //
   // console.log(JSON.stringify(tables));
-  await dbConn.end();
+  await main.end();
   return { tableData };
 }
 
@@ -395,11 +398,11 @@ export async function getTbSchema({ dbName, tbName }) {
   //res: {colName, type, nullable, key}[]
   const tbFound = await checkTb({ dbName, tbName });
   if (!tbFound) throw { customMessage: "Couldn't find the table or database" };
-  const dbConn = await mainDb();
+  const main = await mainDb();
   //combine with information_schema.key_column_usage to get foreign keys?
   const res =
-    await dbConn`select c.column_name as colName, c.data_type as type, c.is_nullable as nullable, arr.agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable ORDER BY c.ordinal_position`;
-  await dbConn.end();
+    await main`select c.column_name as colName, c.data_type as type, c.is_nullable as nullable, arr.agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns left array information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left array information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable ORDER BY c.ordinal_position`;
+  await main.end();
   return { tableMeta: res.rows };
 }
 
@@ -434,8 +437,8 @@ export async function createTb({
   }
   if (!columns.length) throw { customMessage: "Empty columns" };
 
-  const dbConn = await mainDb();
-  let sql = [];
+  const main = await mainDb();
+  let colArr = [];
   let primaryFound = false;
   const nameCheck = /^[A-Z0-9_£$%&!#]*$/i;
   if (!nameCheck.test(tbName)) throw { message: "Not a valid table name" };
@@ -467,15 +470,25 @@ export async function createTb({
     let notnull = col.notnull ? "not null" : null;
 
     if (col.name && col.type) {
-      sql.push(
-        dbConn`${dbConn.identifier([name])} ${dbConn`${type}`} ${unique ? dbConn`unique` : dbConn``} ${primary ? dbConn`primary key` : dbConn``} ${notnull ? dbConn`not null` : dbConn``} ${def ? dbConn`default ${def}` : dbConn``}`,
-      );
+      let colData = main`${main(name)} ${auth.raw(type)}`;
+      unique && (colData = main`${colData} unique`);
+      primary && (colData = main`${colData} primary key`);
+      notnull && (colData = main`${colData} not null`);
+      def && (colData = main`${colData} default ${def}`);
+
+      colArr.push(colData);
     }
   }
+  //reduce aggretes each entry to the previous adding auth`` each time,
+  //columns is an auth`string` which evaluates as a literal
+  const cols = colArr.reduce(
+    (agg, col, j) => (j == 0 ? col : auth`${agg}, ${col}`),
+    auth``,
+  );
   const res =
-    await dbConn`create table ${dbConn.identifier([dbName, tbName])} (${dbConn.join(sql, `,`)}, updated_at datetime, updated_by text)`;
+    await main`create table ${main([dbName, tbName])} (${cols}, updated_at datetime, updated_by text)`;
 
-  await dbConn.end();
+  await main.end();
   const metaAdded = await addMetadata({
     userId,
     isPrivate,
@@ -508,9 +521,9 @@ export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   const order = orderBy?.order.toLowerCase() == "desc" ? "desc" : "asc";
   const whereCol = filterInput(where?.col);
   const whereVal = filterInput(where?.val);
-  const dbConn = await mainDb();
+  const main = await mainDb();
   const res =
-    await dbConn`Select * from ${dbConn.identifier([dbName, tbName])} ${orderCol ? dbConn.raw(`order by ${orderCol} ${order}`) : dbConn.raw("")} ${whereCol ? dbConn.raw(`where ${whereCol} = ${whereVal}`) : dbConn.raw("")}`;
+    await main`Select * from ${main([dbName, tbName])} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
   console.log("TB data from getTBData: ", JSON.stringify(res.rows));
   if (!res.rowCount) console.log({ customMessage: "No table data exists" });
   return { rows: res.rows };
@@ -533,7 +546,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
     };
   }
 
-  const dbConn = await mainDb();
+  const main = await mainDb();
   const auth = await authDb();
 
   //get Table meta to optionally create updated_at/by columns
@@ -550,7 +563,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
   if (!updatedAtFound || !updatedByFound) {
     try {
       let updRes =
-        await dbConn`alter table ${dbConn.identifier([dbName, tbName])} ${!updatedAtFound ? dbConn.raw("add column updated_at timestamp") : dbConn.raw("")} ${!updatedByFound ? dbConn.raw(`${!updatedAtFound ? "," : ""} add column updated_by text`) : dbConn.raw("")}`;
+        await main`alter table ${main([dbName, tbName])} ${!updatedAtFound ? main.raw("add column updated_at timestamp") : main.raw("")} ${!updatedByFound ? main.raw(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.raw("")}`;
     } catch (e) {
       throw {
         customMessage: "metacolumns not found and failed to create them!",
@@ -558,7 +571,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
     }
   }
 
-  let colNames = []; //col1,col2
+  let colArr = []; //col1,col2
   let valuesArr = []; // (...), (...)
 
   for (const [i, cols] of colVals.entries()) {
@@ -567,28 +580,30 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
       for (const a of Object.keys(cols)) {
         //to get column names
         if (!a) break;
-        colNames.push(dbConn`${dbConn.identifier([a])}`);
+        colArr.push(main`${main(a)}`);
       }
     }
 
     const values = []; //val1, val2, val3
     for (const val of Object.values(cols)) {
       if (!val) break;
-      values.push(dbConn`${val}`);
+      values.push(main`${val}`);
     }
-    valuesArr.push(
-      dbConn`(${dbConn.join(values, dbConn`,`)}, ${now}, ${userId} )`,
-    );
+    valuesArr.push(main`(${main.array(values)}, ${now}, ${userId} )`);
   }
 
+  const colnames = colArr.reduce(
+    (agg, col, i) => (i == 0 ? col : main`${agg},${col}`),
+    main``,
+  );
   const res =
-    await dbConn`insert into ${dbConn.identifier([dbName, tbName])} (${dbConn.join(colNames, dbConn`,`)}, updated_at, updated_by) values ${dbConn.join(valuesArr, dbConn`,`)}`;
+    await main`insert into ${main([dbName, tbName])} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)}`;
 
   if (!res.rowCount) throw { customMessage: "insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: userId });
   if (!metaAdded) console.log("insertData meta not added");
 
-  await dbConn.end();
+  await main.end();
   return true;
 }
 
@@ -603,14 +618,14 @@ export async function renameTable({ dbName, tbName, userId, newTbName }) {
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Unauthorized!" };
   const auth = await authDb();
-  await auth`alter table ${auth.identifier([dbName, tbName])} rename to ${newTbName} `;
+  await auth`alter table ${auth([dbName, tbName])} rename to ${newTbName} `;
 }
 
 export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
   const auth = await authDb();
-  await auth`alter table ${auth.identifier([dbName])} rename to ${newDbName} `;
+  await auth`alter table ${auth([dbName])} rename to ${newDbName} `;
 }
 
 async function searchField() {
@@ -618,22 +633,25 @@ async function searchField() {
   const values = [tb1, tb2, tb3];
   const main = await mainDb();
   const row =
-    await main`SELECT * FROM db1.users WHERE id IN (${main.join(values, main`, `)})`; //something like it
+    await main`SELECT * FROM db1.users WHERE id IN (${main.array(values, main`, `)})`; //something like it
 }
 
 //--------- user auth
 
 export async function getAllUsers() {
+  //users = {id, title, firstname, lastname, username, level, created{}, views{}, edits{}}
   const auth = await authDb();
-  const allUsers = auth`select id, title, firstname, lastname, username, level from user `;
+  const allUsers =
+    await auth`select id, title, firstname, lastname, username, level from user `;
   if (!allUsers.rowCount) {
     console.log("allUsers HAS NO rows");
     return null;
   }
 
-  const users = []; //{created, views, edits} : prop: {db:[], tb:[]} : tb: db/tb, db
+  const users = []; //{created, views, edits} : each: {db:[], tb:[]} : tb: db/tb, db
 
-  const meta = auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from metadata`;
+  const meta =
+    await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from metadata`;
   allUsers.rows.forEach((u, i) => {
     const currU = {
       created: { db: [], tb: [] },
@@ -678,7 +696,8 @@ export async function createSession({ userId, dcrPass, token32 }) {
   const auth = await authDb();
   const expAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
   const deleted = await delSession({ userId });
-  const rowIn = auth`insert into user_session (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
+  const rowIn =
+    await auth`insert into user_session (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
   await auth.end();
   if (!rowIn.rowCount)
     throw {
@@ -690,7 +709,7 @@ export async function createSession({ userId, dcrPass, token32 }) {
 
 export async function delSession({ userId }) {
   const auth = await authDb();
-  const rowDel = auth`delete from user_session where user_id = ${userId}`;
+  const rowDel = await auth`delete from user_session where user_id = ${userId}`;
   await auth.end();
   if (!rowDel.rowCount) return false;
   return true;
@@ -698,7 +717,8 @@ export async function delSession({ userId }) {
 
 export async function updateSession({ sessionId, expires_at }) {
   const auth = await authDb();
-  const rowUpd = auth`update user_session set expires_at = ${expires_at} where id = ${sessionId}`;
+  const rowUpd =
+    await auth`update user_session set expires_at = ${expires_at} where id = ${sessionId}`;
   await auth.end();
   console.log("rowUpd from updsession: " + rowUpd);
   if (!rowUpd.rowCount) return false;
@@ -712,14 +732,16 @@ export async function getSession({ token32, update, getId }) {
     : null;
   const auth = await authDb();
   let sessionUpdated = false;
-  const rowArr = [
-    auth`select user_session.expires_at as expiresAt, user.username, user.firstname, user.lastname, user.title, user.joined, user.level, user.id as userId, user.avatar_url as avatarUrl from user_session INNER JOIN user on user_session.user_id = user.id where user_session.id = ${sessionId}`,
-  ];
-  let row = auth`${auth.raw(rowArr[0])}`;
+  const rowArr = auth`select user_session.expires_at as expiresAt, user.username, user.firstname, user.lastname, user.title, user.joined, user.level, user.id as userId, user.avatar_url as avatarUrl from user_session INNER JOIN user on user_session.user_id = user.id where user_session.id = ${sessionId}`;
+  let row = auth`${rowArr}`;
   if (!row.rowCount) throw { customMessage: "Session does not exist." };
 
   let rowTime = row.rows[0].expiresAt.getTime();
-  console.log("Session exists. RowTime from get session: ", rowTime);
+  console.log("GetSession Session exists. RowTime.getTime():  ", rowTime);
+  console.log(
+    "GetSession Session exists. row.rows[0].expires_at:  ",
+    row.rows[0].expiresAt,
+  );
 
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });
@@ -729,7 +751,7 @@ export async function getSession({ token32, update, getId }) {
   if (update && Date.now() >= rowTime - 1000 * 60 * 60 * 24 * 3) {
     const expires_at = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
     if (await updateSession({ sessionId, expires_at })) sessionUpdated = true;
-    row = auth`${auth.raw(rowArr[0])}`;
+    row = auth`${rowArr}`;
   }
   await auth.end();
 
@@ -744,9 +766,11 @@ export async function getSession({ token32, update, getId }) {
 export async function checkUser({ userId, email, username, password }) {
   //userExists is redundant
   const auth = await authDb();
-  if (!userId && !email && !username)
-    return { userExists: false, userId: null };
-  let row = auth`select * from user where ${auth.raw(userId ? `id` : email ? `email` : `username`)} = ${userId ? userId : email ? email : username}`;
+
+  if (!userId && !email && !username) return { userId: null };
+  const col = userId ? `id` : email ? `email` : `username`;
+  let row =
+    await auth`select * from user where ${auth(col)} = ${userId ? userId : email ? email : username}`;
 
   if (row.rowCount && password) {
     const samePass = await bcrypt.compare(
@@ -792,7 +816,7 @@ async function newUsername({ username }) {
   }
   for (let i = 0; i < 100; i++) {
     const randNum = [randFn, randFn, randFn];
-    let newUname = username + randNum.join("");
+    let newUname = username + randNum.array("");
     const { userId } = await checkUser({ username: newUname });
     if (!userId) {
       newUsername = newUname;
@@ -826,8 +850,8 @@ export async function createUser({
   //-- will create a function to update username, not here.
   if (!firstname || !lastname || !email || !pass || !token32 || !title)
     throw { customMessage: "Incomplete user credentials" };
-  const { userExists } = await checkUser({ email });
-  if (userExists) throw { customMessage: "User exists; Login Instead!" }; //userexists
+  const id = (await checkUser({ email })).userId;
+  if (id) throw { customMessage: "Account exists; Login Instead!" }; //userexists
   const auth = await authDb();
   const userId = uuidv4();
   const hashedPass = await bcrypt.hash(pass, 11);
@@ -851,9 +875,10 @@ export async function createUser({
     title1,
     gender1,
   ];
-  const rowIn = auth`insert into user (firstname, lastname, email, password,id, title, gender ) values (${auth.join(vals, auth`,`)})`;
+  const rowIn =
+    await auth`insert into user (firstname, lastname, email, password,id, title, gender ) values (${auth.array(vals)})`;
   console.log("createUser insert executed ");
-
+  console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
   await auth.end();
 
@@ -891,8 +916,8 @@ export async function createUser({
 //---------------------------- misc fns
 // export async function showSchema() {
 //   let sql = "show create table user_session";
-//   const dbConn = await authDb();
-//   const [row] = await dbConn.query(sql);
+//   const main = await authDb();
+//   const [row] = await main.query(sql);
 //   console.log(row);
 //   return { row };
 // }

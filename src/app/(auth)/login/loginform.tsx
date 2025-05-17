@@ -41,7 +41,7 @@ export default function LoginForm() {
   }
 
   const [errMsg, setErrMsg] = useState({ err1: "", err2: "" });
-  const { setIsLoading, isLoading } = useLoading();
+  const { setAuthPath, setIsLoading, isLoading } = useLoading();
   const { setNotify } = useNotifyContext();
   const [isPending, startTransition] = useTransition();
 
@@ -136,6 +136,9 @@ export default function LoginForm() {
 
         <Link
           href="/signup"
+          onClick={() => {
+            setAuthPath(0);
+          }}
           className="self-center hover:text-blue-400 hover:underline"
         >
           Create an account Instead.{" "}

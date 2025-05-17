@@ -22,8 +22,6 @@ import Loading from "@/components/loading";
 import { cn } from "@/lib/utils";
 
 export default function SignupForm({ className }: { className?: string }) {
-  const [passVisible, setPassVisible] = useState(false);
-
   const fields: names[] = [
     { name: "firstname", type: "text", placeholder: "John" },
     { name: "lastname", type: "text", placeholder: "Doe" },
@@ -62,7 +60,7 @@ export default function SignupForm({ className }: { className?: string }) {
 
   const [msg, setMsg] = useState({ err: false, msg1: "", msg2: "" });
   const [isPending, startTransition] = useTransition();
-  const { isLoading, setIsLoading } = useLoading();
+  const { isLoading, setIsLoading, setAuthPath } = useLoading();
 
   const signform = useForm<signupType>({
     resolver: zodResolver(signupSchema),
@@ -116,6 +114,12 @@ export default function SignupForm({ className }: { className?: string }) {
         onMouseUp={mouseEntered}
         onSubmit={signform.handleSubmit(signSubmit)}
         className="flex w-[25rem] flex-col justify-center space-y-4"
+        onKeyDown={(e) => {
+          if (e.key == "Enter" && !subForm) {
+            e.preventDefault();
+            setSubForm(!subForm);
+          }
+        }}
       >
         <div
           id="form error"
@@ -210,6 +214,9 @@ export default function SignupForm({ className }: { className?: string }) {
         />
         <Link
           href="/login"
+          onClick={() => {
+            setAuthPath(1);
+          }}
           className="self-center hover:text-blue-600 hover:underline"
         >
           {" "}
