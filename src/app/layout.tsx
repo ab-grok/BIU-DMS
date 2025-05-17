@@ -1,23 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import dotenv from "dotenv";
-import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import DialogContexts from "./dialogcontext";
+import { montserrat } from "@/lib/utils";
 
 dotenv.config();
-
-export const montserrat = localFont({
-  src: "../../public/fonts/Montserrat-VariableFont_wght.ttf",
-  variable: "--font-montserrat",
-  weight: "100 900",
-});
-
-export const geist = localFont({
-  src: "../../public/fonts/Geist-VariableFont_wght.ttf",
-  variable: "--font-geist-pro",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: {
