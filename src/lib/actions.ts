@@ -1,7 +1,7 @@
 "use server";
 
 import { createTbCol, createTbMeta } from "@/app/(main)/(pages)/selectcontext";
-import { encryptText, getCookie, validateSession } from "@/lib/sessions";
+import { getCookie, validateSession } from "@/lib/sessions";
 import { unstable_cache } from "next/cache";
 import { getAllUsers, getDb, getSession, getTables } from "./server";
 //types
@@ -54,12 +54,12 @@ export async function listDatabases(): Promise<Array<db> | null> {
   return data;
 }
 
-export async function createDatabase(): Promise<Boolean> {
+export async function createDatabase(): Promise<boolean> {
   //can you get the creatDatabase() working right with sessionId validation and cleared authencation for users with levels not less than 2
   return true;
 }
 
-export async function deleteDatabase(): Promise<Boolean> {
+export async function deleteDatabase(): Promise<boolean> {
   //can you get the deleteDatabase() working right with sessionId validation for users with levels not less than 2 and are editors or the creator(which should be an editor)  to
   // const result = await delDb(dbName.toLowerCase());
   // res.status(201).send({ message: `${dbName} deleted!` });

@@ -4,11 +4,11 @@ import Index from "@/components";
 import { useButtonAnim } from "@/components/count";
 import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
-import { getUsers, Users } from "@/lib/actions";
+import { allUsers, getUsers } from "@/lib/actions";
 import { useEffect, useState } from "react";
 
 export default function AllUsers() {
-  const [users, setUsers] = useState([] as Users[]);
+  const [users, setUsers] = useState([] as allUsers[]);
   const [viewsCount, setViewsCount] = useState({ db: 0, tb: 0 }); //tb holds the dbname/tbname
   const [editsCount, setEditsCount] = useState({ db: 0, tb: 0 }); //tb holds the dbname/tbname
 
@@ -113,7 +113,7 @@ type user = {
   i: number;
   setEditsCount: (count: count) => void;
   setViewsCount: (count: count) => void;
-  user: Users;
+  user: allUsers;
 };
 type views = { db: string[]; tb: string[] };
 type count = { db: number; tb: number };

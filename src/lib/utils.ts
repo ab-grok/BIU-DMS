@@ -7,13 +7,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const montserrat = localFont({
-  src: "../../../public/fonts/Montserrat-VariableFont_wght.ttf",
+  src: "../../public/fonts/Montserrat-VariableFont_wght.ttf",
   variable: "--font-montserrat",
   weight: "100 900",
 });
 
 export const geist = localFont({
-  src: "../../../public/fonts/Geist-VariableFont_wght.ttf",
+  src: "../../public/fonts/Geist-VariableFont_wght.ttf",
   variable: "--font-geist-pro",
   weight: "100 900",
 });

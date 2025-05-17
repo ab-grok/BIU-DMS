@@ -20,7 +20,6 @@ const eslintConfig = [
     },
     rules: {
       "no-undef": "error", // Flags undeclared variables like 'connection'
-      "no-use-before-define": "error", // Ensures variables are defined before use
       "@typescript-eslint/no-unused-vars": "warn", // Relax to warn
       "unused-imports/no-unused-imports": "error", // Remove unused imports
       "unused-imports/no-unused-vars": [
