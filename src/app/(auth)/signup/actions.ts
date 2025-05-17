@@ -11,7 +11,9 @@ export async function signUser(
     const { firstname, lastname, email, password, gender, title } =
       signupSchema.parse(signUp);
     //create new user
+
     const token32 = await generateSessionToken();
+    console.log("---------signup entered token32: ", token32);
     const { expiresAt } = await createUser({
       firstname,
       lastname,
@@ -22,7 +24,7 @@ export async function signUser(
       gender,
     });
 
-    console.log("---------signup entered. got expiresAt ", expiresAt);
+    console.log(" in signup entered. got expiresAt ", expiresAt);
     if (!expiresAt)
       return {
         signError: true,

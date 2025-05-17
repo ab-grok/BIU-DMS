@@ -875,6 +875,7 @@ export async function createUser({
     title1,
     gender1,
   ];
+  console.log("createUser just before insert executed ");
   const rowIn =
     await auth`insert into user (firstname, lastname, email, password,id, title, gender ) values (${auth.array(vals)})`;
   console.log("createUser insert executed ");
