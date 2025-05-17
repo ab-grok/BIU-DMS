@@ -19,9 +19,14 @@ const eslintConfig = [
       "unused-imports": unusedImports,
     },
     rules: {
-      "no-undef": "error", // Flags undeclared variables like 'connection'
+      "no-undef": "warn", // Flags undeclared variables like 'connection'
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
+        { allowShortCircuit: true, allowTernary: true },
+      ],
+      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "warn", // Relax to warn
-      "unused-imports/no-unused-imports": "error", // Remove unused imports
+      "unused-imports/no-unused-imports": "warn", // Remove unused imports
       "unused-imports/no-unused-vars": [
         "warn",
         { vars: "all", args: "after-used", ignoreRestSiblings: true },

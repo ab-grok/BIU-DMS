@@ -18,7 +18,7 @@ type contextStateType = {
   exitable: boolean;
 };
 
-export default function NotificationBar({}: {}) {
+export default function NotificationBar() {
   //get message from context
   const [msg, setMsg] = useState({
     start: false,

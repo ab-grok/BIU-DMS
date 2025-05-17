@@ -21,13 +21,13 @@ export function QuickActions({
   const [button, setButton] = useState(0);
   function handleClicked(i: number) {
     if (i == 1) {
-      fn1;
+      fn1 && fn1();
     } else if (i == 2) {
-      fn2;
+      fn2 && fn2();
     } else if (i == 3) {
-      fn3;
+      fn3 && fn3();
     } else if (i == 4) {
-      fn4;
+      fn4 && fn4();
     }
     setButton(i);
     setTimeout(() => {
@@ -68,10 +68,10 @@ export function QuickActions({
 }
 
 type quickActions = {
-  fn1?: () => {};
-  fn2?: () => {};
-  fn3?: () => {};
-  fn4?: () => {};
+  fn1?: () => void;
+  fn2?: () => void;
+  fn3?: () => void;
+  fn4?: () => void;
   hide?: boolean;
   action1: string;
   action2?: string;

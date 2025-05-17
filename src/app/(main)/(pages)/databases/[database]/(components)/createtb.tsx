@@ -304,7 +304,11 @@ export default function CreateTb({ i, u, db }: tbType) {
                   >
                     {createTbCol.length > 0 &&
                       createTbCol.map((a, i) => (
-                        <UserTag name={a.name} delFn={checkOrDelCol} />
+                        <UserTag
+                          key={a.name}
+                          name={a.name}
+                          delFn={checkOrDelCol}
+                        />
                       ))}
                   </div>
                 </div>
@@ -600,7 +604,10 @@ function LiveTable({
             </header>
             <div className="h-[85%] overflow-y-auto">
               {users.viewers?.map((a, i) => (
-                <span className="hover:bg-bw/20 flex px-0.5 transition-all">
+                <span
+                  key={a.firstname}
+                  className="hover:bg-bw/20 flex px-0.5 transition-all"
+                >
                   <UserTag
                     name={a.firstname}
                     title={a.title}
@@ -640,7 +647,10 @@ function LiveTable({
             </header>
             <div className="h-[85%] overflow-y-auto">
               {users.editors?.map((a, i) => (
-                <span className="hover:bg-bw/20 flex px-0.5 transition-all">
+                <span
+                  key={a.firstname}
+                  className="hover:bg-bw/20 flex px-0.5 transition-all"
+                >
                   <UserTag
                     name={a.firstname}
                     title={a.title}
@@ -665,6 +675,7 @@ function LiveTable({
             {createTbCol.length > 0 &&
               createTbCol.map((a, i) => (
                 <div
+                  key={i + 3}
                   className={`flex h-[1.6rem] w-full items-center justify-between hover:bg-white/20 ${i % 2 == 0 ? "bg-row-bg1/20" : "bg-row-bg1/10"} bg-black`}
                 >
                   <UserTag
@@ -676,6 +687,7 @@ function LiveTable({
                     {" "}
                     {keys.map((b, j) => (
                       <KeysButton
+                        key={j + i}
                         boxSize={4}
                         abbrev={true}
                         handleChange={onKeysChange}

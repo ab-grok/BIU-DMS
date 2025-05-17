@@ -104,8 +104,9 @@ export default function SelectionContext({
         quickA,
         setQuickA,
       }}
-      children={children}
-    />
+    >
+      {children}
+    </selectionContext.Provider>
   );
 }
 

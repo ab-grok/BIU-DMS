@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-export default function customForm({ refer }: { refer: string }) {
+export default function CustomForm({ refer }: { refer: string }) {
   const [buttonClicked, setButtonClicked] = useState(false);
   function entered() {
     setButtonClicked(true);

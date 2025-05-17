@@ -21,8 +21,6 @@ import { useLoading } from "@/app/dialogcontext";
 import Loading from "@/components/loading";
 import { cn } from "@/lib/utils";
 
-type name = {};
-
 export default function SignupForm({ className }: { className?: string }) {
   const [passVisible, setPassVisible] = useState(false);
 

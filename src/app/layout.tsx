@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <DialogContexts children={children} />
+          <DialogContexts>{children}</DialogContexts>
         </ThemeProvider>
       </body>
     </html>

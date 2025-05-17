@@ -468,7 +468,7 @@ export async function createTb({
 
     if (col.name && col.type) {
       sql.push(
-        dbConn`${sql.identifier([name])} ${dbConn`${type}`} ${unique ? dbConn`unique` : dbConn``} ${primary ? dbConn`primary key` : dbConn``} ${notnull ? dbConn`not null` : dbConn``} ${def ? dbConn`default ${def}` : dbConn``}`,
+        dbConn`${dbConn.identifier([name])} ${dbConn`${type}`} ${unique ? dbConn`unique` : dbConn``} ${primary ? dbConn`primary key` : dbConn``} ${notnull ? dbConn`not null` : dbConn``} ${def ? dbConn`default ${def}` : dbConn``}`,
       );
     }
   }
@@ -602,22 +602,23 @@ export async function renameTable({ dbName, tbName, userId, newTbName }) {
   //getUserAccess
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Unauthorized!" };
-  const connDb = await authDb();
-  await connDb`alter table ${sql.identifier([dbName, tbName])} rename to ${newTbName} `;
+  const auth = await authDb();
+  await auth`alter table ${auth.identifier([dbName, tbName])} rename to ${newTbName} `;
 }
 
 export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
-  const connDb = await authDb();
-  await connDb`alter table ${sql.identifier([dbName])} rename to ${newDbName} `;
+  const auth = await authDb();
+  await auth`alter table ${auth.identifier([dbName])} rename to ${newDbName} `;
 }
 
 async function searchField() {
   //must be unique or primary
   const values = [tb1, tb2, tb3];
+  const main = await mainDb();
   const row =
-    await sql`SELECT * FROM db1.users WHERE id IN (${sql.join(values, sql`, `)})`; //something like it
+    await main`SELECT * FROM db1.users WHERE id IN (${main.join(values, main`, `)})`; //something like it
 }
 
 //--------- user auth
@@ -888,27 +889,14 @@ export async function createUser({
 // }
 
 //---------------------------- misc fns
-export async function showSchema() {
-  let sql = "show create table user_session";
-  const dbConn = await authDb();
-  const [row] = await dbConn.query(sql);
-  console.log(row);
-  return { row };
-}
+// export async function showSchema() {
+//   let sql = "show create table user_session";
+//   const dbConn = await authDb();
+//   const [row] = await dbConn.query(sql);
+//   console.log(row);
+//   return { row };
+// }
 
-export async function dropForeign() {
-  // let sql = `alter table user_session drop foreign key user_session_ibfk_2; `;
-  for (let i = 0; i < 8; i++) {
-    let row = "";
-    let sql = `alter table user_session drop foreign key user_session_ibfk_${
-      i + 6
-    }; `;
-    console.log(sql);
-    [row] = await await authDb().query(sql);
-    console.log(row);
-    // return { row };
-  }
-}
 //alter column name - alter table tbname Rename column clname1 to clname2
 
 //____________ Enctyprion

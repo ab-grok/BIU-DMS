@@ -16,7 +16,7 @@ export default async function Layout({
 
   return (
     <div className={`flex h-screen max-h-screen w-full max-w-screen flex-col`}>
-      <LayoutContext children={children} />
+      <LayoutContext>{children}</LayoutContext>
     </div>
   );
 }

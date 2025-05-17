@@ -118,6 +118,6 @@ function SBQuickActions({ fn1, fn2 }: quickActions) {
 }
 
 type quickActions = {
-  fn1?: () => {};
-  fn2: () => {};
+  fn1?: () => void;
+  fn2: () => void;
 };
