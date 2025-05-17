@@ -913,16 +913,16 @@ export async function dropForeign() {
 
 //____________ Enctyprion
 // can extend for other data much later
-export function deCryptText(data) {
-  if (typeof data != "string") return null;
-  if (!data.includes("#")) return null;
-  const [ivHex, text] = data.split("#");
+// export async function deCryptText(data) {
+//   if (typeof data != "string") return null;
+//   if (!data.includes("#")) return null;
+//   const [ivHex, text] = data.split("#");
 
-  const key = Buffer.from(process.env.DRC_KEY, "hex");
-  const iv = Buffer.from(ivHex, "hex");
-  const decipher = createDecipheriv("aes-256-cbc", key, iv);
-  let decrypted = decipher.update(text, "hex", "utf8");
-  decrypted += decipher.final("utf8");
+//   const key = Buffer.from(process.env.DRC_KEY, "hex");
+//   const iv = Buffer.from(ivHex, "hex");
+//   const decipher = createDecipheriv("aes-256-cbc", key, iv);
+//   let decrypted = decipher.update(text, "hex", "utf8");
+//   decrypted += decipher.final("utf8");
 
-  return decrypted;
-}
+//   return decrypted;
+// }
