@@ -6,7 +6,7 @@ import { useLoading, useNotifyContext } from "@/app/dialogcontext";
 import { db, listDatabases } from "@/lib/actions";
 import Loading from "@/components/loading";
 
-export default function DbLayout({ children }: { children: React.ReactNode }) {
+export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
   const { isLoading, setIsLoading } = useLoading();
   const [db, setDb] = useState([] as db[] | null);
