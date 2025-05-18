@@ -841,7 +841,9 @@ export async function createUser({
     title1,
     gender1,
   ];
-  console.log("createUser just before insert executed ");
+  console.log(
+    `createUser just before insert executed: fname: ${firstname}... lname:  ${lastname}... email: ${email.toLowerCase()} ... pass: ${hashedPass} ... userId: ${userId} ... title: ${title1} ... gender: ${gender1}  `,
+  );
   const rowIn =
     await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${auth.array(vals)})`;
   console.log("createUser insert executed ");
