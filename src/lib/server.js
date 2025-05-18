@@ -744,8 +744,8 @@ export async function checkUser({ userId, email, username, password }) {
   if (!userId && !email && !username) return { userId: null };
   const col = userId ? `id` : email ? `email` : `username`;
   let row =
-    await auth`select * from user where ${auth(col)} = ${userId ? userId : email ? email : username}`;
-
+    await auth`select * from user where ${auth([col])} = ${userId ? userId : email ? email : username}`;
+  console.log("got past query in checkUser. email: " + email);
   if (row.rowCount && password) {
     const samePass = await bcrypt.compare(
       password.trim(),
@@ -850,7 +850,7 @@ export async function createUser({
   ];
   console.log("createUser just before insert executed ");
   const rowIn =
-    await auth`insert into user (firstname, lastname, email, password,id, title, gender ) values (${auth.array(vals)})`;
+    await auth`insert into user (firstname, lastname, email, password, id, title, gender ) values (${auth.array(vals)})`;
   console.log("createUser insert executed ");
   console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
