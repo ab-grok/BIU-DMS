@@ -27,7 +27,7 @@ const auth = postgres(process.env.AUTHDB, {
 });
 export async function getDb(getTbCount) {
   const rows =
-    await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema) order by schema_name`;
+    await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
   const dbWithMeta = [];
 
   if (getTbCount) {
@@ -38,7 +38,7 @@ export async function getDb(getTbCount) {
       let dbMeta = await getMetadata({ dbName: a.schema_name });
       dbWithMeta.push({
         Database: a.schema_name,
-        tbCount: count.rows[0].tbCount,
+        tbCount: count[0].tbCount,
         ...dbMeta,
       });
     });
@@ -171,21 +171,21 @@ export async function getMetadata({ dbName, tbName, asString }) {
   }
   // const { name, title } = await checkUser({ userId: row[0].userId });
   if (asString) {
-    viewers = rowSel.rows[0].viewers.join(",");
-    editors = rowSel.rows[0].editors.join(",");
+    viewers = rowSel[0].viewers.join(",");
+    editors = rowSel[0].editors.join(",");
   } else {
-    viewers = rowSel.rows[0].viewers;
-    editors = rowSel.rows[0].editors;
+    viewers = rowSel[0].viewers;
+    editors = rowSel[0].editors;
     // console.log("editots from getMeta: " + JSON.stringify(editors));
     // console.log("viewers from getMeta: " + JSON.stringify(viewers));
   }
   return {
-    createdBy: rowSel.rows[0].created_by,
-    createdAt: rowSel.rows[0].created_at,
-    updatedAt: rowSel.rows[0].updated_at,
-    updatedBy: rowSel.rows[0].updated_by,
-    description: rowSel.rows[0].description,
-    private: rowSel.rows[0].private,
+    createdBy: rowSel[0].created_by,
+    createdAt: rowSel[0].created_at,
+    updatedAt: rowSel[0].updated_at,
+    updatedBy: rowSel[0].updated_by,
+    description: rowSel[0].description,
+    private: rowSel[0].private,
     viewers,
     editors,
   };
@@ -211,8 +211,8 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //         // console.log("editors  sql res: " + JSON.stringify(a));
 //         if (res.rows.length > 0) {
 //           return {
-//             username: res.rows[0].username,
-//             firstname: res.rows[0].firstname,
+//             username: res[0].username,
+//             firstname: res[0].firstname,
 //             title: res[0].title,
 //             id: a,
 //           };
@@ -384,7 +384,7 @@ export async function getTables(dbName, includeMeta) {
     if (includeMeta) {
       let rc = await main`select count(*) as rC from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
-      return { tbName: a.tb, rowCount: rc.rows[0].rC, ...tableMeta };
+      return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
   });
   const tableData = await Promise.all(tableDataPromise); //
@@ -685,6 +685,9 @@ export async function createSession({ userId, dcrPass, token32 }) {
   const deleted = await delSession({ userId });
   const rowIn =
     await auth`insert into "user_session" (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt}) returning *`;
+  console.log("expAt = " + expAt);
+  console.log("expiresAt = " + rowIn[0].expires_at);
+  console.log("expiresAt.getTime() = " + rowIn[0].expires_at.getTime());
   if (!rowIn[0])
     throw {
       customMessage: "User session couldn't be created!",
@@ -712,15 +715,16 @@ export async function getSession({ token32, update, getId }) {
     ? encodeHexLowerCase(sha256(new TextEncoder().encode(token32)))
     : null;
   let sessionUpdated = false;
-  const rowArr = auth`select user_session.expires_at as expiresAt, user.username, user.firstname, user.lastname, user.title, user.joined, user.level, user.id as userId, user.avatar_url as avatarUrl from user_session INNER JOIN user on user_session.user_id = user.id where user_session.id = ${sessionId}`;
+  const rowArr = auth`select user_session.expires_at as expiresAt, user.username, user.firstname, user.lastname, user.title, user.joined, user.level, user.id as userId, user.avatar_url as avatarUrl from "user_session" INNER JOIN "user" on user_session.user_id = user.id where user_session.id = ${sessionId} returning *`;
   let row = auth`${rowArr}`;
-  if (!row.rowCount) throw { customMessage: "Session does not exist." };
+  if (!row[0]) throw { customMessage: "Session does not exist." };
 
-  let rowTime = row.rows[0].expiresAt.getTime();
-  console.log("GetSession Session exists. RowTime.getTime():  ", rowTime);
+  let rowTime = row[0].expiresAt.getTime();
+  console.log("row from getSession: ", row);
+  console.log("GetSession Session exists. RowTime.getTime(): ", rowTime);
   console.log(
-    "GetSession Session exists. row.rows[0].expires_at:  ",
-    row.rows[0].expiresAt,
+    "GetSession Session exists. row[0].expires_at: ",
+    row[0].expiresAt,
   );
 
   if (!rowTime || Date.now() >= rowTime) {
@@ -734,7 +738,7 @@ export async function getSession({ token32, update, getId }) {
     row = auth`${rowArr}`;
   }
 
-  const { userId, expiresAt, ...user1 } = row.rows[0];
+  const { userId, expiresAt, ...user1 } = row[0];
   let user = user1;
   if (getId) user = { userId, ...user1 };
   if (update && sessionUpdated) user = { expiresAt, ...user1 };
@@ -864,6 +868,7 @@ export async function createUser({
     await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${valString}) returning *`;
   console.log("createUser insert executed: ", rowIn);
   const { expiresAt } = await createSession({ userId, dcrpass: pass, token32 });
+  console.log("got past created session");
   if (!expiresAt.getTime())
     throw {
       customMessage: "Failed to create a session; Registration was sucessful",

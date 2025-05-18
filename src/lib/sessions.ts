@@ -78,20 +78,21 @@ export async function validateSession() {
   const validateWithCookies = unstable_cache(
     async (): Promise<sessionValidation> => {
       console.log("+++++++++++++gets inside unstable_cache's function");
-      let user: sessionValidation = null;
       try {
-        user = await getSession({ token32, update: true, getId: true });
+        const user = await getSession({ token32, update: true, getId: true });
         if (!user) throw { customMessage: "User not found!" };
         console.log("got session, user: ", user);
+        if (!user) return null;
+        // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
+        //handle expires at from updated session.
+        const { expiresAt } = user;
+        console.log("got past create session, expiresAt: ", expiresAt);
+        if (expiresAt) await createSessionCookie({ token32, expiresAt });
+        return user;
       } catch (e: any) {
         console.log(e.customMessage);
+        return null;
       }
-      if (!user) return null;
-      // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
-      //handle expires at from updated session.
-      const { expiresAt } = user;
-      if (expiresAt) await createSessionCookie({ token32, expiresAt });
-      return user;
     },
     [token32],
     {
