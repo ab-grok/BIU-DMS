@@ -716,11 +716,11 @@ export async function getSession({ token32, update, getId }) {
     : null;
   let sessionUpdated = false;
   const rowArr = auth`select user_session.expires_at as expiresAt, user.username, user.firstname, user.lastname, user.title, user.joined, user.level, user.id as userId, user.avatar_url as avatarUrl from "user_session" INNER JOIN "user" on user_session.user_id = user.id where user_session.id = ${sessionId} returning *`;
-  let row = auth`${rowArr}`;
+  let row = await auth`${rowArr}`;
+  console.log("row from getSession: ", row);
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
   let rowTime = row[0].expiresAt.getTime();
-  console.log("row from getSession: ", row);
   console.log("GetSession Session exists. RowTime.getTime(): ", rowTime);
   console.log(
     "GetSession Session exists. row[0].expires_at: ",
