@@ -4,6 +4,8 @@
 //postgres(column) for columns, auth`${values}` for values
 //auth`somethign ${value}` treats value as paramterized and something as string -- must use ${} to be parameterized
 //cant escape a value in the position of an identifier, have postgres(value) for that.
+//identifiers must be quoted "users"
+//auth.array(vals) inserts parenthesis per array (nested arrays have nested parenthesis?)
 import { v4 as uuidv4 } from "uuid";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
@@ -11,8 +13,12 @@ import bcrypt from "bcryptjs";
 import postgres from "postgres";
 
 const main = postgres(process.env.MAINDB);
-const auth = postgres(process.env.AUTHDB);
-
+const auth = postgres(process.env.AUTHDB, {
+  debug: (connection, query, parameters) => {
+    console.log("SQL:", query);
+    console.log("Params:", parameters);
+  },
+});
 export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema) order by schema_name`;
@@ -845,7 +851,7 @@ export async function createUser({
     `createUser just before insert executed: fname: ${firstname}... lname:  ${lastname}... email: ${email.toLowerCase()} ... pass: ${hashedPass} ... userId: ${userId} ... title: ${title1} ... gender: ${gender1}  `,
   );
   const rowIn =
-    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${auth.array(vals)})`;
+    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values ${auth.array(vals)}`;
   console.log("createUser insert executed ");
   console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
