@@ -714,17 +714,12 @@ export async function getSession({ token32, update, getId }) {
     : null;
   let sessionUpdated = false;
 
-  const rowArr = auth`select us.expires_at as expiresAt, u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as userId, u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
+  const rowArr = auth`select us.expires_at as "expiresAt", u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as "userId", u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
   let row = await auth`${rowArr}`;
   console.log("row from getSession: ", row);
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
-  let rowTime = row[0].expiresAt.getTime();
-  console.log("GetSession Session exists. RowTime.getTime(): ", rowTime);
-  console.log(
-    "GetSession Session exists. row[0].expires_at: ",
-    row[0].expiresAt,
-  );
+  let rowTime = row[0].expiresat.getTime();
 
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });

@@ -13,7 +13,7 @@ type sessionValidation = {
   username: string;
   firstname: string;
   level: number;
-  avatarUrl: string;
+  avatar: string;
   title: string;
   userId: string;
   joined: string;
@@ -77,15 +77,13 @@ export async function validateSession() {
 
   const validateWithCookies = unstable_cache(
     async (): Promise<sessionValidation> => {
-      console.log("+++++++++++++gets inside unstable_cache's function");
+      console.log("+++++++++++++got inside unstable_cache's function");
       try {
         const user = await getSession({ token32, update: true, getId: true });
-        if (!user) {
-          throw { customMessage: "User not found!" };
-        }
-        console.log("got session, user: ", user);
+        if (!user) throw { customMessage: "User not found!" };
         // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
         //handle expires at from updated session.
+        console.log("got session, user: ", user);
         const { expiresAt } = user;
         console.log("got past create session, expiresAt: ", expiresAt);
         if (expiresAt) await createSessionCookie({ token32, expiresAt });
