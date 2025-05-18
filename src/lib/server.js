@@ -719,7 +719,7 @@ export async function getSession({ token32, update, getId }) {
   console.log("row from getSession: ", row);
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
-  let rowTime = row[0].expiresat.getTime();
+  let rowTime = row[0].expiresAt.getTime();
 
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });
