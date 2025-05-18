@@ -678,19 +678,17 @@ export async function createSession({ userId, dcrPass, token32 }) {
   );
   if (!uid || !token32) return { expiresAt: null };
 
-  console.log("dcrPass from createSession: " + dcrPass);
   const sessionId = encodeHexLowerCase(
     sha256(new TextEncoder().encode(token32)),
   );
   const expAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
   const deleted = await delSession({ userId });
   const rowIn =
-    await auth`insert into "user_session" (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
-  // if (!rowIn.rowCount)
-  //   throw {
-  //     customMessage:
-  //       "User session couldn't be created. You'll have to log in again!",
-  //   };
+    await auth`insert into "user_session" (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt}) returning *`;
+  if (!rowIn[0])
+    throw {
+      customMessage: "User session couldn't be created!",
+    };
   return { expiresAt: expAt, token32 };
 }
 
@@ -750,41 +748,38 @@ export async function checkUser({ userId, email, username, password }) {
   if (!userId && !email && !username) return { userId: null };
   const col = userId ? "id" : email ? "email" : "username";
   let row =
-    await auth`select * from "user" where ${auth([col])} = ${userId ? userId : email ? email : username}`;
+    await auth`select * from "user" where ${auth([col])} = ${userId ? userId : email ? email.toLowerCase() : username}`;
   console.log(
     "got past query in checkUser. email: " + email + "... userid:" + userId,
   );
   console.log("row from checkUser: ", row);
-  if (row.rowCount && password) {
-    const samePass = await bcrypt.compare(
-      password.trim(),
-      row.rows[0].password,
-    );
+  if (row[0] && password) {
+    const samePass = await bcrypt.compare(password.trim(), row[0].password);
     if (samePass) {
       return {
-        pass: row.rows[0].password,
-        email: row.rows[0].show_email && row.rows[0].email,
-        username: row.rows[0].username,
-        firstname: row.rows[0].firstname,
-        title: row.rows[0].title,
-        userId: row.rows[0].id,
-        joined: row.rows[0].joined,
-        level: row.rows[0].level,
-        avatarUrl: row.rows[0].avatar_url,
-        bio: row.rows[0].bio,
+        pass: row[0].password,
+        email: row[0].show_email && row[0].email,
+        username: row[0].username,
+        firstname: row[0].firstname,
+        title: row[0].title,
+        userId: row[0].id,
+        joined: row[0].joined,
+        level: row[0].level,
+        avatarUrl: row[0].avatar_url,
+        bio: row[0].bio,
       };
     }
-  } else if (row.rowCount) {
+  } else if (row[0]) {
     return {
-      email: row.rows[0].show_email && row.rows[0].email,
-      username: row.rows[0].username,
-      firstname: row.rows[0].firstname,
-      level: row.rows[0].level,
-      avatarUrl: row.rows[0].avatar_url,
-      joined: row.rows[0].joined,
-      title: row.rows[0].title,
-      bio: row.rows[0].bio,
-      userId: row.rows[0].id,
+      email: row[0].show_email && row[0].email,
+      username: row[0].username,
+      firstname: row[0].firstname,
+      level: row[0].level,
+      avatarUrl: row[0].avatar_url,
+      joined: row[0].joined,
+      title: row[0].title,
+      bio: row[0].bio,
+      userId: row[0].id,
     };
   }
   return { userId: null };
