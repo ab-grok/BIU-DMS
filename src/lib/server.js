@@ -118,7 +118,7 @@ async function addMetadata({
 
   if (!row.rowCount) {
     let row2 =
-      await auth`Insert into metadata (${auth.raw(columns.join(","))}) values (${auth.array(values)})`;
+      await auth`Insert into "metadata" (${auth.raw(columns.join(","))}) values (${auth.array(values)})`;
     if (!row2.count) return false;
   } else {
     const updClause = [];
@@ -673,7 +673,7 @@ export async function createSession({ userId, dcrPass, token32 }) {
   const expAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
   const deleted = await delSession({ userId });
   const rowIn =
-    await auth`insert into user_session (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
+    await auth`insert into "user_session" (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
   if (!rowIn.rowCount)
     throw {
       customMessage:
@@ -843,7 +843,7 @@ export async function createUser({
   ];
   console.log("createUser just before insert executed ");
   const rowIn =
-    await auth`insert into user (firstname, lastname, email, password, id, title, gender ) values (${auth.array(vals)})`;
+    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${auth.array(vals)})`;
   console.log("createUser insert executed ");
   console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
