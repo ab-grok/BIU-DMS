@@ -714,7 +714,7 @@ export async function getSession({ token32, update, getId }) {
     : null;
   let sessionUpdated = false;
 
-  const rowArr = auth`select us.expires_at as expiresAt, u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as userId, u.avatar_url as avatarUrl from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
+  const rowArr = auth`select us.expires_at as expiresAt, u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as userId, u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
   let row = await auth`${rowArr}`;
   console.log("row from getSession: ", row);
   if (!row[0]) throw { customMessage: "Session does not exist." };
@@ -768,7 +768,7 @@ export async function checkUser({ userId, email, username, password }) {
         userId: row[0].id,
         joined: row[0].joined,
         level: row[0].level,
-        avatarUrl: row[0].avatar_url,
+        avatar: row[0].avatar,
         bio: row[0].bio,
       };
     }
@@ -778,7 +778,7 @@ export async function checkUser({ userId, email, username, password }) {
       username: row[0].username,
       firstname: row[0].firstname,
       level: row[0].level,
-      avatarUrl: row[0].avatar_url,
+      avatar: row[0].avatar,
       joined: row[0].joined,
       title: row[0].title,
       bio: row[0].bio,
