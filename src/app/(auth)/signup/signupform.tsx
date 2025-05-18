@@ -42,7 +42,7 @@ export default function SignupForm({ className }: { className?: string }) {
   const [subForm, setSubForm] = useState(false);
   const [buttonAnim, setButtonAnim] = useState(0);
   function handleClicked(i: number) {
-    setSubForm(!subForm);
+    i < 3 && setSubForm(!subForm);
     setButtonAnim(i);
     setTimeout(() => {
       setButtonAnim(0);
@@ -113,7 +113,7 @@ export default function SignupForm({ className }: { className?: string }) {
       <form
         onMouseUp={mouseEntered}
         onSubmit={signform.handleSubmit(signSubmit)}
-        className="flex w-[25rem] flex-col justify-center space-y-4"
+        className="flex w-[90%] flex-col justify-center space-y-4"
         onKeyDown={(e) => {
           if (e.key == "Enter" && !subForm) {
             e.preventDefault();
@@ -140,7 +140,7 @@ export default function SignupForm({ className }: { className?: string }) {
               name={Item.name}
               key={Item.name}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="">
                   <FormLabel>
                     {Item.name.charAt(0).toUpperCase() + Item.name.slice(1)}
                   </FormLabel>
@@ -216,8 +216,9 @@ export default function SignupForm({ className }: { className?: string }) {
           href="/login"
           onClick={() => {
             setAuthPath(1);
+            handleClicked(3);
           }}
-          className="self-center hover:text-blue-600 hover:underline"
+          className={` ${buttonAnim == 3 && "text-blue-600"} self-center hover:text-blue-500 hover:underline`}
         >
           {" "}
           Already have an account? Log in{" "}

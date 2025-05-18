@@ -28,11 +28,11 @@ export default function LoginForm() {
     },
   });
 
-  const [clicked, setClicked] = useState(false);
-  async function handleClicked() {
-    setClicked(true);
+  const [clicked, setClicked] = useState(0);
+  async function handleClicked(i: number) {
+    setClicked(i);
     setTimeout(() => {
-      setClicked(false);
+      setClicked(0);
     }, 60);
   }
 
@@ -86,7 +86,7 @@ export default function LoginForm() {
       <form
         onMouseUp={() => mouseEntered()}
         onSubmit={logform.handleSubmit(logSubmit)}
-        className="flex h-[30rem] w-[25rem] flex-col justify-center space-y-5"
+        className="flex h-[30rem] w-[90%] flex-col justify-center space-y-5"
       >
         <div
           className={`absolute top-5 transition-all ${errMsg.err1 ? "flex scale-100" : "hidden scale-0"} h-[4rem] w-[95%] items-center justify-center place-self-center rounded-full border-2 border-red-600 text-center shadow-xl shadow-black/40`}
@@ -138,15 +138,16 @@ export default function LoginForm() {
           href="/signup"
           onClick={() => {
             setAuthPath(0);
+            handleClicked(2);
           }}
-          className="self-center hover:text-blue-400 hover:underline"
+          className={`${clicked == 2 && "text-blue-500"} self-center hover:text-blue-400 hover:underline`}
         >
           Create an account Instead.{" "}
         </Link>
         <Button
-          onMouseDown={() => handleClicked()}
+          onMouseDown={() => handleClicked(1)}
           type="submit"
-          className={`${clicked ? "scale-95" : ""} flex h-[50px] w-full items-center rounded-3xl bg-green-600 transition-all hover:bg-green-500 ${clicked && ""} hover:shadow-xs`}
+          className={`${clicked == 1 && "scale-95"} flex h-[50px] w-full items-center rounded-3xl bg-green-600 transition-all hover:bg-green-500 ${clicked && ""} hover:shadow-xs`}
         >
           {" "}
           Log in{" "}
