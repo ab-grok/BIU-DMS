@@ -751,7 +751,10 @@ export async function checkUser({ userId, email, username, password }) {
   const col = userId ? "id" : email ? "email" : "username";
   let row =
     await auth`select * from "user" where ${auth([col])} = ${userId ? userId : email ? email : username}`;
-  console.log("got past query in checkUser. email: " + email);
+  console.log(
+    "got past query in checkUser. email: " + email + "... userid:" + userId,
+  );
+  console.log("row from checkUser: ", row);
   if (row.rowCount && password) {
     const samePass = await bcrypt.compare(
       password.trim(),
@@ -864,9 +867,7 @@ export async function createUser({
 
   const rowIn =
     await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${valString}) returning *`;
-  console.log("createUser insert executed ");
-  console.log(rowIn);
-
+  console.log("createUser insert executed: ", rowIn);
   const { expiresAt } = await createSession({ userId, dcrpass: pass, token32 });
   if (!expiresAt.getTime())
     throw {
