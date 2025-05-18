@@ -744,7 +744,7 @@ export async function checkUser({ userId, email, username, password }) {
   if (!userId && !email && !username) return { userId: null };
   const col = userId ? `id` : email ? `email` : `username`;
   let row =
-    await auth`select * from user where ${auth([col])} = ${userId ? userId : email ? email : username}`;
+    await auth`select * from user where ${postgres([col])} = ${userId ? userId : email ? email : username}`;
   console.log("got past query in checkUser. email: " + email);
   if (row.rowCount && password) {
     const samePass = await bcrypt.compare(
