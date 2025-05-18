@@ -851,7 +851,7 @@ export async function createUser({
     `createUser just before insert executed: fname: ${firstname}... lname:  ${lastname}... email: ${email.toLowerCase()} ... pass: ${hashedPass} ... userId: ${userId} ... title: ${title1} ... gender: ${gender1}  `,
   );
   const rowIn =
-    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values ${auth.array(vals)}`;
+    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values ${auth.array(...vals)}`;
   console.log("createUser insert executed ");
   console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
