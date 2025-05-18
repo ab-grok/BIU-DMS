@@ -12,7 +12,13 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
 
-const main = postgres(process.env.MAINDB);
+const main = postgres(process.env.MAINDB, {
+  debug: (connection, query, parameters) => {
+    console.log("SQL:", query);
+    console.log("Params:", parameters);
+  },
+});
+
 const auth = postgres(process.env.AUTHDB, {
   debug: (connection, query, parameters) => {
     console.log("SQL:", query);
@@ -604,13 +610,13 @@ export async function renameTable({ dbName, tbName, userId, newTbName }) {
   //getUserAccess
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Unauthorized!" };
-  await auth`alter table ${postgres([dbName, tbName])} rename to ${newTbName} `;
+  await auth`alter table ${auth([dbName, tbName])} rename to ${newTbName} `;
 }
 
 export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
-  await auth`alter schema ${postgres([dbName])} rename to ${newDbName} `;
+  await auth`alter schema ${auth([dbName])} rename to ${newDbName} `;
 }
 
 async function searchField() {
@@ -680,11 +686,11 @@ export async function createSession({ userId, dcrPass, token32 }) {
   const deleted = await delSession({ userId });
   const rowIn =
     await auth`insert into "user_session" (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
-  if (!rowIn.rowCount)
-    throw {
-      customMessage:
-        "User session couldn't be created. You'll have to log in again!",
-    };
+  // if (!rowIn.rowCount)
+  //   throw {
+  //     customMessage:
+  //       "User session couldn't be created. You'll have to log in again!",
+  //   };
   return { expiresAt: expAt, token32 };
 }
 
@@ -857,10 +863,9 @@ export async function createUser({
   );
 
   const rowIn =
-    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${valString})`;
+    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${valString}) returning *`;
   console.log("createUser insert executed ");
   console.log(rowIn);
-  if (!rowIn.rowCount) throw { message: "Some error occured." };
 
   const { expiresAt } = await createSession({ userId, dcrpass: pass, token32 });
   if (!expiresAt.getTime())
