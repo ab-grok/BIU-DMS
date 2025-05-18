@@ -1,9 +1,9 @@
 "use server";
 //auth.array handles fragments (tagged) not raw stings
 //auth.array can escape array values as is
-//auth(column) for columns, auth`${values}` for values
+//postgres(column) for columns, auth`${values}` for values
 //auth`somethign ${value}` treats value as paramterized and something as string -- must use ${} to be parameterized
-//cant escape a value in the position of an identifier, have auth(value) for that.
+//cant escape a value in the position of an identifier, have postgres(value) for that.
 import { v4 as uuidv4 } from "uuid";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
@@ -137,7 +137,6 @@ async function addMetadata({
       await auth`update metadata set ${auth.array(updClause)} where ${auth.array(updWhere)}`;
     if (rowUpd.rowCount < 1) return false;
   }
-  await auth.end();
   return true;
 }
 
@@ -168,7 +167,6 @@ export async function getMetadata({ dbName, tbName, asString }) {
     // console.log("editots from getMeta: " + JSON.stringify(editors));
     // console.log("viewers from getMeta: " + JSON.stringify(viewers));
   }
-  await auth.end();
   return {
     createdBy: rowSel.rows[0].created_by,
     createdAt: rowSel.rows[0].created_at,
@@ -600,13 +598,13 @@ export async function renameTable({ dbName, tbName, userId, newTbName }) {
   //getUserAccess
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Unauthorized!" };
-  await auth`alter table ${auth([dbName, tbName])} rename to ${newTbName} `;
+  await auth`alter table ${postgres([dbName, tbName])} rename to ${newTbName} `;
 }
 
 export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
-  await auth`alter schema ${auth([dbName])} rename to ${newDbName} `;
+  await auth`alter schema ${postgres([dbName])} rename to ${newDbName} `;
 }
 
 async function searchField() {
@@ -676,7 +674,6 @@ export async function createSession({ userId, dcrPass, token32 }) {
   const deleted = await delSession({ userId });
   const rowIn =
     await auth`insert into user_session (id, user_id, expires_at) values (${sessionId}, ${userId}, ${expAt})`;
-  await auth.end();
   if (!rowIn.rowCount)
     throw {
       customMessage:
@@ -687,7 +684,6 @@ export async function createSession({ userId, dcrPass, token32 }) {
 
 export async function delSession({ userId }) {
   const rowDel = await auth`delete from user_session where user_id = ${userId}`;
-  await auth.end();
   if (!rowDel.rowCount) return false;
   return true;
 }
@@ -695,7 +691,6 @@ export async function delSession({ userId }) {
 export async function updateSession({ sessionId, expires_at }) {
   const rowUpd =
     await auth`update user_session set expires_at = ${expires_at} where id = ${sessionId}`;
-  await auth.end();
   console.log("rowUpd from updsession: " + rowUpd);
   if (!rowUpd.rowCount) return false;
   return true;
@@ -728,7 +723,6 @@ export async function getSession({ token32, update, getId }) {
     if (await updateSession({ sessionId, expires_at })) sessionUpdated = true;
     row = auth`${rowArr}`;
   }
-  await auth.end();
 
   const { userId, expiresAt, ...user1 } = row.rows[0];
   let user = user1;
@@ -744,7 +738,7 @@ export async function checkUser({ userId, email, username, password }) {
   if (!userId && !email && !username) return { userId: null };
   const col = userId ? `id` : email ? `email` : `username`;
   let row =
-    await auth`select * from user where ${postgres([col])} = ${userId ? userId : email ? email : username}`;
+    await auth`select * from public.user where ${postgres([col])} = ${userId ? userId : email ? email : username}`;
   console.log("got past query in checkUser. email: " + email);
   if (row.rowCount && password) {
     const samePass = await bcrypt.compare(
@@ -778,7 +772,6 @@ export async function checkUser({ userId, email, username, password }) {
       userId: row.rows[0].id,
     };
   }
-  await auth.end();
   return { userId: null };
 }
 
@@ -854,7 +847,6 @@ export async function createUser({
   console.log("createUser insert executed ");
   console.log(rowIn);
   if (!rowIn.rowCount) throw { message: "Some error occured." };
-  await auth.end();
 
   const { expiresAt } = await createSession({ userId, dcrpass: pass, token32 });
   if (!expiresAt.getTime())
