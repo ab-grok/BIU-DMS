@@ -1,141 +1,141 @@
-"use server";
-import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
-import { revalidateTag, unstable_cache } from "next/cache";
-import { createCipheriv, randomBytes } from "crypto";
-import { cookies } from "next/headers";
+// "use server";
+// import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+// import { revalidateTag, unstable_cache } from "next/cache";
+// import { createCipheriv, randomBytes } from "crypto";
+// import { cookies } from "next/headers";
 
-// type session = {
-//   token: string;
-//   expiresAt: Date;
-// };
-type sessionValidation = {
-  username: string;
-  firstname: string;
-  level: number;
-  avatarUrl: string | null;
-  title: string;
-  userId: string | null;
-  joined: string | null;
-  bio: string | null;
-  email: string | null;
-} | null;
+// // type session = {
+// //   token: string;
+// //   expiresAt: Date;
+// // };
+// type sessionValidation = {
+//   username: string;
+//   firstname: string;
+//   level: number;
+//   avatarUrl: string | null;
+//   title: string;
+//   userId: string | null;
+//   joined: string | null;
+//   bio: string | null;
+//   email: string | null;
+// } | null;
 
-export async function generateSessionToken(): Promise<string> {
-  //upon logging or signing up
-  const bytes = new Uint8Array(20);
-  crypto.getRandomValues(bytes);
-  const token = encodeBase32LowerCaseNoPadding(bytes);
-  return token;
-}
+// export async function generateSessionToken(): Promise<string> {
+//   //upon logging or signing up
+//   const bytes = new Uint8Array(20);
+//   crypto.getRandomValues(bytes);
+//   const token = encodeBase32LowerCaseNoPadding(bytes);
+//   return token;
+// }
 
-export async function getCookie() {
-  const token32 = (await cookies()).get("session")?.value;
-  return { token32 }; //token32 = {value: token}
-}
+// export async function getCookie() {
+//   const token32 = (await cookies()).get("session")?.value;
+//   return { token32 }; //token32 = {value: token}
+// }
 
-export async function createSessionCookie({
-  token32,
-  expiresAt,
-}: {
-  token32: string;
-  expiresAt: string;
-}): Promise<boolean> {
-  try {
-    const expires = new Date(expiresAt);
-    (await cookies()).set("session", token32, {
-      httpOnly: true,
-      expires,
-      sameSite: "lax",
-      path: "/",
-      secure: process.env.NODE_ENV == "production",
-    });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+// export async function createSessionCookie({
+//   token32,
+//   expiresAt,
+// }: {
+//   token32: string;
+//   expiresAt: string;
+// }): Promise<boolean> {
+//   try {
+//     const expires = new Date(expiresAt);
+//     (await cookies()).set("session", token32, {
+//       httpOnly: true,
+//       expires,
+//       sameSite: "lax",
+//       path: "/",
+//       secure: process.env.NODE_ENV == "production",
+//     });
+//     return true;
+//   } catch (e) {
+//     return false;
+//   }
+// }
 
-export async function deleteSessionCookie(): Promise<boolean> {
-  const token32 = (await cookies()).get("session");
-  if (!token32) {
-    console.log("No cookies.");
-    return false;
-  }
-  (await cookies()).set("session", "", {
-    maxAge: 0,
-    path: "/",
-  });
-  return true;
-}
+// export async function deleteSessionCookie(): Promise<boolean> {
+//   const token32 = (await cookies()).get("session");
+//   if (!token32) {
+//     console.log("No cookies.");
+//     return false;
+//   }
+//   (await cookies()).set("session", "", {
+//     maxAge: 0,
+//     path: "/",
+//   });
+//   return true;
+// }
 
-//delete with revalidateTag(tag) on logout
-export async function validateSession(sensitive?: boolean) {
-  const { token32 } = await getCookie();
-  if (!token32) return null;
-  console.log("validateSession was hit, token32", token32);
+// //delete with revalidateTag(tag) on logout
+// export async function validateSession(sensitive?: boolean) {
+//   const { token32 } = await getCookie();
+//   if (!token32) return null;
+//   console.log("validateSession was hit, token32", token32);
 
-  const validateWithCookies = unstable_cache(
-    async (): Promise<sessionValidation> => {
-      console.log("+++++++++++++gets inside unstable_cache's function");
-      const res = await fetch(`${process.env.SERVER}/session`, {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-          "enc-token": (await encryptText(token32)) ?? "",
-        },
-      });
-      console.log("res.status: " + res.status);
-      if (!res.ok) return null;
-      const user = await res.json();
+//   const validateWithCookies = unstable_cache(
+//     async (): Promise<sessionValidation> => {
+//       console.log("+++++++++++++gets inside unstable_cache's function");
+//       const res = await fetch(`${process.env.SERVER}/session`, {
+//         method: "GET",
+//         headers: {
+//           "content-type": "application/json",
+//           "enc-token": (await encryptText(token32)) ?? "",
+//         },
+//       });
+//       console.log("res.status: " + res.status);
+//       if (!res.ok) return null;
+//       const user = await res.json();
 
-      // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
-      //handle expires at from updated session.
-      const { joined, bio, email, expiresAt, ...user1 } = user;
-      if (expiresAt) await createSessionCookie({ token32, expiresAt });
-      if (sensitive) return user;
-      return user1;
-    },
-    [token32],
-    {
-      tags: ["session-" + token32, "session"],
-      revalidate: 3600, //
-    },
-  );
-  const user = await validateWithCookies();
-  return user;
-}
+//       // console.log(`Got from sessionValidate: ${JSON.stringify(user)}`);
+//       //handle expires at from updated session.
+//       const { joined, bio, email, expiresAt, ...user1 } = user;
+//       if (expiresAt) await createSessionCookie({ token32, expiresAt });
+//       if (sensitive) return user;
+//       return user1;
+//     },
+//     [token32],
+//     {
+//       tags: ["session-" + token32, "session"],
+//       revalidate: 3600, //
+//     },
+//   );
+//   const user = await validateWithCookies();
+//   return user;
+// }
 
-export async function deleteSession(): Promise<{
-  error: string;
-}> {
-  const token32 = (await cookies()).get("session")?.value;
-  if (!token32) return { error: "Session not found!" };
-  const res = await fetch(`${process.env.SERVER}/session`, {
-    method: "DELETE",
-    headers: {
-      enc_token: (await encryptText(token32)) ?? "",
-    },
-  });
-  if (!res.ok) return { error: "Could not connect to server." };
-  const deleted = await res.json();
-  if (!deleted) return { error: "The server gave an error." };
-  revalidateTag(token32);
-  await deleteSessionCookie();
-  return { error: "" };
-}
+// export async function deleteSession(): Promise<{
+//   error: string;
+// }> {
+//   const token32 = (await cookies()).get("session")?.value;
+//   if (!token32) return { error: "Session not found!" };
+//   const res = await fetch(`${process.env.SERVER}/session`, {
+//     method: "DELETE",
+//     headers: {
+//       enc_token: (await encryptText(token32)) ?? "",
+//     },
+//   });
+//   if (!res.ok) return { error: "Could not connect to server." };
+//   const deleted = await res.json();
+//   if (!deleted) return { error: "The server gave an error." };
+//   revalidateTag(token32);
+//   await deleteSessionCookie();
+//   return { error: "" };
+// }
 
-export async function encryptText(text: string) {
-  if (!text) return null;
-  const key = Buffer.from(process.env.UPKEY as string, "hex");
-  const iv = randomBytes(16);
-  const cipher = createCipheriv("aes-256-cbc", key, iv);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return `${iv.toString("hex")}#${encrypted}`;
-}
+// export async function encryptText(text: string) {
+//   if (!text) return null;
+//   const key = Buffer.from(process.env.UPKEY as string, "hex");
+//   const iv = randomBytes(16);
+//   const cipher = createCipheriv("aes-256-cbc", key, iv);
+//   let encrypted = cipher.update(text, "utf8", "hex");
+//   encrypted += cipher.final("hex");
+//   return `${iv.toString("hex")}#${encrypted}`;
+// }
 
-export async function useRevalidate(name: string) {
-  const { token32 } = await getCookie();
-  revalidateTag(`${name}-${token32}`);
-  return true;
-}
+// export async function useRevalidate(name: string) {
+//   const { token32 } = await getCookie();
+//   revalidateTag(`${name}-${token32}`);
+//   return true;
+// }

@@ -735,7 +735,7 @@ export async function getSession({ token32, update, getId }) {
   if (update && Date.now() >= rowTime - 1000 * 60 * 60 * 24 * 3) {
     const expires_at = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
     if (await updateSession({ sessionId, expires_at })) sessionUpdated = true;
-    row = auth`${rowArr}`;
+    row = await auth`${rowArr}`;
   }
 
   const { userId, expiresAt, ...user1 } = row[0];
