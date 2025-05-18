@@ -91,7 +91,7 @@ export async function validateSession() {
         if (expiresAt) await createSessionCookie({ token32, expiresAt });
         return user as sessionValidation;
       } catch (e: any) {
-        console.log(e.customMessage);
+        console.log(e);
         return null;
       }
     },
