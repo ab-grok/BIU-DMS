@@ -70,7 +70,6 @@ export type Tb = {
   tbName: string;
   rowCount: number;
   createdBy: string;
-  title: string;
   createdAt: string;
   updatedAt: string;
   updatedBy: string;
@@ -108,7 +107,7 @@ export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
 
         const { tableData } = await getTables(db_name, true);
         // console.log("tableData: ", tableData);
-        return tableData;
+        return tableData as Tb[];
       } catch (e) {
         console.log(`error in ListTables: ${e}`);
       }

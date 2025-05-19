@@ -158,7 +158,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
     console.log({
       message: "Must specify a database to get meta.",
     });
-    return;
+    return null;
   }
 
   let rowSel =
