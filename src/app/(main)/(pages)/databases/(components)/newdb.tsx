@@ -50,12 +50,15 @@ export default function NewDb() {
     const dbData = createDbSchema.parse(values);
     const editors: string[] = [];
     const viewers: string[] = [];
+
     const editors1 = addUsers.editors.split(",").filter(Boolean);
+    const viewers1 = addUsers.viewers.split(",").filter(Boolean);
+    console.log("formSUbmitted, editors1: ", editors1);
+    console.log("formSUbmitted, viewers1: ", viewers1);
     editors1.forEach((a) => {
       const uid = a.split("&");
       editors.push(uid[0]);
     });
-    const viewers1 = addUsers.viewers.split(",").filter(Boolean);
     viewers1.forEach((a) => {
       const uid = a.split("&");
       viewers.push(uid[0]);
