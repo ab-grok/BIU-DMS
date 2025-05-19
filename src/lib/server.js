@@ -25,16 +25,18 @@ const auth = postgres(process.env.AUTHDB, {
     console.log("Params:", parameters);
   },
 });
+
 export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
   const dbWithMeta = [];
+  console.log("rows: ", rows);
 
   if (getTbCount) {
     const row2 = rows.map(async (a, i) => {
       const count =
         await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
-      //console.log(count)
+      console.log("select count: ", count);
       let dbMeta = await getMetadata({ dbName: a.schema_name });
       dbWithMeta.push({
         Database: a.schema_name,
@@ -44,8 +46,7 @@ export async function getDb(getTbCount) {
     });
     await Promise.all(row2);
   }
-  await main.end();
-  return { rows: rows.rows, dbWithMeta };
+  return { rows: rows[0], dbWithMeta };
 }
 
 async function checkDb(dbName) {
@@ -161,11 +162,11 @@ export async function getMetadata({ dbName, tbName, asString }) {
   }
 
   let rowSel =
-    await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from metadata where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
+    await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
   let viewers;
   let editors;
 
-  if (rowSel.rowCount < 1) {
+  if (!rowSel.length) {
     console.log({ customMessage: "Metadata not found!" });
     return null;
   }
@@ -209,7 +210,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //       editors1 = editorsArray.map(async (a, i) => {
 //         const res = await user(a);
 //         // console.log("editors  sql res: " + JSON.stringify(a));
-//         if (res.rows.length > 0) {
+//         if (res.length > 0) {
 //           return {
 //             username: res[0].username,
 //             firstname: res[0].firstname,
@@ -295,7 +296,6 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //   // console.log("ending viewers: " + JSON.stringify(viewers1));
 //   // console.log("ending editors: " + JSON.stringify(editors1));
 
-//   await main.end();
 //   return { viewers1, editors1 };
 // }
 
@@ -332,7 +332,6 @@ async function getUserAccess({ dbName, tbName, userId }) {
   //   if (!tbName)
   //   view = true;
   // }
-  await main.end();
   return { edit, view };
 }
 
@@ -377,10 +376,10 @@ export async function getTables(dbName, includeMeta) {
   if (!(await checkDb(dbName))) {
     throw { customMessage: "Database does not exist" };
   }
-  const main = mainDb(dbName);
-  const res = main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
+  const res =
+    await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
 
-  let tableDataPromise = res.rows.map(async (a, i) => {
+  let tableDataPromise = res.map(async (a, i) => {
     if (includeMeta) {
       let rc = await main`select count(*) as rC from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
@@ -389,7 +388,6 @@ export async function getTables(dbName, includeMeta) {
   });
   const tableData = await Promise.all(tableDataPromise); //
   // console.log(JSON.stringify(tables));
-  await main.end();
   return { tableData };
 }
 
@@ -399,9 +397,8 @@ export async function getTbSchema({ dbName, tbName }) {
   if (!tbFound) throw { customMessage: "Couldn't find the table or database" };
   //combine with information_schema.key_column_usage to get foreign keys?
   const res =
-    await main`select c.column_name as colName, c.data_type as type, c.is_nullable as nullable, arr.agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns left array information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left array information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable ORDER BY c.ordinal_position`;
-  await main.end();
-  return { tableMeta: res.rows };
+    await main`select c.column_name as "colName", c.data_type as type, c.is_nullable as nullable, arr.agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable ORDER BY c.ordinal_position`;
+  return { tableMeta: res };
 }
 
 export async function checkTb({ dbName, tbName }) {
@@ -485,7 +482,6 @@ export async function createTb({
   const res =
     await main`create table ${main([dbName, tbName])} (${cols}, updated_at timestamp, updated_by text)`;
 
-  await main.end();
   const metaAdded = await addMetadata({
     userId,
     isPrivate,
@@ -520,9 +516,9 @@ export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   const whereVal = filterInput(where?.val);
   const res =
     await main`Select * from ${main([dbName, tbName])} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
-  console.log("TB data from getTBData: ", JSON.stringify(res.rows));
+  console.log("TB data from getTBData: ", JSON.stringify(res));
   if (!res.rowCount) console.log({ customMessage: "No table data exists" });
-  return { rows: res.rows };
+  return { rows: res };
 }
 
 export async function insertData({ dbName, tbName, colVals, userId }) {
@@ -596,7 +592,6 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: userId });
   if (!metaAdded) console.log("insertData meta not added");
 
-  await main.end();
   return true;
 }
 
@@ -641,14 +636,14 @@ export async function getAllUsers() {
 
   const meta =
     await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from metadata`;
-  allUsers.rows.forEach((u, i) => {
+  allUsers.forEach((u, i) => {
     const currU = {
       created: { db: [], tb: [] },
       views: { db: [], tb: [] },
       edits: { db: [], tb: [] },
     };
 
-    for (const [j, md] of meta.rows.entries()) {
+    for (const [j, md] of meta.entries()) {
       if (md.editors.includes(u.id)) {
         md.tb
           ? currU.edits.tb.push(md.db + "/" + md.tb)
