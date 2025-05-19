@@ -343,7 +343,9 @@ export async function createDb({
   editors,
   isPrivate,
 }) {
+  console.log("in createDb");
   const { email, level } = await checkUser({ userId });
+  console.log("gOT past checkUser");
   if (!email) {
     throw {
       customMessage: "User not found! Log in again.",

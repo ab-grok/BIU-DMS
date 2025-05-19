@@ -69,6 +69,7 @@ export default function NewDb() {
       return;
     }
     const userId = user.userId;
+    console.log("userid from validateSession: ", userId);
     const created = await createDb({
       userId,
       ...dbData,
