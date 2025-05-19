@@ -38,9 +38,9 @@ export default function SideBar() {
       className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg shadow-black transition-all`}
     >
       {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
-      <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-0.5 overflow-hidden rounded-[5px] p-0.5 ring-2">
+      <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1 ring-2">
         <section
-          className={`group bg-bw/20 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[20px]`}
+          className={`group bg-bw/10 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px]`}
         >
           <div
             onBlur={() => showAvatar(1)}
@@ -57,7 +57,7 @@ export default function SideBar() {
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
 
-        <section className="bg-bw/20 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[20px]">
+        <section className="bg-bw/10 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
           {" "}
           <SideCard name="Databases" route="databases" />
           <SideCard name="Create a database" route="createdb" />
@@ -66,7 +66,7 @@ export default function SideBar() {
           <SideCard name="Users" route="users" />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
-        <section className="bg-bw/20 relative top-0 h-full max-h-[25%] w-full rounded-[20px]">
+        <section className="bg-bw/10 relative top-0 h-full max-h-[25%] w-full rounded-[10px]">
           {" "}
           List of he db tag (get current db route)
         </section>
