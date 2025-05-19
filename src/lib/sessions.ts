@@ -123,7 +123,7 @@ export async function deleteSession(): Promise<{
 
 type revalidate = "databases" | "tables" | "session" | "tableData";
 
-export async function useRevalidate(name: revalidate) {
+export async function revalidate(name: revalidate) {
   const { token32 } = await getCookie();
   revalidateTag(`${name}-${token32}`);
   return true;

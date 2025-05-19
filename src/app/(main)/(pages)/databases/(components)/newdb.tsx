@@ -21,7 +21,7 @@ import { PlusIcon } from "lucide-react";
 import UserTag from "@/components/usertag";
 import { Separator } from "@/components/ui/separator";
 import { createDb } from "@/lib/server";
-import { useRevalidate, validateSession } from "@/lib/sessions";
+import { revalidate, validateSession } from "@/lib/sessions";
 
 export default function NewDb() {
   const { pressAnim, setPressAnim } = useButtonAnim();
@@ -45,50 +45,48 @@ export default function NewDb() {
     setAddUsers((p) => ({ ...p, viewers: "", editors: "" }));
   }
 
-  function dbSubmitted(values: createDbType) {
+  async function dbSubmitted(values: createDbType) {
     setIsLoading((p) => p + "newDb,");
-    (async () => {
-      const dbData = createDbSchema.parse(values);
-      const editors: string[] = [];
-      const viewers: string[] = [];
-      const editors1 = addUsers.editors.split(",").filter(Boolean);
-      editors1.forEach((a) => {
-        const uid = a.split("&");
-        editors.push(uid[0]);
+    const dbData = createDbSchema.parse(values);
+    const editors: string[] = [];
+    const viewers: string[] = [];
+    const editors1 = addUsers.editors.split(",").filter(Boolean);
+    editors1.forEach((a) => {
+      const uid = a.split("&");
+      editors.push(uid[0]);
+    });
+    const viewers1 = addUsers.viewers.split(",").filter(Boolean);
+    viewers1.forEach((a) => {
+      const uid = a.split("&");
+      viewers.push(uid[0]);
+    });
+    const user = await validateSession();
+    if (!user) {
+      setNotify({
+        danger: true,
+        message: "Something went wrong",
       });
-      const viewers1 = addUsers.viewers.split(",").filter(Boolean);
-      viewers1.forEach((a) => {
-        const uid = a.split("&");
-        viewers.push(uid[0]);
+      return;
+    }
+    const userId = user.userId;
+    const created = await createDb({
+      userId,
+      ...dbData,
+      viewers,
+      editors,
+      isPrivate: true,
+    });
+    if (!created) {
+      setNotify({
+        danger: true,
+        message: "User is authorized, but create failed",
       });
-      const user = await validateSession();
-      if (!user) {
-        setNotify({
-          danger: true,
-          message: "Something went wrong",
-        });
-        return;
-      }
-      const userId = user.userId;
-      const created = await createDb({
-        userId,
-        ...dbData,
-        viewers,
-        editors,
-        isPrivate: true,
-      });
-      if (!created) {
-        setNotify({
-          danger: true,
-          message: "User is authorized, but create failed",
-        });
-        return;
-      } else {
-        setNotify({ message: "Database created successfully" });
-        await useRevalidate("databases");
-      }
-      setIsLoading((p) => p.replace("newDb,", ""));
-    })();
+      return;
+    } else {
+      setNotify({ message: "Database created successfully" });
+      await revalidate("databases");
+    }
+    setIsLoading((p) => p.replace("newDb,", ""));
   }
 
   useEffect(() => {
