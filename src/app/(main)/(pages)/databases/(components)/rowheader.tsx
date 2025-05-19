@@ -40,7 +40,8 @@ export default function RowHeader({
     else setdbClicked(i);
   }
   return (
-    <div className="z-5 flex h-[3rem] w-[100%] items-center p-1 select-none">
+    <div className="relative z-5 flex h-[3rem] w-[100%] items-center p-1 select-none">
+      <div className="sticky h-full w-[2.4rem] bg-black"> button </div>
       <div className="ml-[2.6rem] flex">
         {headerList.map((a, i) => (
           <div
