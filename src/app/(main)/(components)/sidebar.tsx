@@ -8,6 +8,7 @@ import Loading from "@/components/loading";
 import { useLoading } from "@/app/dialogcontext";
 import { usePathname } from "next/navigation";
 import { logOut } from "@/app/(auth)/actions";
+import { FaUserAlt } from "react-icons/fa";
 
 export default function SideBar() {
   const { sidebarState, setSidebarState } = useSideContext().context;
@@ -84,7 +85,9 @@ function Avatar({ expanded }: { expanded: boolean }) {
       id="avatar"
       onClick={() => setSidebarState((p) => ({ ...p, sbExpanded: true }))}
       className={`${!expanded ? "size-[3rem] lg:size-[5rem]" : "size-[5rem]"} bg-main-bg text-bw absolute rounded-full p-1 text-xs transition-all`}
-    >{`Avatar goes here`}</div>
+    >
+      <FaUserAlt />
+    </div>
   );
 }
 
