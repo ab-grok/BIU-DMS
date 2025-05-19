@@ -7,13 +7,13 @@ import Index from "@/components";
 import Count from "@/components/count";
 import { db } from "@/lib/actions";
 
-export default function Row({ db, i }: { db: db; i: number }) {
+export default function Db({ db, i }: { db: db; i: number }) {
   return (
     <div
-      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-fg"} hover:bg-bw/30`}
+      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-bg/10"} hover:bg-bw/30`}
     >
       {" "}
-      <Index i={i + 1} className="sticky h-[5rem]" />
+      <Index i={i + 1} className="sticky h-[5rem] w-[2.2rem]" />
       <RowItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
         {db.Database && db.Database.length > 17
           ? db.Database.slice(0, 14) + `...`

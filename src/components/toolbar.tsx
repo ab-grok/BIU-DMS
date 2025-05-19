@@ -111,7 +111,7 @@ export function Toolbar() {
 
   return (
     <header
-      className={` ${!page.db && "hidden"} bg-main-fg relative flex h-full max-h-[3rem] min-h-[3rem] items-center px-1`}
+      className={` ${!page.db && "hidden"} bg-main-fg border-main-bg relative flex h-full max-h-[3rem] min-h-[3rem] items-center border-b-2 px-1`}
     >
       <div className="flex h-[2.5rem] w-full items-center justify-between overflow-hidden rounded-xl bg-yellow-400 p-1 text-sm">
         <section className="relative flex h-full max-w-fit items-center rounded-2xl bg-blue-400 select-none">

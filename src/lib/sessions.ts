@@ -121,7 +121,9 @@ export async function deleteSession(): Promise<{
   return { error: "" };
 }
 
-export async function useRevalidate(name: string) {
+type revalidate = "databases" | "tables" | "session" | "tableData";
+
+export async function useRevalidate(name: revalidate) {
   const { token32 } = await getCookie();
   revalidateTag(`${name}-${token32}`);
   return true;

@@ -24,4 +24,20 @@ export const createTbSchema = z.object({
   type: z.number(), //1- text, 2- number, 3- boolean, 4- date, 5-file
 });
 
+export const createDbSchema = z.object({
+  dbName: reqString
+    .regex(
+      /^[A-Z0-9_£$%&!#]*$/i,
+      'No white spaces or characters besides "_ £ $ % & ! #" ',
+    )
+    .max(30, "Too long."),
+  desc: reqString
+    .regex(
+      /^(?=[^A-Z]*[A-Z])^[A-Z0-9_, \-.$£&+<>|*()\[\]{}#@!?]*$/i,
+      "Certain characters are not allowed. ",
+    )
+    .max(255, "Too long"),
+});
+
 export type createTbType = z.infer<typeof createTbSchema>;
+export type createDbType = z.infer<typeof createDbSchema>;

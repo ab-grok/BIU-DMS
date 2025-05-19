@@ -1,14 +1,19 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import RowHeader from "./(components)/rowheader";
-import Row from "./(components)/row";
-import { useLoading, useNotifyContext } from "@/app/dialogcontext";
+import Db from "./(components)/db";
+import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
 import { db, listDatabases } from "@/lib/actions";
 import Loading from "@/components/loading";
+import { useSelection } from "../selectcontext";
+import AddUsers from "../../(components)/addusers";
+import NewDb from "./(components)/newdb";
 
 export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
+  const { addUsers } = useAddUsers();
   const { isLoading, setIsLoading } = useLoading();
+  const { create } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
 
   console.log("current isLoading: ", isLoading);
@@ -41,6 +46,7 @@ export default function DbLayout() {
   const headerRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef(null);
   const headerScroll = headerRef.current;
+
   function handleScroll(e: React.UIEvent<HTMLElement>) {
     const currScroll = e.currentTarget.scrollLeft;
     headerScroll && (headerScroll.scrollLeft = currScroll);
@@ -48,19 +54,21 @@ export default function DbLayout() {
 
   return (
     <div className="">
-      <div
-        ref={headerRef}
-        className="scrollbar-custom bg-sub-bg relative overflow-x-scroll border-b-2"
-      >
-        <RowHeader headerList={headerList} />
+      <div className="scrollbar-custom relative border-b-2">
+        <RowHeader ref={headerRef} headerList={headerList} />
+      </div>
+      <div className="scrollbar-custom relative overflow-x-scroll">
+        {create == "db" && <NewDb />}
       </div>
       <main
         ref={rowRef}
         onScroll={(e) => handleScroll(e)}
-        className="max-h-[43.2rem] overflow-auto pb-3"
+        className={`${create == "db" ? "mt-2 h-[31.3rem]" : "h-[43.2rem]"} overflow-auto pb-3 transition-transform`}
       >
+        {addUsers.type == "newDb" && <AddUsers height="h-[76%]" />}
+
         {isLoading.includes("databases") && <Loading />}
-        {db && db.map((a, i) => <Row key={i + 2} db={a} i={i} />)}
+        {db && db.map((a, i) => <Db key={i + 2} db={a} i={i} />)}
       </main>
     </div>
   );

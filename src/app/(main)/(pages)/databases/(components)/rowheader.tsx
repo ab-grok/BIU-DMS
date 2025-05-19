@@ -1,12 +1,16 @@
 "use client";
 import { Icon } from "@/components/Icons";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useSelection } from "../../selectcontext";
+import { useButtonAnim } from "@/components/count";
 
 export default function RowHeader({
   headerList,
+  ref,
 }: {
   headerList: Array<string>;
+  ref: React.RefObject<HTMLDivElement | null>;
 }) {
   // const scrollRef = useRef<HTMLDivElement>(null);
   // const { setScrollPos, scrollPos } = useScroll();
@@ -35,13 +39,35 @@ export default function RowHeader({
   //     setScrollPos({ pos: thisScroll?.scrollLeft ?? 0, currRef: "rowHead" });
   // }, [scrollPos.currRef, selfScroll]);
   const [dbClicked, setdbClicked] = useState(0);
+  const { pressAnim, setPressAnim } = useButtonAnim();
+  const { create, setCreate } = useSelection();
+
   function handleClick(i: number) {
     if (dbClicked == i) setdbClicked(0);
     else setdbClicked(i);
   }
+
+  function createDb() {
+    create == "db" ? setCreate("") : setCreate("db");
+    setPressAnim("newDb");
+  }
+
   return (
-    <div className="relative z-5 flex h-[3rem] w-[100%] items-center p-1 select-none">
-      <div className="sticky h-full w-[2.4rem] bg-black"> button </div>
+    <div
+      ref={ref}
+      className="scrollbar-custom z-5 flex h-[3rem] w-[100%] items-center overflow-x-scroll p-1 select-none"
+    >
+      <div className="bg-row-bgd2/70 absolute left-0 flex h-full w-[2.55rem] items-center backdrop-blur-2xl">
+        <div
+          onClick={createDb}
+          title={` ${create == "db" ? "Cancel" : "Create new database"} `}
+          className={` ${pressAnim == "newDb" && "scale-95 shadow-none"} ${create == "db" && "ring-bw/50 ring-2"} bg-row-bg1 hover:bg-main-fg ml-[10%] flex size-8 cursor-pointer items-center justify-center rounded-[5px] hover:shadow-md`}
+        >
+          <PlusIcon
+            className={`${create == "db" && "rotate-45"} transition-all`}
+          />
+        </div>
+      </div>
       <div className="ml-[2.6rem] flex">
         {headerList.map((a, i) => (
           <div

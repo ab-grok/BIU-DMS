@@ -8,7 +8,7 @@ import Index from "@/components";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
-import { createTbSchema, createTbType } from "@/lib/tableschema";
+import { createTbSchema, createTbType } from "@/lib/createschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -592,7 +592,7 @@ function LiveTable({
                   {" "}
                   viewers
                   <span className="ml-2">
-                    {addUsers.viewers?.split(",")?.length}{" "}
+                    {addUsers.viewers?.split(",")?.length - 1}{" "}
                   </span>
                 </span>
               )}
@@ -602,7 +602,7 @@ function LiveTable({
                 <PlusIcon className="size-6 drop-shadow-xs transition-all hover:scale-95" />
               </span>
             </header>
-            <div className="h-[85%] overflow-y-auto">
+            <div className="h-[85%] overflow-x-hidden overflow-y-auto">
               {users.viewers?.map((a, i) => (
                 <span
                   key={a.firstname}
@@ -635,7 +635,7 @@ function LiveTable({
                   Editors
                   <span className="ml-2">
                     {" "}
-                    {addUsers.editors?.split(",")?.length}{" "}
+                    {addUsers.editors?.split(",")?.length - 1}{" "}
                   </span>
                 </span>
               )}
@@ -645,7 +645,7 @@ function LiveTable({
                 <PlusIcon className="size-6 drop-shadow-xs transition-all hover:scale-95" />
               </span>
             </header>
-            <div className="h-[85%] overflow-y-auto">
+            <div className="h-[85%] overflow-x-hidden overflow-y-auto">
               {users.editors?.map((a, i) => (
                 <span
                   key={a.firstname}

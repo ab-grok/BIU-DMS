@@ -29,6 +29,11 @@ export type createTbMeta = {
   editors: string;
   viewers: string;
 };
+export type createDbMeta = {
+  createdBy: string;
+  editors: string[];
+  viewers: string[];
+};
 
 export type views = {
   db: number;
@@ -47,7 +52,7 @@ type selections = {
   selectedTbUsers: selectedTbUsers;
   setSelectedTbUsers: Dispatch<React.SetStateAction<selectedTbUsers>>; //users can be editors or viewers
   views: views;
-  setViews: Dispatch<React.SetStateAction<views>>; //number of views seen on the users page header
+  setViews: Dispatch<React.SetStateAction<views>>; //count of viewers seen on the users_page header
   edits: views;
   setEdits: Dispatch<React.SetStateAction<views>>;
   selectedTb: string;
@@ -62,6 +67,8 @@ type selections = {
   setCreateTbMeta: Dispatch<React.SetStateAction<createTbMeta>>;
   createTbCol: createTbCol;
   setCreateTbCol: Dispatch<React.SetStateAction<createTbCol>>;
+  createDbMeta: createDbMeta;
+  setCreateDbMeta: Dispatch<React.SetStateAction<createDbMeta>>;
 };
 
 export default function SelectionContext({
@@ -75,6 +82,7 @@ export default function SelectionContext({
   const [create, setCreate] = useState<string>("");
   const [quickA, setQuickA] = useState<string>("");
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
+  const [createDbMeta, setCreateDbMeta] = useState({} as createDbMeta);
   const [createTbCol, setCreateTbCol] = useState({} as createTbCol);
   const [views, setViews] = useState({ tb: 0, db: 0 });
   const [edits, setEdits] = useState({ tb: 0, db: 0 });
@@ -91,6 +99,8 @@ export default function SelectionContext({
         setViews,
         edits,
         setEdits,
+        createDbMeta,
+        setCreateDbMeta,
         createTbMeta,
         setCreateTbMeta,
         createTbCol,
