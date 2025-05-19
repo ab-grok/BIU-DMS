@@ -40,7 +40,7 @@ export default function SideBar() {
       {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
       <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1 ring-2">
         <section
-          className={`group bg-bw/10 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px]`}
+          className={`group bg-bw/5 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px]`}
         >
           <div
             onBlur={() => showAvatar(1)}
@@ -57,7 +57,7 @@ export default function SideBar() {
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
 
-        <section className="bg-bw/10 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
+        <section className="bg-bw/5 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
           {" "}
           <SideCard name="Databases" route="databases" />
           <SideCard name="Create a database" route="createdb" />
@@ -66,7 +66,7 @@ export default function SideBar() {
           <SideCard name="Users" route="users" />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
-        <section className="bg-bw/10 relative top-0 h-full max-h-[25%] w-full rounded-[10px]">
+        <section className="bg-bw/5 relative top-0 h-full max-h-[25%] w-full rounded-[10px]">
           {" "}
           List of he db tag (get current db route)
         </section>
