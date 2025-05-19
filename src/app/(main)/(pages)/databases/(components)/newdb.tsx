@@ -84,7 +84,7 @@ export default function NewDb() {
       return;
     } else {
       setNotify({ message: "Database created successfully" });
-      useRevalidate("databases");
+      await useRevalidate("databases");
     }
     setIsLoading((p) => p.replace("newDb,", ""));
   }

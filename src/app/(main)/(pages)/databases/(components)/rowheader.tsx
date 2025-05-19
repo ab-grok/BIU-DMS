@@ -4,6 +4,7 @@ import { ChevronDown, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useSelection } from "../../selectcontext";
 import { useButtonAnim } from "@/components/count";
+import { useAddUsers } from "@/app/dialogcontext";
 
 export default function RowHeader({
   headerList,
@@ -41,6 +42,7 @@ export default function RowHeader({
   const [dbClicked, setdbClicked] = useState(0);
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { create, setCreate } = useSelection();
+  const { setAddUsers } = useAddUsers();
 
   function handleClick(i: number) {
     if (dbClicked == i) setdbClicked(0);
@@ -48,7 +50,12 @@ export default function RowHeader({
   }
 
   function createDb() {
-    create == "db" ? setCreate("") : setCreate("db");
+    if (create == "db") {
+      setCreate("");
+      setAddUsers((p) => ({ ...p, type: "" }));
+    }
+    setCreate("db");
+
     setPressAnim("newDb");
   }
 
