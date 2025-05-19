@@ -46,7 +46,7 @@ export default function SideCard({
   }, [sidebarState.route]);
   return (
     <div
-      className={`bg-sub-bg/20 justify-content flex max-h-full min-h-[3.5rem] w-[100%] flex-none flex-col items-center overflow-hidden transition-all duration-200`}
+      className={`justify-content flex max-h-full min-h-[3.5rem] w-[100%] flex-none flex-col items-center overflow-hidden transition-all duration-200`}
     >
       <div
         onClick={() => handleClicked()}
