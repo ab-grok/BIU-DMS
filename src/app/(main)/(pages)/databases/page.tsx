@@ -41,6 +41,7 @@ export default function DbLayout() {
           });
           return;
         }
+        setUser(user);
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));

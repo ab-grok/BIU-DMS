@@ -345,7 +345,7 @@ export async function createDb({
   isPrivate,
 }) {
   console.log(
-    "in createDb: ",
+    "in createDb: userid",
     userId +
       "... dbName" +
       dbName +
