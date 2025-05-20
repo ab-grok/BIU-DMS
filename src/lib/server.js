@@ -119,8 +119,8 @@ async function addMetadata({
   const values = [
     db ? auth`${db}` : ndb ? auth`${ndb}` : "",
     tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
-    updEditors ? auth`${updEditors}` : "",
-    viewers ? auth`${viewers}` : "",
+    updEditors ? auth.array(updEditors) : "",
+    viewers ? auth.array(viewers) : "",
     desc ? auth`${desc}` : "",
     createdBy ? auth`${createdBy}` : "",
     updatedBy ? auth`${updatedBy}` : "",
