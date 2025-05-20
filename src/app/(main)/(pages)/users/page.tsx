@@ -5,6 +5,7 @@ import { useButtonAnim } from "@/components/count";
 import { Separator } from "@/components/ui/separator";
 import UserTag from "@/components/usertag";
 import { allUsers, getUsers } from "@/lib/actions";
+import { revalidate } from "@/lib/sessions";
 import { useEffect, useState } from "react";
 
 export default function AllUsers() {
@@ -15,6 +16,7 @@ export default function AllUsers() {
   useEffect(() => {
     setIsLoading((p) => p + "users,");
     (async () => {
+      revalidate("users");
       const allUsers = await getUsers();
       if (!allUsers) {
         console.log("couldnt get users");
