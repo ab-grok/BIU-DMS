@@ -110,10 +110,12 @@ async function addMetadata({
     viewers ? `viewers` : null,
     desc ? `description` : null,
     ...(createdBy ? [`created_by`, `created_at`] : []),
-    ...(updatedBy ? [`updated_by, updated_at`] : []),
+    ...(updatedBy ? [`updated_by`, `updated_at`] : []),
     `private`,
   ].filter(Boolean);
 
+  console.log("viewers from addMetadata: ", viewers);
+  console.log("viewers from addMetadata: ", editors);
   const values = [
     db ? auth`${db}` : ndb ? auth`${ndb}` : "",
     tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
