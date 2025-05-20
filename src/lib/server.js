@@ -33,7 +33,7 @@ export async function getDb(getTbCount) {
   console.log("rows: ", rows);
 
   if (getTbCount) {
-    const row2 = rows.map(async (a, i) => {
+    const row2 = rows?.map(async (a, i) => {
       const count =
         await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
       console.log("select count: ", count);
@@ -52,7 +52,8 @@ export async function getDb(getTbCount) {
 async function checkDb(dbName) {
   const { rows } = await getDb();
   let dbFound = false;
-  rows.forEach((a, i) => {
+  rows?.forEach((a, i) => {
+    console.log("dbName: ", dbName, "rows.a", a.schema_name);
     if (a.schema_name == dbName) {
       dbFound = true;
       return;
