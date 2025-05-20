@@ -348,16 +348,15 @@ export async function createDb({
   const { firstname, level } = await checkUser({ userId });
   console.log("gOT past checkUser");
   if (!firstname) {
-    throw {
-      customMessage: "User not found! Log in again.",
+    return {
+      error: "User not found! Log in again.",
     };
   } else if (level < 2)
-    throw {
-      customMessage:
-        "You cannot currently perform this action; Contact an admin",
+    return {
+      error: "You cannot currently perform this action; Contact an admin",
     };
 
-  if (await checkDb(dbName)) throw { customMessage: "Database already exists" };
+  if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${dbName}`; //will throw own error
 
   const metaAdded = await addMetadata({
@@ -372,7 +371,7 @@ export async function createDb({
     console.log("Couldnt add metadata, Database will be deleted!");
     const deleted = await delDb(dbName);
   }
-  return true;
+  return { success: true };
 }
 
 export async function getTables(dbName, includeMeta) {

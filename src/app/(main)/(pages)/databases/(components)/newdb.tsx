@@ -22,6 +22,7 @@ import UserTag from "@/components/usertag";
 import { Separator } from "@/components/ui/separator";
 import { revalidate, validateSession } from "@/lib/sessions";
 import { createDb } from "@/lib/server";
+import Loading from "@/components/loading";
 
 export default function NewDb() {
   const { pressAnim, setPressAnim } = useButtonAnim();
@@ -46,7 +47,7 @@ export default function NewDb() {
   }
 
   async function dbSubmitted(values: createDbType) {
-    setIsLoading((p) => p + "newDb,");
+    setIsLoading((p) => p + "ndb,");
     const dbData = createDbSchema.parse(values);
     const editors: string[] = [];
     const viewers: string[] = [];
@@ -72,24 +73,24 @@ export default function NewDb() {
       return;
     }
     const userId = user.userId;
-    const created = await createDb({
+    const { error } = await createDb({
       userId,
       ...dbData,
       viewers,
       editors,
       isPrivate: true,
     });
-    if (!created) {
+    if (error) {
       setNotify({
         danger: true,
-        message: "User is authorized, but create failed",
+        message: error,
       });
       return;
     } else {
       setNotify({ message: "Database created successfully" });
       await revalidate("databases");
     }
-    setIsLoading((p) => p.replace("newDb,", ""));
+    setIsLoading((p) => p.replace("ndb,", ""));
   }
 
   useEffect(() => {
@@ -149,7 +150,8 @@ export default function NewDb() {
           <section className="bg-main-fg ml-3 flex h-[5rem] w-[15rem] min-w-[10rem] p-1 font-medium shadow-sm">
             <UsersTable />
           </section>
-          <div className="bg-main-fg ml-3 h-[5rem] w-[6rem] min-w-[6rem] space-y-1 p-1 px-2 font-medium shadow-sm">
+          <div className="bg-main-fg relative ml-3 h-[5rem] w-[6rem] min-w-[6rem] space-y-1 p-1 px-2 font-medium shadow-sm">
+            {isLoading.includes("ndb") && <Loading />}
             <Button
               onClick={resetForm}
               type="button"
