@@ -52,6 +52,16 @@ export default function NewDb({ uid }: { uid: string }) {
     const editors = addUsers.editors?.split(",").filter(Boolean);
     const viewers = addUsers.viewers?.split(",").filter(Boolean);
 
+    console.log(
+      "dbData: ",
+      dbData,
+      "editors: ",
+      editors,
+      "viewers: ",
+      viewers,
+      "uid: ",
+      uid,
+    );
     const { error } = await createDb({
       userId: uid,
       ...dbData,
