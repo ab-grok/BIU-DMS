@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { revalidate, validateSession } from "@/lib/sessions";
 import { createDb } from "@/lib/server";
 import Loading from "@/components/loading";
+import { useRouter } from "next/navigation";
 
 export default function NewDb({ uid }: { uid: string }) {
   const { pressAnim, setPressAnim } = useButtonAnim();
@@ -30,6 +31,7 @@ export default function NewDb({ uid }: { uid: string }) {
   const { addUsers, setAddUsers } = useAddUsers();
   const { setNotify, notify } = useNotifyContext();
   const { isLoading, setIsLoading } = useLoading();
+  const router = useRouter();
 
   const form = useForm<createDbType>({
     resolver: zodResolver(createDbSchema),
@@ -77,6 +79,7 @@ export default function NewDb({ uid }: { uid: string }) {
     } else {
       setNotify({ message: "Database created successfully" });
       await revalidate("databases");
+      router.refresh();
     }
     setIsLoading((p) => p.replace("ndb,", ""));
   }

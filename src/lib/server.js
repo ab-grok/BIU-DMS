@@ -60,7 +60,6 @@ async function checkDb(dbName) {
       return;
     }
   });
-  console.log("in dbFound");
   return dbFound;
 }
 
@@ -375,7 +374,7 @@ export async function createDb({
   console.log("got past checkUser");
 
   if (await checkDb(dbName)) return { error: "Database already exists" };
-  const res = await main`Create schema ${dbName}`; //will throw own error
+  const res = await main`Create schema ${main(dbName)}`; //will throw own error
   console.log("got past checkDb, Database will be deleted!");
 
   const metaAdded = await addMetadata({
