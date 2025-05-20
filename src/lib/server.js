@@ -130,13 +130,15 @@ async function addMetadata({
 
   let row =
     await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
-
+  console.log("row from metadata: ", row);
+  console.log("values from metadata: ", values);
   if (!row[0]) {
     let row2 =
       await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`;
     if (!row2[0]) return false;
   } else {
     const updClause = [];
+    console.log("in else from if !row[0]");
     if (db || ndb) updClause.push(auth`db_name = ${db ? db : ndb}`);
     if (tb || ntb) updClause.push(auth`tb_name = ${tb ? tb : ntb}`);
     if (prv) updClause.push(auth`private = ${prv}`);
@@ -149,7 +151,7 @@ async function addMetadata({
       updClause.push(auth`updated_by = ${updatedBy}, updated_at = ${now}`);
 
     const rowUpd =
-      await auth`update metadata set ${auth.array(updClause)} where ${auth.array(updWhere)} returning *`;
+      await auth`update metadata set ${auth(updClause)} where ${auth(updWhere)} returning *`;
     if (rowUpd[0]) return false;
   }
   return true;
