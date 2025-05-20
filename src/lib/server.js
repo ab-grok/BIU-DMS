@@ -344,7 +344,8 @@ export async function createDb({
   editors,
   isPrivate,
 }) {
-  console.log("in createDb");
+  console.log("in createDb: ", userId);
+
   const result = await checkUser({ userId });
   console.log("gOT past checkUser, createTB result: ", result);
   if (!result.firstname) {
