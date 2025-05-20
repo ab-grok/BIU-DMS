@@ -20,12 +20,12 @@ import { useEffect, useState } from "react";
 import { PlusIcon } from "lucide-react";
 import UserTag from "@/components/usertag";
 import { Separator } from "@/components/ui/separator";
-import { createDb } from "@/lib/server";
 import { revalidate, validateSession } from "@/lib/sessions";
+import { createDb } from "@/lib/server";
 
 export default function NewDb() {
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const { createDbMeta, setCreateDbMeta } = useSelection();
+  const { create, setCreate } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
   const { setNotify, notify } = useNotifyContext();
   const { isLoading, setIsLoading } = useLoading();
@@ -50,21 +50,16 @@ export default function NewDb() {
     const dbData = createDbSchema.parse(values);
     const editors: string[] = [];
     const viewers: string[] = [];
-
-    const editors1 = addUsers.editors?.split(",").filter(Boolean);
-    const viewers1 = addUsers.viewers?.split(",").filter(Boolean);
-    console.log("formSUbmitted, editors1: ", editors1);
-    console.log("formSUbmitted, viewers1: ", viewers1);
-    editors1 &&
-      editors1.forEach((a) => {
-        const uid = a.split("&");
-        editors.push(uid[0]);
-      });
-    viewers1 &&
-      viewers1.forEach((a) => {
-        const uid = a.split("&");
-        viewers.push(uid[0]);
-      });
+    const editors1 = addUsers.editors.split(",").filter(Boolean);
+    editors1.forEach((a) => {
+      const uid = a.split("&");
+      editors.push(uid[0]);
+    });
+    const viewers1 = addUsers.viewers.split(",").filter(Boolean);
+    viewers1.forEach((a) => {
+      const uid = a.split("&");
+      viewers.push(uid[0]);
+    });
     const user = await validateSession();
     if (!user) {
       setNotify({
@@ -74,7 +69,6 @@ export default function NewDb() {
       return;
     }
     const userId = user.userId;
-    console.log("userid from validateSession: ", userId);
     const created = await createDb({
       userId,
       ...dbData,
@@ -101,7 +95,7 @@ export default function NewDb() {
 
   return (
     <div
-      className={`group/ndb hover:bg-row-bg2/70 bg-row-bg1/90 border-bw/30 relative z-5 flex min-h-[6rem] w-full min-w-fit flex-none items-center border-b-2`}
+      className={`${create == "db" ? "scale-100" : "scale-0"} group/ndb hover:bg-row-bg1/70 bg-row-bg2/90 border-bw/30 relative z-5 flex min-h-[6rem] w-full min-w-fit flex-none items-center border-b-2 transition-all`}
     >
       {" "}
       <Index

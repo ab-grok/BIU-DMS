@@ -10,12 +10,14 @@ import { usePathname } from "next/navigation";
 import { logOut } from "@/app/(auth)/actions";
 import { FaUserAlt } from "react-icons/fa";
 import { validateSessionType, validateSession } from "@/lib/sessions";
+import { useSelection } from "../(pages)/selectcontext";
 
 export default function SideBar() {
   const { sidebarState, setSidebarState } = useSideContext().context;
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
   const [u, setUser] = useState({} as validateSessionType);
+  const { setCreate } = useSelection();
 
   function showAvatar(n?: number) {
     if (n) {
@@ -77,7 +79,7 @@ export default function SideBar() {
         <section className="bg-bw/5 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
           {" "}
           <SideCard name="Databases" route="databases" />
-          <SideCard name="Create a database" route="createdb" />
+          <SideCard name="Create a database" fn={() => setCreate("db")} />
           <SideCard name="View requests" route="requests" />
           <SideCard name="Private message" route="chat" />
           <SideCard name="Users" route="users" />

@@ -58,7 +58,7 @@ type selections = {
   selectedTb: string;
   setSelectedTb: Dispatch<React.SetStateAction<string>>;
   create: string;
-  setCreate: Dispatch<React.SetStateAction<string>>;
+  setCreate: Dispatch<React.SetStateAction<string>>; //createTb or createDb
   selectedRecords: string;
   setSelectedRecords: Dispatch<React.SetStateAction<string>>;
   quickA: string;

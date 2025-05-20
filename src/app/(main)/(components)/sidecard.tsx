@@ -14,9 +14,11 @@ import { usePathname, useRouter } from "next/navigation";
 export default function SideCard({
   name,
   route,
+  fn,
 }: {
   name: string;
-  route: string;
+  route?: string;
+  fn?: () => void;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -25,8 +27,11 @@ export default function SideCard({
   const { setSidebarState, sidebarState } = useSideContext().context;
 
   function handleClicked() {
-    router.push(`/${route}`);
-    setSidebarState((prev) => ({ ...prev, sbExpanded: false, route: route }));
+    if (route) {
+      router.push(`/${route}`);
+      setSidebarState((prev) => ({ ...prev, sbExpanded: false, route: route }));
+    }
+    fn && fn();
   }
 
   function hovered() {
@@ -52,7 +57,7 @@ export default function SideCard({
         onClick={() => handleClicked()}
         onMouseOver={() => hovered()}
         onMouseLeave={() => unHovered()}
-        className={`group/sb ${sidebarState.route?.includes(route) && isHovered ? "bg-sub-grad-hover" : isHovered ? `bg-sub-grad shadow-bw/70 shadow-xs` : ``} ${sidebarState.route?.includes(route) ? "bg-main-fg border-2 border-blue-400 font-bold shadow-sm" : ""} relative top-0 m-[4px] flex h-[3rem] min-h-[3rem] w-[96%] cursor-pointer items-center space-x-2 rounded-2xl p-2`}
+        className={`group/sb ${route && sidebarState.route?.includes(route) && isHovered ? "bg-sub-grad-hover" : isHovered ? `bg-sub-grad shadow-bw/70 shadow-xs` : ``} ${route && sidebarState.route?.includes(route) ? "bg-main-fg border-2 border-blue-400 font-bold shadow-sm" : ""} relative top-0 m-[4px] flex h-[3rem] min-h-[3rem] w-[96%] cursor-pointer items-center space-x-2 rounded-2xl p-2`}
       >
         <div>
           <Icon name={name} clicked={sidebarState.route == route} />

@@ -58,7 +58,7 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        {create == "db" && <NewDb />}
+        <NewDb />
       </div>
       <main
         ref={rowRef}

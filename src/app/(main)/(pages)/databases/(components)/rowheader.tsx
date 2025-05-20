@@ -53,8 +53,9 @@ export default function RowHeader({
     if (create == "db") {
       setCreate("");
       setAddUsers((p) => ({ ...p, type: "" }));
+    } else {
+      setCreate("db");
     }
-    setCreate("db");
 
     setPressAnim("newDb");
   }
