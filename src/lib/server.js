@@ -133,7 +133,7 @@ async function addMetadata({
 
   if (!row[0]) {
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${auth.array(values)}) returning *`;
+      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`;
     if (!row2[0]) return false;
   } else {
     const updClause = [];
