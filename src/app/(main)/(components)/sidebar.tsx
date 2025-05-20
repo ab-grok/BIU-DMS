@@ -9,13 +9,13 @@ import { useLoading } from "@/app/dialogcontext";
 import { usePathname } from "next/navigation";
 import { logOut } from "@/app/(auth)/actions";
 import { FaUserAlt } from "react-icons/fa";
-import { sessionValidation, validateSession } from "@/lib/sessions";
+import { validateSessionType, validateSession } from "@/lib/sessions";
 
 export default function SideBar() {
   const { sidebarState, setSidebarState } = useSideContext().context;
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
-  const [u, setUser] = useState({} as sessionValidation);
+  const [u, setUser] = useState({} as validateSessionType);
 
   function showAvatar(n?: number) {
     if (n) {
