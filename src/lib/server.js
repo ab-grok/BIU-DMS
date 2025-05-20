@@ -96,7 +96,7 @@ async function addMetadata({
   newDbName,
 }) {
   if (!dbName || (!createdBy && !updatedBy)) return false;
-  const updEditors = [createdBy, ...editors];
+  const updEditors = editors ? [createdBy, ...editors] : [createdBy];
   const prv = isPrivate == 0 || false ? false : true;
   const now = new Date();
   const tb = tbName?.trim();
@@ -119,8 +119,8 @@ async function addMetadata({
   const values = [
     db ? auth`${db}` : ndb ? auth`${ndb}` : "",
     tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
-    updEditors ? auth.array(updEditors) : "",
-    viewers ? auth.array(viewers) : "",
+    updEditors ? auth`${updEditors}` : "",
+    viewers ? auth`${viewers}` : "",
     desc ? auth`${desc}` : "",
     createdBy ? auth`${createdBy}` : "",
     updatedBy ? auth`${updatedBy}` : "",
