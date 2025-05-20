@@ -7,6 +7,7 @@ import SearchBar from "@/components/searchbar";
 import { Button } from "@/components/ui/button";
 import UserTag from "@/components/usertag";
 import { getUsers, allUsers } from "@/lib/actions";
+import { revalidate } from "@/lib/sessions";
 import { UIEvent, useEffect, useState } from "react";
 
 export default function AddUsers({ height }: { height?: string }) {
@@ -23,6 +24,7 @@ export default function AddUsers({ height }: { height?: string }) {
 
   useEffect(() => {
     (async () => {
+      await revalidate("users");
       const allUsers = await getUsers();
       if (allUsers) setUsers(allUsers);
       else {
