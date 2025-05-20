@@ -30,7 +30,6 @@ export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
   const dbWithMeta = [];
-  console.log("rows: ", rows);
 
   if (getTbCount) {
     console.log("in getTbCount");
@@ -48,7 +47,7 @@ export async function getDb(getTbCount) {
     });
     await Promise.all(row2);
   }
-  return { rows: rows[0], dbWithMeta };
+  return { rows, dbWithMeta };
 }
 
 async function checkDb(dbName) {
@@ -373,6 +372,7 @@ export async function createDb({
     return {
       error: "You cannot currently perform this action; Contact an admin",
     };
+  console.log("got past checkUser");
 
   if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${dbName}`; //will throw own error
