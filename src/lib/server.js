@@ -360,9 +360,10 @@ export async function createDb({
       "... ",
   );
 
-  const result = await checkUser({ userId });
+  const { firstname, level } = await checkUser({ userId });
   console.log("gOT past checkUser, createTB result: ", result);
-  if (!result.firstname) {
+
+  if (!firstname) {
     return {
       error: "User not found! Log in again.",
     };
@@ -373,6 +374,7 @@ export async function createDb({
 
   if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${dbName}`; //will throw own error
+  console.log("got past checkDb, Database will be deleted!");
 
   const metaAdded = await addMetadata({
     createdBy: userId,
@@ -386,6 +388,8 @@ export async function createDb({
     console.log("Couldnt add metadata, Database will be deleted!");
     const deleted = await delDb(dbName);
   }
+  console.log("got past metadata, Database will be deleted!");
+
   return { success: true };
 }
 
