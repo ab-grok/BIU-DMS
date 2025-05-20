@@ -109,8 +109,8 @@ async function addMetadata({
     updEditors ? `editors` : null,
     viewers ? `viewers` : null,
     desc ? `description` : null,
-    createdBy ? `created_by, created_at` : null,
-    updatedBy ? `updated_by, updated_at` : null,
+    ...(createdBy ? [`created_by`, `created_at`] : []),
+    ...(updatedBy ? [`updated_by, updated_at`] : []),
     `private`,
   ].filter(Boolean);
 
@@ -134,7 +134,7 @@ async function addMetadata({
 
   let row =
     await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
-  console.log("values from metadata: ", values);
+  // console.log("values from metadata: ", values);
 
   if (!row[0]) {
     console.log("in !row[0] from metadata: ");
