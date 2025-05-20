@@ -24,7 +24,6 @@ export default function AddUsers({ height }: { height?: string }) {
 
   useEffect(() => {
     (async () => {
-      await revalidate("users");
       const allUsers = await getUsers();
       if (allUsers) setUsers(allUsers);
       else {
