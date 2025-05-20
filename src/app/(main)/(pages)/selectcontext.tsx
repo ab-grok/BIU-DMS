@@ -26,8 +26,8 @@ export type createTbMeta = {
   tbName: string;
   createdBy: string;
   desc: string | undefined;
-  editors: string;
-  viewers: string;
+  // editors: string; //not needed
+  // viewers: string;
 };
 export type createDbMeta = {
   createdBy: string;

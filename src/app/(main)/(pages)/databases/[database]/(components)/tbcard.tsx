@@ -15,18 +15,24 @@ import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
 import { Tb } from "@/lib/actions";
 import { useNotifyContext } from "@/app/dialogcontext";
+import { getUserAccess } from "@/lib/server";
 
 type tbType = {
   i: number;
   Tb: Tb;
-  u: string;
+  uid: string;
   db: string;
 };
-export default function TableCard({ Tb, i, u, db }: tbType) {
+export default function TableCard({ Tb, i, uid, db }: tbType) {
   const router = useRouter();
 
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const userAllowed = useRef(false);
+  const [uAccess, setUAccess] = useState({ edit: false, view: false });
+  type userType = { id: string; ttl: string; fname: string }[];
+
+  const [viewers, setViewers] = useState([] as userType);
+  const [editors, setEditors] = useState([] as userType);
+
   const [metaHover, setMetaHover] = useState(0);
   const [viewersHover, setViewersHover] = useState(0);
   const [editorsHover, setEditorsHover] = useState(0);
@@ -45,16 +51,24 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
 
   useEffect(() => {
     // console.log("u from tbcard: ", u);
-    const currTbV = Tb.viewers ?? "";
-    const CurrTbE = Tb.editors ?? "";
-    for (let i = 0; i < Math.max(currTbV.length, CurrTbE.length); i++) {
-      // console.log("for loop hit..", i);
-      if ((currTbV && currTbV[i].id == u) || (CurrTbE && CurrTbE[i].id == u)) {
-        userAllowed.current = true;
-        break;
-        //set logic for locks on databse without view -- you cant view this table.
-      }
-    }
+    (async () => {
+      Tb.viewers?.forEach((a) => {
+        if (a.includes(uid)) setUAccess({ view: true, edit: false });
+        const u = a?.split("&");
+        setViewers((p) => {
+          return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
+        });
+      });
+      Tb.editors?.forEach((a) => {
+        if (a.includes(uid)) setUAccess({ view: true, edit: true });
+        const u = a?.split("&");
+        setEditors((p) => {
+          return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
+        });
+      });
+
+      if (Tb.createdBy?.includes(uid)) setUAccess({ edit: true, view: true });
+    })();
   }, []);
 
   function handleMetaHover(n: number) {
@@ -130,11 +144,11 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
     setTimeout(() => {
       setBtnClicked("");
     }, 60);
-    if (a == "door" && userAllowed.current) {
-      router.push(`/databases${Tb.tbName}`);
+    if (a == "door" && (uAccess.view || uAccess.edit)) {
+      router.push(`/databases/${db}/${Tb.tbName}`);
     } else {
       setNotify({
-        message: "You do not have access to this table",
+        message: "Access Denied!",
         danger: true,
       });
     }
@@ -214,7 +228,7 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
               onClick={() => handleEnter("door")}
               className={`${selectedTb.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter h-full w-1/3 cursor-pointer items-center justify-end pr-3`}
             >
-              {!userAllowed.current ? (
+              {!(uAccess.view || uAccess.edit) ? (
                 <LockIcon
                   className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-red-900 stroke-3 duration-50 group-hover/enter:stroke-red-600 hover:scale-105`}
                 />
@@ -280,8 +294,8 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
               )}
             </div>
             <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
-              {Tb.viewers ? (
-                Tb.viewers.map((a, i) => (
+              {viewers ? (
+                viewers.map((a, i) => (
                   <div
                     key={i}
                     onMouseEnter={() => setViewersHover(i + 1)}
@@ -298,8 +312,8 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
                       />
                     </span>
                     <UserTag
-                      name={a.username || a.firstname}
-                      title={!a.username ? a.title : ""}
+                      name={a.fname}
+                      title={a.ttl}
                       className="w-fit justify-start text-xs font-normal"
                       hovered={viewersHover}
                       n={i + 1}
@@ -351,8 +365,8 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
               )}
             </div>
             <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
-              {Tb.editors ? (
-                Tb.editors.map((a, i) => (
+              {editors ? (
+                editors.map((a, i) => (
                   <div
                     key={i}
                     onMouseEnter={() => setEditorsHover(i + 1)}
@@ -369,8 +383,8 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
                       />
                     </span>
                     <UserTag
-                      name={a.username || a.firstname}
-                      title={!a.username ? a.title : ""}
+                      name={a.fname}
+                      title={a.ttl}
                       className="w-fit justify-start text-xs font-normal"
                       hovered={editorsHover}
                       n={i + 1}

@@ -300,21 +300,21 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //   return { viewers1, editors1 };
 // }
 
-async function getUserAccess({ dbName, tbName, userId }) {
+export async function getUserAccess({ dbName, tbName, userId }) {
   //ADMIN
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
-  if (!userId || !dbName)
-    throw {
-      customMessage: "Only granted users can access this database or table.",
-    };
+  const none = { level: null, edit: null, view: null };
+  if (!userId) return none;
+
   if (!(await checkDb())) {
     console.log("Db not found");
-    return false;
+    return none;
   }
   if (!(await checkTb())) {
     console.log("Tb not found!");
-    return false;
+    return none;
   }
+  const { level } = await checkUser({ userId });
   const { createdBy, viewers, editors } = await getMetadata({
     dbName,
     tbName,
@@ -333,7 +333,7 @@ async function getUserAccess({ dbName, tbName, userId }) {
   //   if (!tbName)
   //   view = true;
   // }
-  return { edit, view };
+  return { edit, view, level };
 }
 
 export async function createDb({
@@ -428,18 +428,18 @@ export async function createTb({
   viewers,
   editors,
 }) {
-  if (!(await checkDb(dbName))) throw { customMessage: `Unauthorized action` };
+  if (!(await checkDb(dbName))) return { error: `Unauthorized action` };
   if (await checkTb({ dbName, tbName })) {
-    throw {
-      customMessage: "Table already exists.",
+    return {
+      error: "Table already exists.",
     };
   }
-  if (!columns.length) throw { customMessage: "Empty columns" };
+  if (!columns.length) return { error: "Empty columns" };
 
   let colArr = [];
   let primaryFound = false;
   const nameCheck = /^[A-Z0-9_£$%&!#]*$/i;
-  if (!nameCheck.test(tbName)) throw { message: "Not a valid table name" };
+  if (!nameCheck.test(tbName)) return { message: "Not a valid table name" };
 
   for (const col of columns) {
     //fn to screen value digits for number, etc
@@ -498,7 +498,7 @@ export async function createTb({
   if (!metaAdded) {
     //undo created table
     console.log(`metaData not added for database: ${dbName}, table: ${tbName}`);
-    throw { customMessage: "An error occured." };
+    return { error: "An error occured." };
   }
 
   console.log("sql from createTb: ", sql);

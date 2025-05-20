@@ -24,7 +24,7 @@ import { revalidate, validateSession } from "@/lib/sessions";
 import { createDb } from "@/lib/server";
 import Loading from "@/components/loading";
 
-export default function NewDb() {
+export default function NewDb({ uid }: { uid: string }) {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { create, setCreate } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
@@ -49,32 +49,11 @@ export default function NewDb() {
   async function dbSubmitted(values: createDbType) {
     setIsLoading((p) => p + "ndb,");
     const dbData = createDbSchema.parse(values);
-    const editors: string[] = [];
-    const viewers: string[] = [];
-    const editors1 = addUsers.editors?.split(",").filter(Boolean);
-    editors1 &&
-      editors1.forEach((a) => {
-        const uid = a.split("&");
-        editors.push(uid[0]);
-      });
-    const viewers1 = addUsers.viewers?.split(",").filter(Boolean);
-    viewers1 &&
-      viewers1.forEach((a) => {
-        const uid = a.split("&");
-        viewers.push(uid[0]);
-      });
-    console.log("got data about to validateSession");
-    const user = await validateSession();
-    if (!user) {
-      setNotify({
-        danger: true,
-        message: "Something went wrong",
-      });
-      return;
-    }
-    const userId = user.userId;
+    const editors = addUsers.editors?.split(",").filter(Boolean);
+    const viewers = addUsers.viewers?.split(",").filter(Boolean);
+
     const { error } = await createDb({
-      userId,
+      userId: uid,
       ...dbData,
       viewers,
       editors,

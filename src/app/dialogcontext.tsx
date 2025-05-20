@@ -26,7 +26,7 @@ type dialogTypes = {
 };
 
 type addUsers = {
-  editors: string; //id?db/tb, id?db  //newTB/Db - uid&title&firstname
+  editors: string; //(id?db/tb, id?db  !)  //newTB/Db - uid&title&firstname
   viewers: string; //"new" for createTb
   type: "newDb" | "newTb" | "db" | "tb" | ""; //you can use this to render the specific context - this is not done yet
   category: "editors" | "viewers";

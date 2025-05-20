@@ -8,6 +8,7 @@ import Loading from "@/components/loading";
 import { useSelection } from "../selectcontext";
 import AddUsers from "../../(components)/addusers";
 import NewDb from "./(components)/newdb";
+import { validateSession, validateSessionType } from "@/lib/sessions";
 
 export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
@@ -15,6 +16,7 @@ export default function DbLayout() {
   const { isLoading, setIsLoading } = useLoading();
   const { create } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
+  const [user, setUser] = useState({} as validateSessionType);
 
   console.log("current isLoading: ", isLoading);
   useEffect(() => {
@@ -30,6 +32,15 @@ export default function DbLayout() {
         return;
       } else {
         setDb(res);
+        console.log("got data about to validateSession");
+        const user = await validateSession();
+        if (!user) {
+          setNotify({
+            danger: true,
+            message: "Couldn't authenticate you. Please log in again.",
+          });
+          return;
+        }
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));
@@ -58,7 +69,7 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb />
+        <NewDb uid={user?.userId || ""} />
       </div>
       <main
         ref={rowRef}

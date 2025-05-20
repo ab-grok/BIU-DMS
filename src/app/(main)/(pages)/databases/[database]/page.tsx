@@ -56,7 +56,7 @@ export default function Database() {
     <div className="relative flex h-full w-full flex-col">
       {isLoading.includes(currDb) && <Loading />}
       {addUsers.type == "newTb" && <AddUsers />}
-      <CreateTb u={userId.current} db={currDb} i={0} />
+      <CreateTb uid={userId.current} db={currDb} i={0} />
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
@@ -64,7 +64,7 @@ export default function Database() {
           tbData.map((a, i) => (
             <TableCard
               key={i}
-              u={userId.current}
+              uid={userId.current}
               Tb={a}
               i={i + 1}
               db={currDb}

@@ -75,18 +75,8 @@ export type Tb = {
   updatedBy: string;
   description: string;
   private: boolean;
-  viewers: {
-    firstname: string;
-    username: string;
-    title: string;
-    id: string;
-  }[];
-  editors: {
-    firstname: string;
-    username: string;
-    title: string;
-    id: string;
-  }[];
+  viewers: string[];
+  editors: string[];
 };
 
 export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
@@ -220,34 +210,34 @@ export async function timeAgo(iso: string): Promise<string> {
   return `${seconds}s`;
 }
 
-export async function getUserAccess(db?: string, tb?: string): Promise<number> {
-  //0 - none, 1 - view, 2 - edit
-  const userId = (await validateSession())?.userId;
-  const level = (await validateSession())?.level;
+// async function getUserAccess(db?: string, tb?: string): Promise<number> {
+//   //0 - none, 1 - view, 2 - edit
+//   const {userId, level} = (await validateSession())?.userId;
+//   const level = (await validateSession())?.level;
 
-  if (!userId) return 0;
-  if (tb) {
-  } //can add rows
-  else if (db) {
-    const tbs = await ListTables(db);
-    tbs &&
-      tbs.forEach((a, i) => {
-        const length = Math.max(a.editors.length, a.viewers.length);
-        for (let j = 0; j < length; j++) {
-          if (a.editors[j]?.id == userId) return 2;
-          else if (a.viewers[j]?.id == userId) return 1;
-        }
-      });
-  } else {
-    const dbs = await listDatabases();
-    dbs &&
-      dbs.forEach((a, i) => {
-        a.editors.forEach((b, j) => {
-          if (b.id == userId) return 2;
-        });
-      });
+//   if (!userId) return 0;
+//   if (tb) {
+//   } //can add rows
+//   else if (db) {
+//     const tbs = await ListTables(db);
+//     tbs &&
+//       tbs.forEach((a, i) => {
+//         const length = Math.max(a.editors.length, a.viewers.length);
+//         for (let j = 0; j < length; j++) {
+//           if (a.editors[j]?.id == userId) return 2;
+//           else if (a.viewers[j]?.id == userId) return 1;
+//         }
+//       });
+//   } else {
+//     const dbs = await listDatabases();
+//     dbs &&
+//       dbs.forEach((a, i) => {
+//         a.editors.forEach((b, j) => {
+//           if (b.id == userId) return 2;
+//         });
+//       });
 
-    //return 1 if level 2: user can view dbs
-  }
-  return 0;
-}
+//     //return 1 if level 2: user can view dbs
+//   }
+//   return 0;
+// }
