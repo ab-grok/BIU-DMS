@@ -51,15 +51,17 @@ export default function NewDb() {
     const editors: string[] = [];
     const viewers: string[] = [];
     const editors1 = addUsers.editors?.split(",").filter(Boolean);
-    editors1.forEach((a) => {
-      const uid = a.split("&");
-      editors.push(uid[0]);
-    });
+    editors1 &&
+      editors1.forEach((a) => {
+        const uid = a.split("&");
+        editors.push(uid[0]);
+      });
     const viewers1 = addUsers.viewers?.split(",").filter(Boolean);
-    viewers1.forEach((a) => {
-      const uid = a.split("&");
-      viewers.push(uid[0]);
-    });
+    viewers1 &&
+      viewers1.forEach((a) => {
+        const uid = a.split("&");
+        viewers.push(uid[0]);
+      });
     console.log("got data about to validateSession");
     const user = await validateSession();
     if (!user) {
