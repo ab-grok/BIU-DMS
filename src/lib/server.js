@@ -127,12 +127,12 @@ async function addMetadata({
   const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`];
 
   let row =
-    await await auth`select * from metadata where db_name = ${db} and tb_name = ${tb ? tb : ""}`;
+    await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : ""}`;
 
-  if (!row.rowCount) {
+  if (!row[0]) {
     let row2 =
-      await auth`Insert into "metadata" (${auth.raw(columns.join(","))}) values (${auth.array(values)})`;
-    if (!row2.count) return false;
+      await auth`Insert into "metadata" (${auth.raw(columns.join(","))}) values (${auth.array(values)}) returning *`;
+    if (!row2[0]) return false;
   } else {
     const updClause = [];
     if (db || ndb) updClause.push(auth`db_name = ${db ? db : ndb}`);
@@ -147,8 +147,8 @@ async function addMetadata({
       updClause.push(auth`updated_by = ${updatedBy}, updated_at = ${now}`);
 
     const rowUpd =
-      await auth`update metadata set ${auth.array(updClause)} where ${auth.array(updWhere)}`;
-    if (rowUpd.rowCount < 1) return false;
+      await auth`update metadata set ${auth.array(updClause)} where ${auth.array(updWhere)} returning *`;
+    if (rowUpd[0]) return false;
   }
   return true;
 }
@@ -519,7 +519,7 @@ export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   const res =
     await main`Select * from ${main([dbName, tbName])} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
   console.log("TB data from getTBData: ", JSON.stringify(res));
-  if (!res.rowCount) console.log({ customMessage: "No table data exists" });
+  if (!res[0]) console.log({ customMessage: "No table data exists" });
   return { rows: res };
 }
 
@@ -588,9 +588,9 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
     main``,
   );
   const res =
-    await main`insert into ${main([dbName, tbName])} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)}`;
+    await main`insert into ${main([dbName, tbName])} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)} returning *`;
 
-  if (!res.rowCount) throw { customMessage: "insert failed" };
+  if (!res[0]) throw { customMessage: "insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: userId });
   if (!metaAdded) console.log("insertData meta not added");
 
@@ -628,8 +628,8 @@ async function searchField() {
 export async function getAllUsers() {
   //users = {id, title, firstname, lastname, username, level, created{}, views{}, edits{}}
   const allUsers =
-    await auth`select id, title, firstname, lastname, username, level from user `;
-  if (!allUsers.rowCount) {
+    await auth`select id, title, firstname, lastname, username, level from "user" `;
+  if (!allUsers[0]) {
     console.log("allUsers HAS NO rows");
     return null;
   }
@@ -637,7 +637,7 @@ export async function getAllUsers() {
   const users = []; //{created, views, edits} : each: {db:[], tb:[]} : tb: db/tb, db
 
   const meta =
-    await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from metadata`;
+    await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from "metadata"`;
   allUsers.forEach((u, i) => {
     const currU = {
       created: { db: [], tb: [] },
@@ -691,16 +691,17 @@ export async function createSession({ userId, dcrPass, token32 }) {
 }
 
 export async function delSession({ userId }) {
-  const rowDel = await auth`delete from user_session where user_id = ${userId}`;
-  if (!rowDel.rowCount) return false;
+  const rowDel =
+    await auth`delete from "user_session" where user_id = ${userId} returning *`;
+  if (!rowDel[0]) return false;
   return true;
 }
 
 export async function updateSession({ sessionId, expires_at }) {
   const rowUpd =
-    await auth`update user_session set expires_at = ${expires_at} where id = ${sessionId}`;
+    await auth`update user_session set expires_at = ${expires_at} where id = ${sessionId} returning *`;
   console.log("rowUpd from updsession: " + rowUpd);
-  if (!rowUpd.rowCount) return false;
+  if (!rowUpd[0]) return false;
   return true;
 }
 
@@ -714,7 +715,6 @@ export async function getSession({ token32, update, getId }) {
   console.log("sessionId from getSession: ", sessionId);
   const rowArr = auth`select us.expires_at as "expiresAt", u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as "userId", u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
   let row = await auth`${rowArr}`;
-  console.log("row from getSession: ", row);
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
   let rowTime = row[0].expiresAt.getTime();
