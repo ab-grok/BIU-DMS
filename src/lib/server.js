@@ -389,7 +389,7 @@ export async function createDb({
     console.log("Couldnt add metadata, Database will be deleted!");
     const deleted = await delDb(dbName);
   }
-  console.log("got past metadata, Database will be deleted!");
+  console.log("got past metadata, database success !");
 
   return { success: true };
 }

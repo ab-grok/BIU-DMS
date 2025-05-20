@@ -32,7 +32,7 @@ export async function listDatabases(): Promise<Array<db> | null> {
   if (!token32) return null;
   const dbList = unstable_cache(
     async () => {
-      console.log("listDatabases token32: " + token32);
+      console.log("in listDatabases token32: " + token32);
       try {
         const { userId } = await getSession({
           token32,

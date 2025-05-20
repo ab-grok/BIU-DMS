@@ -64,7 +64,7 @@ export default function NewDb({ uid }: { uid: string }) {
       "uid: ",
       uid,
     );
-    const { error } = await createDb({
+    const { error, success } = await createDb({
       userId: uid,
       ...dbData,
       viewers,
@@ -81,6 +81,7 @@ export default function NewDb({ uid }: { uid: string }) {
       await revalidate("databases");
       router.refresh();
     }
+    console.log("db created, success: ", success, "...error: ", error);
     setIsLoading((p) => p.replace("ndb,", ""));
   }
 
