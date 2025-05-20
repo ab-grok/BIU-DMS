@@ -95,7 +95,7 @@ export default function NewDb() {
 
   return (
     <div
-      className={`${create == "db" ? "scale-100" : "scale-0"} group/ndb hover:bg-row-bg1/70 bg-row-bg2/90 border-bw/30 relative z-5 flex min-h-[6rem] w-full min-w-fit flex-none items-center border-b-2 transition-all`}
+      className={`${create == "db" ? "scale-100" : "hidden scale-0"} group/ndb hover:bg-row-bg1/70 bg-row-bg2/90 border-bw/30 relative z-5 flex min-h-[6rem] w-full min-w-fit flex-none items-center border-b-2 transition-all`}
     >
       {" "}
       <Index
