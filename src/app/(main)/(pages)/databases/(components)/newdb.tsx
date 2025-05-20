@@ -78,7 +78,7 @@ export default function NewDb({ uid }: { uid: string }) {
       });
     } else {
       setNotify({ message: "Database created successfully" });
-      await revalidate("databases");
+      await revalidate("databases", "all");
       router.refresh();
     }
     console.log("db created, success: ", success, "...error: ", error);
