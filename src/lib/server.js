@@ -96,7 +96,7 @@ async function addMetadata({
   newDbName,
 }) {
   if (!dbName || (!createdBy && !updatedBy)) return false;
-  const updEditors = `${createdBy ? createdBy : ""}${editors ? `,${editors}` : null}`;
+  const updEditors = [createdBy, ...editors];
   const prv = isPrivate == 0 || false ? false : true;
   const now = new Date();
   const tb = tbName?.trim();
