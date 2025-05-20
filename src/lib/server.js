@@ -503,7 +503,7 @@ export async function createTb({
 
   console.log("sql from createTb: ", sql);
 
-  return true;
+  return { success: true };
 }
 
 export async function getTbData({ dbName, tbName, orderBy, userId, where }) {

@@ -27,10 +27,11 @@ import { postTable } from "@/lib/actions";
 import Loading from "@/components/loading";
 import { KeysButton } from "@/components/keysbutton";
 import { PlusIcon } from "lucide-react";
+import { createTb } from "@/lib/server";
 
 type tbType = {
   i: number;
-  u: string;
+  uid: string;
   db: string;
 };
 
@@ -48,7 +49,7 @@ export type errSetter = {
   delPrifn?: (del: string) => void;
 } | null;
 
-export default function CreateTb({ i, u, db }: tbType) {
+export default function CreateTb({ i, uid, db }: tbType) {
   const router = useRouter();
   const [cardClicked, setCardClick] = useState(false);
   const { notify, setNotify } = useNotifyContext();
@@ -63,6 +64,7 @@ export default function CreateTb({ i, u, db }: tbType) {
     setCreateTbCol,
   } = useSelection();
   const { pressAnim, setPressAnim } = useButtonAnim();
+  const { addUsers } = useAddUsers();
   const [errDialog, setErrDialog] = useState({} as errSetter);
   const { isLoading, setIsLoading } = useLoading();
   const [typeChange, setTypeChange] = useState(0);
@@ -112,10 +114,8 @@ export default function CreateTb({ i, u, db }: tbType) {
     if (!createTbMeta.tbName) {
       setCreateTbMeta({
         dbName: db,
-        createdBy: u,
+        createdBy: uid,
         tbName: columns.name,
-        viewers: "",
-        editors: "",
         desc: "",
       });
       setCreateTbCol([]);
@@ -194,9 +194,24 @@ export default function CreateTb({ i, u, db }: tbType) {
       return;
     }
 
+    const viewers = addUsers.viewers?.split(",").filter(Boolean);
+    const editors = addUsers.editors?.split(",").filter(Boolean);
+    const { createdBy, ...meta } = createTbMeta;
+
+    const postTb = {
+      columns: createTbCol,
+      ...meta,
+      userId: createdBy,
+      viewers,
+      editors,
+      isPrivate: 1,
+    }; //change isprivate?
+    console.log("createTbMeta: ", createTbMeta);
+    console.log("postTb: ", createTbMeta);
+
     setIsLoading((p) => p + "createTb,");
     (async () => {
-      const { error } = await postTable(createTbCol, createTbMeta);
+      const { error } = await createTb(postTb);
       if (!error)
         setNotify({
           message: "Table has been created",
