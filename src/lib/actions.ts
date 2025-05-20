@@ -172,9 +172,8 @@ export async function getUsers(): Promise<Array<allUsers> | null> {
 
   const userData = unstable_cache(
     async () => {
-      console.log("getUsers unstable_cache ran. token32: ", token32);
       try {
-        console.log("token32 from decryptText: ", token32);
+        console.log("getUsers unstable_cache ran. token32: ", token32);
         const { userId } = await getSession({
           token32,
           update: false,
