@@ -3,18 +3,23 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import React, { useState } from "react";
 
+interface searchProps extends React.ComponentProps<"input"> {
+  placeholder?: string;
+}
+
 export default function SearchBar({
   className,
   type,
   onChange,
   value,
-}: React.ComponentProps<"input">) {
+  placeholder,
+}: searchProps) {
   const [search, setSearch] = useState(false);
   function handleSearch() {}
   return (
     <div className="relative flex">
       <input
-        placeholder="Firstname / lastname"
+        placeholder={placeholder || "Firstname / lastname"}
         type="text"
         onChange={onChange}
         className={cn(

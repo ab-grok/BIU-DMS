@@ -9,7 +9,7 @@ import { delSession, getSession } from "./server";
 //   token: string;
 //   expiresAt: Date;
 // };
-type sessionValidation = {
+export type validateSessionType = {
   username: string;
   firstname: string;
   level: number;
@@ -76,7 +76,7 @@ export async function validateSession() {
   console.log("validateSession was hit, token32", token32);
 
   const validateWithCookies = unstable_cache(
-    async (): Promise<sessionValidation> => {
+    async (): Promise<validateSessionType> => {
       console.log("+++++++++++++got inside unstable_cache's function");
       try {
         const user = await getSession({ token32, update: true, getId: true });
@@ -87,7 +87,7 @@ export async function validateSession() {
         const { expiresAt } = user;
         console.log("got past create session, expiresAt: ", expiresAt);
         if (expiresAt) await createSessionCookie({ token32, expiresAt });
-        return user as sessionValidation;
+        return user as validateSessionType;
       } catch (e: any) {
         console.log(e);
         return null;

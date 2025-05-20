@@ -4,6 +4,9 @@ import { IoBulb, IoBulbSharp } from "react-icons/io5";
 import { useTheme } from "next-themes";
 import { GalleryHorizontal, RectangleEllipsis } from "lucide-react";
 import { useSideContext } from "../layoutcontext";
+import logo from "@/assets/images/biu_blue_round.png";
+import Image from "next/image";
+import SearchBar from "@/components/searchbar";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -23,8 +26,8 @@ export default function Navbar() {
   }
 
   return (
-    <div className="bg-main-fg absolute top-0 z-5 flex h-[3rem] w-[90%] flex-none items-center justify-between self-center rounded-[5px]">
-      <div className="flex h-full w-1/3 flex-none items-center bg-amber-300 px-1">
+    <div className="bg-nav-grad ring-main-bg/30 absolute top-0.5 z-5 flex h-[3rem] w-[90%] flex-none items-center justify-between gap-1 self-center overflow-hidden rounded-[5px] shadow-lg ring-2 shadow-black">
+      <div className="bg-bw/10 flex h-full w-1/3 flex-none items-center rounded-xs px-1">
         {" "}
         <span
           onClick={menuClicked}
@@ -37,15 +40,24 @@ export default function Navbar() {
             <RectangleEllipsis className="fill-main-fg rotate-90 group-hover/menu:shadow-md" />
           )}
         </span>
-        logo far right
+        <span className="bg-main-fg/50 flex size-11 items-center justify-center rounded-full">
+          <Image src={logo} alt="Logo" className={`size-10`} />
+        </span>
+        <span className="text-main-bg ml-1 text-xl font-bold select-none">
+          {" "}
+          BIU DMS{" "}
+        </span>
       </div>
-      <div className="z-6 w-1/3 flex-none"> search bar w-dynamic</div>
-      <div className="flex h-full w-[10rem] items-center justify-end bg-green-500 px-2">
+      <div className="z-6 w-1/3 flex-none px-3">
+        {" "}
+        <SearchBar placeholder="database, table or field " />
+      </div>
+      <div className="bg-bw/10 flex h-full w-[10rem] items-center justify-end px-2">
         {" "}
         <div
           onClick={() => switchMode()}
           title="Theme"
-          className="group shadow-bw flex h-[90%] w-[3rem] items-center justify-center rounded-full bg-white hover:bg-slate-200 hover:shadow-xs"
+          className="group shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
         >
           {theme == "light" ? (
             <IoBulb

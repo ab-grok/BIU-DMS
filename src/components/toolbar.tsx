@@ -113,12 +113,12 @@ export function Toolbar() {
     <header
       className={` ${!page.db && "hidden"} bg-main-fg border-main-bg relative flex h-full max-h-[3rem] min-h-[3rem] items-center border-b-2 px-1`}
     >
-      <div className="flex h-[2.5rem] w-full items-center justify-between overflow-hidden rounded-xl bg-yellow-400 p-1 text-sm">
-        <section className="relative flex h-full max-w-fit items-center rounded-2xl bg-blue-400 select-none">
+      <div className="flex h-[2.5rem] w-full items-center justify-between overflow-hidden rounded-xl p-1 text-sm">
+        <section className="relative flex h-full max-w-fit items-center rounded-2xl select-none">
           <div
             onClick={() => reRoute(5)}
             title={` Create a new ${page.record ? "" : page.tb ? "record" : page.db ? "table" : ""} `}
-            className={` ${pressAnim == "new" && "scale-95 shadow-none"} mr-2 flex size-8 cursor-pointer items-center justify-center rounded-[5px] bg-red-400 hover:shadow-sm`}
+            className={` ${pressAnim == "new" && "scale-95 shadow-none"} ${create == "record" || (create == "table" && "ring-2")} hover:bg-sub-fg bg-sub-fg/50 mr-2 flex size-8 cursor-pointer items-center justify-center rounded-[5px] hover:shadow-sm`}
           >
             <PlusIcon
               className={`${(create == "record" || create == "table") && "rotate-45"} transition-all`}

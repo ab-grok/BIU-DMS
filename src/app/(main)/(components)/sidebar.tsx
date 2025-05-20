@@ -9,11 +9,13 @@ import { useLoading } from "@/app/dialogcontext";
 import { usePathname } from "next/navigation";
 import { logOut } from "@/app/(auth)/actions";
 import { FaUserAlt } from "react-icons/fa";
+import { sessionValidation, validateSession } from "@/lib/sessions";
 
 export default function SideBar() {
   const { sidebarState, setSidebarState } = useSideContext().context;
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
+  const [u, setUser] = useState({} as sessionValidation);
 
   function showAvatar(n?: number) {
     if (n) {
@@ -25,6 +27,12 @@ export default function SideBar() {
   const { isLoading, sidebarEditable, setSidebarEdit } = useLoading();
   useEffect(() => {
     setSidebarEdit(true);
+    (async () => {
+      const user = await validateSession();
+      if (user) {
+        setUser(user);
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -35,7 +43,7 @@ export default function SideBar() {
   return (
     <div
       onClick={() => showAvatar(1)}
-      className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg shadow-black transition-all`}
+      className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
     >
       {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
       <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1 ring-2">
@@ -54,6 +62,15 @@ export default function SideBar() {
               <SBQuickActions fn2={() => logOut()} />
             )}
           </div>
+          <span
+            className={`${quickActions && "hidden"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
+          >
+            <span>
+              {u?.title}
+              {u?.firstname}
+            </span>
+            <span className="text-main-bg">level: {u?.level}</span>
+          </span>
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
 
@@ -66,9 +83,9 @@ export default function SideBar() {
           <SideCard name="Users" route="users" />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
-        <section className="bg-bw/5 relative top-0 h-full max-h-[25%] w-full rounded-[10px]">
-          {" "}
-          List of he db tag (get current db route)
+        <section className="bg-bw/5 relative top-0 flex h-full max-h-[25%] w-full flex-col items-center rounded-[10px] p-4 text-xs italic">
+          <span className="text-lg">Feed</span>
+          <span>No activiy yet</span>
         </section>
       </main>
     </div>

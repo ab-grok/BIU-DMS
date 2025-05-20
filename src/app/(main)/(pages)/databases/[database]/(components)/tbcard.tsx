@@ -182,7 +182,7 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
     >
       <Index
         i={i}
-        className="group-hover:bg-sub-grad-forced sticky h-[11rem] self-center"
+        className="group-hover:bg-sub-grad-forced sticky h-[11.2rem] self-center"
       />
       <div
         id="main"
@@ -212,15 +212,15 @@ export default function TableCard({ Tb, i, u, db }: tbType) {
             </div>
             <div
               onClick={() => handleEnter("door")}
-              className="group/enter flex h-full w-1/3 cursor-pointer items-center justify-end pr-3"
+              className={`${selectedTb.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter h-full w-1/3 cursor-pointer items-center justify-end pr-3`}
             >
               {!userAllowed.current ? (
                 <LockIcon
-                  className={`${btnClicked == "door" ? "scale-[0.97] animate-ping" : ""} hidden stroke-red-900 stroke-3 duration-50 group-hover:flex group-hover/enter:animate-bounce group-hover/enter:stroke-red-600`}
+                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-red-900 stroke-3 duration-50 group-hover/enter:stroke-red-600 hover:scale-105`}
                 />
               ) : (
                 <KeyRound
-                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 hidden group-hover:flex group-hover/enter:stroke-green-600`}
+                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 group-hover/enter:stroke-green-600`}
                 />
               )}
             </div>

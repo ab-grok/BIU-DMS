@@ -164,12 +164,11 @@
   .bg-radial-gradient {
     background-image: radial-gradient(ellipse at center, #acb0ed, #dedede);
   }
-  .bg-card-gradient-light {
-    background-image: radial-gradient(
-      ellipse at center,
-      rgb(116, 133, 138),
-      rgb(10, 177, 228),
-      rgb(10, 177, 228)
+  .bg-nav-grad {
+    background-image: linear-gradient(
+      to bottom,
+      var(--main-fg),
+      var(--tb-row1)
     );
   }
   .bg-card-gradient-light-r {
@@ -266,7 +265,7 @@
   --shadow-bw: rgb(60, 60, 60);
   --row-bg1: rgb(236, 232, 232);
   --row-bg2: rgb(178, 177, 177);
-  --tb-row1: rgb(185, 185, 185);
+  --tb-row1: rgb(77, 75, 75);
   --tb-row2: rgb(235, 140, 140);
   --sub-text: rgb(54, 54, 54);
   --card-selection: rgb(76, 182, 72);
