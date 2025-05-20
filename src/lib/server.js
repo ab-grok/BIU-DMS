@@ -361,7 +361,6 @@ export async function createDb({
   );
 
   const { firstname, level } = await checkUser({ userId });
-  console.log("gOT past checkUser, createTB result: ", result);
 
   if (!firstname) {
     return {
