@@ -345,9 +345,9 @@ export async function createDb({
   isPrivate,
 }) {
   console.log("in createDb");
-  const { firstname, level } = await checkUser({ userId });
-  console.log("gOT past checkUser");
-  if (!firstname) {
+  const result = await checkUser({ userId });
+  console.log("gOT past checkUser, createTB result: ", result);
+  if (!result.firstname) {
     return {
       error: "User not found! Log in again.",
     };
