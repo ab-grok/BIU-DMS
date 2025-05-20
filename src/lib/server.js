@@ -77,6 +77,7 @@ export async function delDb(dbName) {
     throw "database does not exist";
   }
   const res = await main`drop schema ${dbName} cascade`;
+  console.log("database deleted from deldb");
   return res;
 }
 
@@ -344,9 +345,9 @@ export async function createDb({
   isPrivate,
 }) {
   console.log("in createDb");
-  const { email, level } = await checkUser({ userId });
+  const { userId, level } = await checkUser({ userId });
   console.log("gOT past checkUser");
-  if (!email) {
+  if (!userId) {
     throw {
       customMessage: "User not found! Log in again.",
     };
@@ -367,8 +368,10 @@ export async function createDb({
     editors,
     viewers,
   });
-  if (!metaAdded)
+  if (!metaAdded) {
     console.log("Couldnt add metadata, Database will be deleted!");
+    const deleted = await delDb(dbName);
+  }
   return true;
 }
 
