@@ -115,26 +115,32 @@ async function addMetadata({
   ].filter(Boolean);
 
   const values = [
-    db ? db : ndb ? ndb : "",
-    tb ? tb : ntb ? ntb : "",
-    updEditors ? updEditors : "",
-    viewers ? viewers : "",
-    desc ? desc : "",
-    createdBy ? createdBy : "",
-    updatedBy ? updatedBy : "",
-    now ? now : "",
-    prv ? prv : "",
+    db ? auth`${db}` : ndb ? auth`${ndb}` : "",
+    tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
+    updEditors ? auth`${updEditors}` : "",
+    viewers ? auth`${viewers}` : "",
+    desc ? auth`${desc}` : "",
+    createdBy ? auth`${createdBy}` : "",
+    updatedBy ? auth`${updatedBy}` : "",
+    now ? auth`${now}` : "",
+    prv ? auth`${prv}` : "",
   ].filter(Boolean);
 
   const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`];
+  let valStr = values.reduce(
+    (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
+    auth``,
+  );
 
   let row =
     await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
-  console.log("row from metadata: ", row);
   console.log("values from metadata: ", values);
+
   if (!row[0]) {
+    console.log("in !row[0] from metadata: ");
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`;
+      await auth`Insert into "metadata" (${auth(columns)}) values (${valStr}) returning *`;
+    console.log("row2 from metadata: ", row2);
     if (!row2[0]) return false;
   } else {
     const updClause = [];
