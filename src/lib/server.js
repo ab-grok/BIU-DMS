@@ -33,7 +33,9 @@ export async function getDb(getTbCount) {
   console.log("rows: ", rows);
 
   if (getTbCount) {
+    console.log("in getTbCount");
     const row2 = rows?.map(async (a, i) => {
+      console.log("tbCOunts a: ", a);
       const count =
         await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
       console.log("select count: ", count);
