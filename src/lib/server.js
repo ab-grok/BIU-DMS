@@ -711,6 +711,7 @@ export async function getSession({ token32, update, getId }) {
     : null;
   let sessionUpdated = false;
 
+  console.log("sessionId from getSession: ", sessionId);
   const rowArr = auth`select us.expires_at as "expiresAt", u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as "userId", u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
   let row = await auth`${rowArr}`;
   console.log("row from getSession: ", row);
@@ -733,7 +734,7 @@ export async function getSession({ token32, update, getId }) {
   let user = user1;
   if (getId) user = { userId, ...user1 };
   if (update && sessionUpdated) user = { expiresAt, ...user1 };
-
+  console.log("getUser from getSession: ", user);
   return user;
 }
 
