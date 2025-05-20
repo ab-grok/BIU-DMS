@@ -55,7 +55,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <SearchBar />
           </div>
         </header>
-        <main className="h-[78%] w-full">
+        <main className="h-[78%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}
         </main>
         <Button

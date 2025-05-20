@@ -129,11 +129,11 @@ async function addMetadata({
   const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`];
 
   let row =
-    await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : ""}`;
+    await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
 
   if (!row[0]) {
     let row2 =
-      await auth`Insert into "metadata" (${auth.raw(columns.join(","))}) values (${auth.array(values)}) returning *`;
+      await auth`Insert into "metadata" (${auth(columns)}) values (${auth.array(values)}) returning *`;
     if (!row2[0]) return false;
   } else {
     const updClause = [];
