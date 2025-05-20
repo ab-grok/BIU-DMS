@@ -105,7 +105,7 @@ async function addMetadata({
   const db = dbName.trim();
   const columns = [
     "db_name",
-    `tb_name`,
+    tb ? `tb_name` : null,
     updEditors ? `editors` : null,
     viewers ? `viewers` : null,
     desc ? `description` : null,
