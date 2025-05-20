@@ -85,7 +85,6 @@ export default function NewDb() {
         danger: true,
         message: error,
       });
-      return;
     } else {
       setNotify({ message: "Database created successfully" });
       await revalidate("databases");
