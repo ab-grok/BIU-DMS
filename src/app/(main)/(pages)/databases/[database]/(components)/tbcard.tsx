@@ -163,7 +163,25 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
   }
 
   const items = ["Author", "Created on", "Last updated", "Editor"];
-  const names = ["Jacobs", "Apr 14 25", "May 15 25", "Michael"];
+  const TbMeta = [
+    [Tb.createdBy?.split("&")[2], Tb.createdBy?.split("&")[1]],
+    [dateAbrev(Tb.createdAt)],
+    [dateAbrev(Tb.updatedAt)],
+    [Tb.updatedBy?.split("&")[2], Tb.updatedBy?.split("&")[1]],
+  ];
+
+  function dateAbrev(d: Date) {
+    console.log("type of date in dateAbrev: ", typeof d);
+    const date = d || new Date();
+    const dateStr = date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    });
+
+    return dateStr;
+  }
+
   // const views = [
   //   "Mr.jacobs",
   //   "Prof.Mark",
@@ -256,15 +274,14 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
               onMouseLeave={() => handleMetaHover(0)}
               className="flex h-full min-w-[40%] flex-col justify-center gap-y-1 pt-1"
             >
-              {names.map((a, i) => {
-                return (
+              {TbMeta &&
+                TbMeta.map((a, i) => (
                   <UserTag
-                    key={i}
-                    name={a}
+                    name={TbMeta[i][0] || i == 0 ? "Admin" : ""}
+                    title={TbMeta[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
                   />
-                );
-              })}
+                ))}
             </div>
           </div>
         </section>

@@ -29,25 +29,24 @@ const auth = postgres(process.env.AUTHDB, {
 export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
-  const dbWithMeta = [];
 
-  if (getTbCount) {
-    console.log("in getTbCount");
-    const row2 = rows?.map(async (a, i) => {
-      console.log("tbCOunts a: ", a);
+  console.log("in getTbCount");
+  const rowsMetaPromise = rows?.map(async (a, i) => {
+    if (getTbCount) {
       const count =
         await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
-      console.log("select count: ", count);
+      console.log(" getTbCount from getDb: ", count);
       let dbMeta = await getMetadata({ dbName: a.schema_name });
-      dbWithMeta.push({
+      return {
         Database: a.schema_name,
         tbCount: count[0].tbCount,
         ...dbMeta,
-      });
-    });
-    await Promise.all(row2);
-  }
-  return { rows, dbWithMeta };
+      };
+    } else return { Database: a.schema_name };
+  });
+  const rowsMeta = await Promise.all(rowsMetaPromise);
+
+  return { rowsMeta };
 }
 
 async function checkDb(dbName) {
@@ -96,7 +95,6 @@ async function addMetadata({
   newDbName,
 }) {
   if (!dbName || (!createdBy && !updatedBy)) return false;
-  const updEditors = editors ? [createdBy, ...editors] : [createdBy];
   const prv = isPrivate == 0 || false ? false : true;
   const now = new Date();
   const tb = tbName?.trim();
@@ -119,7 +117,7 @@ async function addMetadata({
   const values = [
     db ? auth`${db}` : ndb ? auth`${ndb}` : "",
     tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
-    updEditors ? auth`${updEditors}` : "",
+    editors ? auth`${editors}` : "",
     viewers ? auth`${viewers}` : "",
     desc ? auth`${desc}` : "",
     createdBy ? auth`${createdBy}` : "",
@@ -128,7 +126,7 @@ async function addMetadata({
     prv ? auth`${prv}` : "",
   ].filter(Boolean);
 
-  const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`];
+  const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`]; //see if aupwhere works
   let valStr = values.reduce(
     (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
     auth``,
@@ -141,7 +139,7 @@ async function addMetadata({
   if (!row[0]) {
     console.log("in !row[0] from metadata: ");
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${valStr}) returning *`;
+      await auth`Insert into "metadata" (${auth(columns)}) values (${valStr}) returning *`; // auth(values) should work
     console.log("row2 from metadata: ", row2);
     if (!row2[0]) return false;
   } else {
@@ -349,28 +347,13 @@ export async function getUserAccess({ dbName, tbName, userId }) {
 
 export async function createDb({
   userId,
+  udata,
   dbName,
   desc,
   viewers,
   editors,
   isPrivate,
 }) {
-  console.log(
-    "in createDb: userid",
-    userId +
-      "... dbName" +
-      dbName +
-      "... desc " +
-      desc +
-      "... viewers " +
-      viewers +
-      "... editors " +
-      editors +
-      "... ispRivate" +
-      isPrivate +
-      "... ",
-  );
-
   const { firstname, level } = await checkUser({ userId });
 
   if (!firstname) {
@@ -388,7 +371,7 @@ export async function createDb({
   console.log("got past checkDb, Database will be deleted!");
 
   const metaAdded = await addMetadata({
-    createdBy: userId,
+    createdBy: udata,
     dbName,
     desc,
     isPrivate,
@@ -454,6 +437,7 @@ export async function createTb({
   columns, //
   desc,
   userId,
+  udata,
   isPrivate,
   viewers,
   editors,
@@ -517,7 +501,7 @@ export async function createTb({
     await main`create table ${main([dbName, tbName])} (${cols}, updated_at timestamp, updated_by text)`;
 
   const metaAdded = await addMetadata({
-    userId,
+    createdBy: udata,
     isPrivate,
     dbName,
     tbName,

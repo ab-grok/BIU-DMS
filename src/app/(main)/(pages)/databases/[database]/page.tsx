@@ -13,7 +13,12 @@ import AddUsers from "@/app/(main)/(components)/addusers";
 export default function Database() {
   const currDb = useParams()?.database as string;
   const [tbData, setTbData] = useState([] as Tb[] | null);
-  const userId = useRef<string>("");
+  type userType = {
+    fname: string | undefined;
+    ttl: string | undefined;
+    id: string | undefined;
+  };
+  const [user, setUser] = useState({} as userType);
   const { isLoading, setIsLoading } = useLoading();
   const { setNotify, notify } = useNotifyContext();
   const { create } = useSelection();
@@ -32,8 +37,8 @@ export default function Database() {
       //   useRevalidate("session");
       // }
 
-      const user = await validateSession();
-      console.log("User from [database]'s validateSession call", user);
+      const u = await validateSession();
+      console.log("User from [database]'s validateSession call", u);
       const res = await ListTables(currDb);
       if (!res) {
         setNotify({
@@ -43,8 +48,8 @@ export default function Database() {
         });
         return;
       }
+      setUser({ id: u?.userId, fname: u?.firstname, ttl: u?.title });
       setTbData(res);
-      userId.current = user?.userId ?? "";
       setIsLoading((p) => p.replace(currDb + ",", ""));
     })();
 
@@ -56,7 +61,7 @@ export default function Database() {
     <div className="relative flex h-full w-full flex-col">
       {isLoading.includes(currDb) && <Loading />}
       {addUsers.type == "newTb" && <AddUsers />}
-      <CreateTb uid={userId.current} db={currDb} i={0} />
+      <CreateTb uid={user.id || ""} db={currDb} i={0} />
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
@@ -64,7 +69,7 @@ export default function Database() {
           tbData.map((a, i) => (
             <TableCard
               key={i}
-              uid={userId.current}
+              uid={user.id || ""}
               Tb={a}
               i={i + 1}
               db={currDb}

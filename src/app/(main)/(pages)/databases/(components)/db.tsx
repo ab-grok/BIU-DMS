@@ -27,12 +27,12 @@ export default function Db({ db, i }: { db: db; i: number }) {
         </div>
       </RowItem>
       <RowItem extend i={2}>
-        {db.description ?? <div className="italic">No description yet</div>}
+        {db.description ?? <div className="italic"> No description yet</div>}
       </RowItem>
       <RowItem i={1}>
         <UserTag
-          name={db.createdBy ?? "Admin"}
-          title={db.title}
+          name={db?.createdBy?.split("&")[2] ?? "Admin"}
+          title={db?.createdBy?.split("&")[1]}
           className="mb-1"
         />
         <Count date={db.createdAt} className="fill-blue-600/70" />
@@ -40,7 +40,8 @@ export default function Db({ db, i }: { db: db; i: number }) {
       <RowItem extend i={2}>
         {db.viewers ? (
           db.viewers.map((a, i) => {
-            return <UserTag key={i} name={a.name} title={a.title} />;
+            const v = a?.split("&");
+            return <UserTag key={i} name={v[2]} title={v[1]} />;
           })
         ) : (
           <UserTag name={""} />
@@ -49,7 +50,8 @@ export default function Db({ db, i }: { db: db; i: number }) {
       <RowItem extend i={1}>
         {db.editors ? (
           db.editors.map((a, i) => {
-            return <UserTag key={i} name={a.name} title={a.title} />;
+            const e = a?.split("&");
+            return <UserTag key={i} name={e[2]} title={e[1]} />;
           })
         ) : (
           <UserTag name={""} />

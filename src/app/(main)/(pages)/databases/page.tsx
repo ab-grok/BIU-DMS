@@ -70,12 +70,16 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb uid={user?.userId || ""} />
+        <NewDb
+          uid={user?.userId || ""}
+          ttl={user?.title || ""}
+          fname={user?.firstname || ""}
+        />
       </div>
       <main
         ref={rowRef}
         onScroll={(e) => handleScroll(e)}
-        className={`${create == "db" ? "mt-2 h-[31.3rem]" : "h-[43.2rem]"} overflow-auto pb-3 transition-transform`}
+        className={`${create == "db" ? "mt-2 h-[30rem]" : "h-[36rem]"} overflow-auto pb-3 transition-transform`}
       >
         {addUsers.type == "newDb" && <AddUsers height="h-[76%]" />}
 

@@ -9,42 +9,34 @@ export type db = {
   Database: string;
   tbCount: number;
   createdBy: string;
-  title: string;
   createdAt: string;
   updatedAt: string;
   description: string;
   private: boolean;
-  topAdmin: string;
-  viewers: {
-    name: string;
-    title: string;
-    id: string;
-  }[];
-  editors: {
-    name: string;
-    title: string;
-    id: string;
-  }[];
+  viewers: string[];
+  editors: string[];
 };
 
 export async function listDatabases(): Promise<Array<db> | null> {
   const { token32 } = await getCookie();
   if (!token32) return null;
+
   const dbList = unstable_cache(
     async () => {
-      console.log("in listDatabases token32: " + token32);
       try {
         const { userId } = await getSession({
           token32,
           getId: true,
           update: false,
         });
+        console.log("got session in listDatabases userId: " + userId);
         if (!userId) throw { message: "Session not found" };
-        const { dbWithMeta } = await getDb("getTbcount");
-        return dbWithMeta;
+        const { rowsMeta } = await getDb("getTbcount");
+        return rowsMeta as db[];
       } catch (e) {
         console.log(`Error in listDatabases: ${JSON.stringify(e)}`);
       }
+
       return null;
     },
     [`databases-${token32}`],
@@ -70,8 +62,8 @@ export type Tb = {
   tbName: string;
   rowCount: number;
   createdBy: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   updatedBy: string;
   description: string;
   private: boolean;

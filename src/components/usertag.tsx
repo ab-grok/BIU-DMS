@@ -91,16 +91,16 @@ export default function UserTag({
   );
 }
 
-export function TimeAgo(date: string) {
-  const [time, setTime] = useState("");
+// export function TimeAgo(date: string) {
+//   const [time, setTime] = useState("");
 
-  (async () => {
-    setTime(await timeAgo(date));
-  })();
-  return (
-    <div className="text-bw flex w-[2rem] space-x-1">
-      <div className="size-3 rounded-full text-xs"> {time && time}</div>
-      <span>ago</span>
-    </div>
-  );
-}
+//   (async () => {
+//     setTime(await timeAgo(date));
+//   })();
+//   return (
+//     <div className="text-bw flex w-[2rem] space-x-1">
+//       <div className="size-3 rounded-full text-xs"> {time && time}</div>
+//       <span>ago</span>
+//     </div>
+//   );
+// }

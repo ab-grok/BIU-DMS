@@ -25,7 +25,15 @@ import { createDb } from "@/lib/server";
 import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 
-export default function NewDb({ uid }: { uid: string }) {
+export default function NewDb({
+  uid,
+  ttl,
+  fname,
+}: {
+  uid: string;
+  ttl: string;
+  fname: string;
+}) {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { create, setCreate } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
@@ -54,18 +62,9 @@ export default function NewDb({ uid }: { uid: string }) {
     const editors = addUsers.editors?.split(",").filter(Boolean);
     const viewers = addUsers.viewers?.split(",").filter(Boolean);
 
-    console.log(
-      "dbData: ",
-      dbData,
-      "editors: ",
-      editors,
-      "viewers: ",
-      viewers,
-      "uid: ",
-      uid,
-    );
     const { error, success } = await createDb({
       userId: uid,
+      udata: uid + "&" + ttl + "&" + fname,
       ...dbData,
       viewers,
       editors,
@@ -79,6 +78,7 @@ export default function NewDb({ uid }: { uid: string }) {
     } else {
       setNotify({ message: "Database created successfully" });
       await revalidate("databases", "all");
+      setCreate("");
       router.refresh();
     }
     console.log("db created, success: ", success, "...error: ", error);
