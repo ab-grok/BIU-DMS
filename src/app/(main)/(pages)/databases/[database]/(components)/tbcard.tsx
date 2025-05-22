@@ -40,14 +40,9 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
   const [btnClicked, setBtnClicked] = useState("");
   const [expandUsers, setExpandusers] = useState("");
   const hoverTime = useRef<NodeJS.Timeout | undefined>(undefined);
-  const { notify, setNotify } = useNotifyContext();
-  const {
-    setSelectedTbUsers,
-    selectedTbUsers,
-    selectedTb,
-    setSelectedTb,
-    create,
-  } = useSelection();
+  const { setNotify } = useNotifyContext();
+  const { setSelectedTbUsers, selectedTbUsers, selectedTb, setSelectedTb } =
+    useSelection();
 
   useEffect(() => {
     // console.log("u from tbcard: ", u);
@@ -277,6 +272,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
               {TbMeta &&
                 TbMeta.map((a, i) => (
                   <UserTag
+                    key={i + 4}
                     name={TbMeta[i][0] || i == 0 ? "Admin" : ""}
                     title={TbMeta[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}

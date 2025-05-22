@@ -2,7 +2,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import ts from "@typescript-eslint/eslint-plugin";
-import unusedImports from "eslint-plugin-unused-imports";
+// import unusedImports from "eslint-plugin-unused-imports";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,7 +16,6 @@ const eslintConfig = [
   {
     plugins: {
       "@typescript-eslint": ts,
-      "unused-imports": unusedImports,
     },
     rules: {
       "no-undef": "warn", // Flags undeclared variables like 'connection'
@@ -26,11 +25,11 @@ const eslintConfig = [
       ],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "warn", // Relax to warn
-      "unused-imports/no-unused-imports": "warn", // Remove unused imports
-      "unused-imports/no-unused-vars": [
-        "warn",
-        { vars: "all", args: "after-used", ignoreRestSiblings: true },
-      ], // Warn on unused vars
+      // "unused-imports/no-unused-imports": "warn", // Remove unused imports
+      // "unused-imports/no-unused-vars": [
+      //   "warn",
+      //   { vars: "all", args: "after-used", ignoreRestSiblings: true },
+      // ], // Warn on unused vars
     },
   },
 ];
