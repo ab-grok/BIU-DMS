@@ -167,6 +167,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
 
   function dateAbrev(d: Date) {
     console.log("type of date in dateAbrev: ", typeof d);
+    console.log("date in dateAbrev: ", d);
     const date = d || new Date();
     const dateStr = date.toLocaleDateString("en-US", {
       month: "short",

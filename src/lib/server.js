@@ -436,7 +436,6 @@ export async function createTb({
   tbName,
   columns, //
   desc,
-  userId,
   udata,
   isPrivate,
   viewers,
