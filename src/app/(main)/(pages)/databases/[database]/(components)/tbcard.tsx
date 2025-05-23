@@ -15,7 +15,7 @@ import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
 import { Tb } from "@/lib/actions";
 import { useNotifyContext } from "@/app/dialogcontext";
-import { getUserAccess } from "@/lib/server";
+import { deleteTb, getUserAccess } from "@/lib/server";
 
 type tbType = {
   i: number;
@@ -32,7 +32,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
 
   const [viewers, setViewers] = useState([] as userType);
   const [editors, setEditors] = useState([] as userType);
-
+  const tbPath = db + "/" + Tb.tbName + ",";
   const [metaHover, setMetaHover] = useState(0);
   const [viewersHover, setViewersHover] = useState(0);
   const [editorsHover, setEditorsHover] = useState(0);
@@ -41,8 +41,14 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
   const [expandUsers, setExpandusers] = useState("");
   const hoverTime = useRef<NodeJS.Timeout | undefined>(undefined);
   const { setNotify } = useNotifyContext();
-  const { setSelectedTbUsers, selectedTbUsers, selectedTb, setSelectedTb } =
-    useSelection();
+  const {
+    setSelectedTbUsers,
+    multiSelectedTb,
+    setMultiSelectedTb,
+    selectedTbUsers,
+    selectedTb,
+    setSelectedTb,
+  } = useSelection();
 
   useEffect(() => {
     // console.log("u from tbcard: ", u);
@@ -78,59 +84,65 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
   }
 
   function handleCardClicked(e: React.UIEvent<HTMLElement>) {
-    selectedTb != Tb.tbName && setSelectedTb(Tb.tbName);
+    selectedTb != tbPath && setSelectedTb(tbPath);
     const trigger = (e.target as HTMLElement).id;
     if (
-      e.target == e.currentTarget ||
+      // e.target == e.currentTarget ||
       trigger == "viewers" ||
       trigger == "editors"
     ) {
-      Tb.tbName == selectedTb && setCardExpand(!cardExpand);
+      tbPath == selectedTb && setCardExpand(!cardExpand);
     }
   }
 
   //replacing a user (complex): sameTable - userid1?db1/tb1, userid2?db1/tb1. otherTable - userid1?db2/tb2
-  function handleViewerSel(id: string) {
-    const user = `${id}?${db}/${Tb.tbName},`;
-    setSelectedTb(Tb.tbName);
-    if (selectedTbUsers.viewers.includes(user)) {
-      setSelectedTbUsers((p) => ({
-        ...p,
-        viewers: p.viewers.replace(user, ""),
-      }));
+  //all selections regardless of table will be mass handled -- can separate actions by table later on.
+
+  //rearrange to {}[]: {dbOrTb:, users:} -- viewers or not is irrelevant will either change to viewers/editors/delete
+  function handleUserSel(id: string) {
+    const uPath = `${id}?${db}/${Tb.tbName},`;
+    setSelectedTb(tbPath);
+    if (selectedTbUsers.includes(uPath)) {
+      setSelectedTbUsers((p) => p.replace(uPath, ""));
     } else {
-      setSelectedTbUsers((p) => ({ ...p, viewers: p.viewers + user }));
+      setSelectedTbUsers((p) => p + uPath);
     }
   }
 
-  function handleEditorSel(id: string) {
-    const user = `${id}?${db}/${Tb.tbName},`;
-    setSelectedTb(Tb.tbName);
-    if (selectedTbUsers.editors.includes(user)) {
-      setSelectedTbUsers((p) => ({
-        ...p,
-        editors: p.editors.replace(user, ""),
-      }));
-    } else {
-      setSelectedTbUsers((p) => ({ ...p, editors: p.editors + user }));
-    }
+  // let user1 = id + "?" + Tb.tbName + ",";
+  // setSelectedTb(Tb.tbName);
+  // if (selectedTbUsers.includes(user)) {
+  //   setSelectedTbUsers(selectedTbUsers.replace(user, ""));
+  //   // setEditorSel(editorSel.replace(user, ""));
+  // } else {
+  //   // setEditorSel(editorSel + user);
+  //   setSelectedTbUsers(selectedTbUsers + user);
+  // }
+  // }
 
-    // let user1 = id + "?" + Tb.tbName + ",";
-    // setSelectedTb(Tb.tbName);
-    // if (selectedTbUsers.includes(user)) {
-    //   setSelectedTbUsers(selectedTbUsers.replace(user, ""));
-    //   // setEditorSel(editorSel.replace(user, ""));
-    // } else {
-    //   // setEditorSel(editorSel + user);
-    //   setSelectedTbUsers(selectedTbUsers + user);
-    // }
+  function handleMultiTables() {
+    if (multiSelectedTb.includes(tbPath)) {
+      setMultiSelectedTb(multiSelectedTb.replace(tbPath, ""));
+    } else {
+      setMultiSelectedTb(multiSelectedTb + tbPath);
+    }
   }
 
-  function handleMultiTables(a: string) {
-    if (selectedTb.includes(a)) {
-      setSelectedTb(selectedTb.replace(a + ",", ""));
+  async function deleteTable() {
+    const { error } = await deleteTb({
+      dbName: db,
+      tbName: Tb.tbName,
+      userId: uid,
+    });
+    if (error) {
+      setNotify({
+        message: error,
+        danger: true,
+      });
     } else {
-      setSelectedTb(selectedTb + a + ",");
+      setNotify({
+        message: "Table deleted successfully",
+      });
     }
   }
 
@@ -143,7 +155,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
       router.push(`/databases/${db}/${Tb.tbName}`);
     } else {
       setNotify({
-        message: "Access Denied!",
+        message: "You must be an editor or viewer to access this table!",
         danger: true,
       });
     }
@@ -211,6 +223,8 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
       <Index
         i={i}
         className="group-hover:bg-sub-grad-forced sticky h-[11.2rem] self-center"
+        morph="selected"
+        selected={selectedTb?.includes(Tb.tbName)}
       />
       <div
         id="main"
@@ -317,7 +331,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
                     className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                   >
                     {" "}
-                    <span onClick={() => handleViewerSel(a.id)}>
+                    <span onClick={() => handleUserSel(a.id)}>
                       <Index
                         size={4}
                         i={i + 1}
@@ -333,14 +347,13 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
                       n={i + 1}
                     />
                     <span
-                      onClick={() => handleViewerSel(a.id)}
+                      onClick={() => handleUserSel(a.id)}
                       className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
                     >
                       <Marker
                         hovered={viewersHover}
-                        selected={selectedTbUsers.viewers}
-                        path={db + "/" + Tb.tbName}
-                        id={a.id}
+                        selectContext={selectedTbUsers}
+                        uPath={db + "/" + Tb.tbName}
                         n={i + 1}
                       />
                     </span>
@@ -374,7 +387,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
                 />
               ) : (
                 <Edit
-                  className={`stroke-bw/50 ${selectedTb.includes(Tb.tbName) ? "fill-red-900/80" : ""}`}
+                  className={`stroke-bw/50 ${selectedTb.includes(Tb.tbName) ? "fill-row-bg2/30" : ""}`}
                 />
               )}
             </div>
@@ -388,7 +401,7 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
                     className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                   >
                     {" "}
-                    <span onClick={() => handleEditorSel(a.id)}>
+                    <span onClick={() => handleUserSel(a.id)}>
                       <Index
                         size={4}
                         i={i + 1}
@@ -404,14 +417,13 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
                       n={i + 1}
                     />
                     <span
-                      onClick={() => handleEditorSel(a.id)}
+                      onClick={() => handleUserSel(a.id)}
                       className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
                     >
                       <Marker
                         hovered={editorsHover}
-                        selected={selectedTbUsers.editors}
-                        path={db + "/" + Tb.tbName}
-                        id={a.id}
+                        selectContext={selectedTbUsers}
+                        uPath={a.id + "?" + db + "/" + Tb.tbName}
                         n={i + 1}
                       />
                     </span>
@@ -430,9 +442,11 @@ export default function TableCard({ Tb, i, uid, db }: tbType) {
       <section>
         <QuickActions
           action1="Select"
-          action2="Add viewer"
-          action3="Add editor"
-          action4="Delete"
+          fn1={() => handleMultiTables}
+          action2={`${uAccess.edit ? "Add viewer" : !uAccess.view ? "Request view" : ""}`}
+          action3={`${uAccess.edit ? "Add editor" : "Request edit"}`}
+          action4={`${uAccess.edit ? "Delete" : ""}`}
+          fn4={() => deleteTable()}
         />
       </section>
     </div>

@@ -519,6 +519,19 @@ export async function createTb({
   return { success: true };
 }
 
+export async function deleteTb({ dbName, tbName, userId }) {
+  const { edit } = await getUserAccess({ dbName, tbName, userId });
+  if (edit) {
+    try {
+      let del = await main`drop table ${main([dbName, tbName])}`;
+      return { error: null };
+    } catch (e) {
+      console.log("Error deleting table: ", e);
+      return { error: e.message };
+    }
+  }
+}
+
 export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   //do getUserAccess
   // const {tbFound} = await checkTb({dbName: dbName, tbName: tbName})
