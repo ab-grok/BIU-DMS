@@ -794,6 +794,7 @@ export async function createSession({ userId, dcrPass, token32 }) {
 }
 
 export async function delSession({ userId }) {
+  console.log("deleteSession fired, userId: ", userId);
   const rowDel =
     await auth`delete from "user_session" where user_id = ${userId} returning *`;
   console.log("deleteSession fired, row: ", rowDel);

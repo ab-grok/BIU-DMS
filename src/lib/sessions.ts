@@ -106,15 +106,14 @@ export async function validateSession() {
 export async function deleteSession(): Promise<{
   error: string;
 }> {
-  console.log("in delete session before token32");
   const token32 = (await cookies()).get("session")?.value;
   if (!token32) return { error: "Session not found!" };
   try {
-    console.log("in delete session");
+    console.log("in delete session after token32");
     const user = await validateSession();
-    console.log("in delete session, user: ", user);
     if (!user) return { error: "User not logged in" };
     await delSession({ userId: user.userId });
+    console.log("in deleteSession() got past delSession ");
   } catch (e: any) {
     return { error: e.customMessage };
   }
