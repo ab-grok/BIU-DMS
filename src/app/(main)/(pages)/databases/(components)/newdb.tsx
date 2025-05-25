@@ -25,15 +25,7 @@ import { createDb } from "@/lib/server";
 import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 
-export default function NewDb({
-  uid,
-  ttl,
-  fname,
-}: {
-  uid: string;
-  ttl: string;
-  fname: string;
-}) {
+export default function NewDb({ uData }: { uData: string }) {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { create, setCreate } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
@@ -63,8 +55,6 @@ export default function NewDb({
     const viewers = addUsers.viewers?.split(",").filter(Boolean);
 
     const { error, success } = await createDb({
-      userId: uid,
-      udata: uid + "&" + ttl + "&" + fname,
       ...dbData,
       viewers,
       editors,
@@ -79,15 +69,12 @@ export default function NewDb({
       setNotify({ message: "Database created successfully" });
       await revalidate("databases", "all");
       setCreate("");
+      setAddUsers({ type: "", category: "editors", editors: "", viewers: "" });
       router.refresh();
     }
     console.log("db created, success: ", success, "...error: ", error);
     setIsLoading((p) => p.replace("ndb,", ""));
   }
-
-  useEffect(() => {
-    (async () => {})();
-  }, []);
 
   return (
     <div
@@ -210,9 +197,9 @@ function UsersTable() {
   function handleAddUsers(n: number) {
     if (n == 1) {
       setAddUsers((p) => {
-        if (p.type && p.type != "newDb") {
+        if (p.type && p.type != "New Database,db") {
           return {
-            type: "newDb",
+            type: "New Database,db",
             category: "viewers",
             editors: "",
             viewers: "",
@@ -220,7 +207,7 @@ function UsersTable() {
         } else {
           return {
             ...p,
-            type: "newDb",
+            type: "New Database,db",
             category: "viewers",
           };
         }
@@ -228,9 +215,9 @@ function UsersTable() {
     }
     if (n == 2) {
       setAddUsers((p) => {
-        if (p.type && p.type != "newDb") {
+        if (p.type && p.type != "New Database,db") {
           return {
-            type: "newDb",
+            type: "New Database,db",
             category: "editors",
             editors: "",
             viewers: "",
@@ -238,7 +225,7 @@ function UsersTable() {
         } else {
           return {
             ...p,
-            type: "newDb",
+            type: "New Database,db",
             category: "editors",
           };
         }

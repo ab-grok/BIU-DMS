@@ -24,8 +24,8 @@ export type createTbCol = {
 export type createTbMeta = {
   dbName: string;
   tbName: string;
-  createdBy: string;
   desc: string | undefined;
+  // createdBy: string; //uid&ttl&fname
   // editors: string; //not needed
   // viewers: string;
 };
@@ -40,24 +40,29 @@ export type views = {
   tb: number;
 };
 
+type selectUsers = {
+  viewers: string; // userId?dbName/tbName,,
+  editors: string;
+};
+
 type selections = {
   // colorState: string;
   // setColorState: Dispatch<React.SetStateAction<string>>;
 
-  selectedTbUsers: string;
-  setSelectedTbUsers: Dispatch<React.SetStateAction<string>>; //tb: userId?dbName/tbName,,
-  selectedDbUsers: string;
-  setSelectedDbUsers: Dispatch<React.SetStateAction<string>>; //db userId?dbName
+  selectedTbUsers: selectUsers;
+  setSelectedTbUsers: Dispatch<React.SetStateAction<selectUsers>>;
+  selectedDbUsers: selectUsers;
+  setSelectedDbUsers: Dispatch<React.SetStateAction<selectUsers>>; //db userId?dbName
   views: views;
   setViews: Dispatch<React.SetStateAction<views>>; //count of viewers seen on the users_page header
   edits: views;
   setEdits: Dispatch<React.SetStateAction<views>>;
   selectedTb: string;
   setSelectedTb: Dispatch<React.SetStateAction<string>>;
-  multiSelectedTb: string;
-  setMultiSelectedTb: Dispatch<React.SetStateAction<string>>;
+  // multiSelectedTb: string;
+  // setMultiSelectedTb: Dispatch<React.SetStateAction<string>>;
   create: string;
-  setCreate: Dispatch<React.SetStateAction<string>>; //createTb or createDb
+  setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
   selectedRecords: string;
   setSelectedRecords: Dispatch<React.SetStateAction<string>>;
   quickA: string;
@@ -75,10 +80,9 @@ export default function SelectionContext({
 }: {
   children: React.ReactNode;
 }) {
-  // const [colorState, setColorState] = useState<string>("");
+  // const [multiSelectedTb, setMultiSelectedTb] = useState<string>("");
   const [selectedRecords, setSelectedRecords] = useState<string>("");
   const [selectedTb, setSelectedTb] = useState<string>("");
-  const [multiSelectedTb, setMultiSelectedTb] = useState<string>("");
   const [create, setCreate] = useState<string>("");
   const [quickA, setQuickA] = useState<string>("");
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
@@ -86,11 +90,14 @@ export default function SelectionContext({
   const [createTbCol, setCreateTbCol] = useState({} as createTbCol);
   const [views, setViews] = useState({ tb: 0, db: 0 });
   const [edits, setEdits] = useState({ tb: 0, db: 0 });
-  const [selectedTbUsers, setSelectedTbUsers] = useState("");
-  const [selectedDbUsers, setSelectedDbUsers] = useState("");
+  const [selectedTbUsers, setSelectedTbUsers] = useState({} as selectUsers);
+  const [selectedDbUsers, setSelectedDbUsers] = useState({} as selectUsers);
+
   return (
     <selectionContext.Provider
       value={{
+        // multiSelectedTb,
+        // setMultiSelectedTb,
         selectedTbUsers,
         setSelectedTbUsers,
         selectedDbUsers,
@@ -111,8 +118,6 @@ export default function SelectionContext({
         setSelectedRecords,
         selectedTb,
         setSelectedTb,
-        multiSelectedTb,
-        setMultiSelectedTb,
         quickA,
         setQuickA,
       }}

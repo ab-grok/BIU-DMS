@@ -11,6 +11,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
+import { getCookie } from "./sessions";
 
 const main = postgres(process.env.MAINDB, {
   debug: (connection, query, parameters) => {
@@ -71,14 +72,23 @@ function filterInput(cmt) {
 }
 
 export async function delDb(dbName) {
-  //getUser access
-  const dbFound = await checkDb(dbName);
-  if (!dbFound) {
-    throw "database does not exist";
+  const { token32 } = await getCookie();
+  if (!token32) return { error: "Unauthorized action" };
+  const { edit, level } = await getUserAccess({ dbName, token32 });
+  if (!edit || level < 3)
+    return { error: "You do not have permission to perform this action" };
+  try {
+    const dbFound = await checkDb(dbName);
+    if (!dbFound) {
+      return { error: "database does not exist" };
+    }
+    const res = await main`drop schema ${dbName} cascade`;
+    console.log("database deleted from deldb, res: ", res);
+    return { error: null };
+  } catch (e) {
+    console.log("Error in delDb: ", e);
+    return { error: e.message || "Some error occured." };
   }
-  const res = await main`drop schema ${dbName} cascade`;
-  console.log("database deleted from deldb");
-  return res;
 }
 
 async function addMetadata({
@@ -95,7 +105,12 @@ async function addMetadata({
   newDbName,
 }) {
   if (!dbName || (!createdBy && !updatedBy)) return false;
-  const prv = isPrivate == 0 || false ? false : true;
+  const prv =
+    typeof isPrivate == "boolean" || typeof isPrivate == "number"
+      ? isPrivate
+        ? true
+        : false
+      : null;
   const now = new Date();
   const tb = tbName?.trim();
   const ntb = newTbName?.trim();
@@ -104,7 +119,7 @@ async function addMetadata({
   const columns = [
     "db_name",
     tb ? `tb_name` : null,
-    updEditors ? `editors` : null,
+    editors ? `editors` : null,
     viewers ? `viewers` : null,
     desc ? `description` : null,
     ...(createdBy ? [`created_by`, `created_at`] : []),
@@ -123,10 +138,10 @@ async function addMetadata({
     createdBy ? auth`${createdBy}` : "",
     updatedBy ? auth`${updatedBy}` : "",
     now ? auth`${now}` : "",
-    prv ? auth`${prv}` : "",
+    typeof prv != null ? auth`${prv}` : "",
   ].filter(Boolean);
 
-  const updWhere = [auth`db_name = ${db} and tb_name = ${tb ? tb : ""}`]; //see if aupwhere works
+  const updWhere = auth`db_name = ${db} and tb_name = ${tb ? tb : null}`; //see if aupwhere works
   let valStr = values.reduce(
     (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
     auth``,
@@ -137,28 +152,37 @@ async function addMetadata({
   // console.log("values from metadata: ", values);
 
   if (!row[0]) {
-    console.log("in !row[0] from metadata: ");
+    console.log(
+      "in metadata, row does not exist, db_name: ",
+      db,
+      "...tb_name: ",
+      tb,
+    );
     let row2 =
       await auth`Insert into "metadata" (${auth(columns)}) values (${valStr}) returning *`; // auth(values) should work
     console.log("row2 from metadata: ", row2);
     if (!row2[0]) return false;
   } else {
     const updClause = [];
-    console.log("in else from if !row[0]");
-    if (db || ndb) updClause.push(auth`db_name = ${db ? db : ndb}`);
-    if (tb || ntb) updClause.push(auth`tb_name = ${tb ? tb : ntb}`);
+    console.log("in metadata, row exists");
+    if (ndb) updClause.push(auth`db_name = ${ndb}`);
+    if (ntb) updClause.push(auth`tb_name = ${ntb}`);
     if (prv) updClause.push(auth`private = ${prv}`);
-    if (updEditors) updClause.push(auth`editors = editors || ${updEditors}`);
-    if (viewers) updClause.push(auth`viewers = viewers || ${viewers}`);
+    if (editors) updClause.push(auth`editors = ${editors}`);
+    if (viewers) updClause.push(auth`viewers = ${viewers}`);
     if (desc) updClause.push(auth`description = ${desc}`);
     if (createdBy)
       updClause.push(auth`created_by = ${createdBy}, created_at = ${now}`);
     else if (updatedBy)
       updClause.push(auth`updated_by = ${updatedBy}, updated_at = ${now}`);
 
+    let upd = updClause.reduce(
+      (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
+      auth``,
+    );
     const rowUpd =
-      await auth`update metadata set ${auth(updClause)} where ${auth(updWhere)} returning *`;
-    if (rowUpd[0]) return false;
+      await auth`update "metadata" set ${upd} where ${updWhere} returning *`;
+    if (!rowUpd[0]) return false;
   }
   return true;
 }
@@ -309,21 +333,32 @@ export async function getMetadata({ dbName, tbName, asString }) {
 //   return { viewers1, editors1 };
 // }
 
-export async function getUserAccess({ dbName, tbName, userId }) {
+export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //ADMIN
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
   const none = { level: null, edit: null, view: null };
-  if (!userId) return none;
-
+  if (!userId && !token32) return none;
+  const { level, userId, title, firstname } = await getSession({
+    token32,
+    getId: true,
+  });
+  if (!level || !userId) {
+    console.log("getUserAccess, Couldn't get session");
+    return none;
+  }
   if (!(await checkDb())) {
-    console.log("Db not found");
+    console.log("getUserAccess, Db not found");
     return none;
   }
-  if (!(await checkTb())) {
-    console.log("Tb not found!");
+  if (tbName && !(await checkTb())) {
+    console.log("getUserAccess, Tb not found!");
     return none;
   }
-  const { level } = await checkUser({ userId });
+  console.log(
+    "got past checkUser and getSession in getUserAccess, level: ",
+    level,
+  );
+  const udata = userId + "&" + title + "&" + firstname;
   const { createdBy, viewers, editors } = await getMetadata({
     dbName,
     tbName,
@@ -331,31 +366,30 @@ export async function getUserAccess({ dbName, tbName, userId }) {
   });
   let edit = false;
   let view = false;
-  if (createdBy.includes(userId.trim())) {
-    edit = true;
+  if (createdBy.includes(userId)) {
+    edit = true; //change to creator
   } else if (editors.includes(userId)) {
     edit = true;
   } else if (viewers.includes(userId)) {
     view = true;
   }
-  // if (level > 2) {
-  //   if (!tbName)
-  //   view = true;
-  // }
-  return { edit, view, level };
+
+  return { edit, view, level, udata };
 }
 
 export async function createDb({
-  userId,
-  udata,
   dbName,
   desc,
   viewers,
   editors,
   isPrivate,
+  // token32
 }) {
-  const { firstname, level } = await checkUser({ userId });
-
+  const { token32 } = await getCookie();
+  const { firstname, level, userId, title } = await getSession({
+    token32,
+    getId: true,
+  });
   if (!firstname) {
     return {
       error: "User not found! Log in again.",
@@ -364,12 +398,12 @@ export async function createDb({
     return {
       error: "You cannot currently perform this action; Contact an admin",
     };
-  console.log("got past checkUser");
 
   if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${main(dbName)}`; //will throw own error
-  console.log("got past checkDb, Database will be deleted!");
+  console.log("in createDb got past checkDb!");
 
+  udata = userId + "&" + title + "&" + firstname;
   const metaAdded = await addMetadata({
     createdBy: udata,
     dbName,
@@ -436,11 +470,12 @@ export async function createTb({
   tbName,
   columns, //
   desc,
-  udata,
   isPrivate,
   viewers,
   editors,
 }) {
+  const { token32 } = await getCookie();
+  const { userId, firstname, title } = await getSession({ token32 });
   if (!(await checkDb(dbName))) return { error: `Unauthorized action` };
   if (await checkTb({ dbName, tbName })) {
     return {
@@ -519,9 +554,46 @@ export async function createTb({
   return { success: true };
 }
 
-export async function deleteTb({ dbName, tbName, userId }) {
-  const { edit } = await getUserAccess({ dbName, tbName, userId });
+export async function changeUsers({
+  dbName,
+  tbName,
+  viewers,
+  editors,
+  remove,
+}) {
+  //assumes editor and viewer logic accounts for previous editors/viewers. can implement toViewers/editors/remove independently
+  const { token32 } = await getCookie();
+  console.log(
+    "changeUsers, token32: ",
+    token32,
+    "...dbName: ",
+    dbName,
+    "...tbName: ",
+    tbName,
+    "...viewers: ",
+    viewers,
+    "...editors: ",
+    editors,
+  );
+  const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
   if (edit) {
+    const metaAdded = await addMetadata({
+      updatedBy: udata,
+      viewers,
+      editors,
+      dbName,
+      tbName,
+    });
+    if (!metaAdded) return { error: "An error occured." };
+    return { error: null };
+  } else return { error: "Unauthorized" };
+}
+
+export async function deleteTb({ dbName, tbName, userId }) {
+  const { token32 } = await getCookie();
+  if (!token32) return { error: "Unauthorized" };
+  const { edit, level } = await getUserAccess({ dbName, tbName, token32 });
+  if (edit || level > 3) {
     try {
       let del = await main`drop table ${main([dbName, tbName])}`;
       return { error: null };
@@ -529,7 +601,7 @@ export async function deleteTb({ dbName, tbName, userId }) {
       console.log("Error deleting table: ", e);
       return { error: e.message };
     }
-  }
+  } else return { error: "You do not have permission to delete this table." };
 }
 
 export async function getTbData({ dbName, tbName, orderBy, userId, where }) {

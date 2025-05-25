@@ -13,12 +13,7 @@ import AddUsers from "@/app/(main)/(components)/addusers";
 export default function Database() {
   const currDb = useParams()?.database as string;
   const [tbData, setTbData] = useState([] as Tb[] | null);
-  type userType = {
-    fname: string | undefined;
-    ttl: string | undefined;
-    id: string | undefined;
-  };
-  const [user, setUser] = useState({} as userType);
+  const [udata, setUdata] = useState({} as string);
   const { isLoading, setIsLoading } = useLoading();
   const { setNotify, notify } = useNotifyContext();
   const { create } = useSelection();
@@ -38,6 +33,10 @@ export default function Database() {
       // }
 
       const u = await validateSession();
+      if (!u) {
+        setNotify({ message: "Unauthorized", danger: true });
+        return;
+      }
       console.log("User from [database]'s validateSession call", u);
       const res = await ListTables(currDb);
       if (!res) {
@@ -48,7 +47,7 @@ export default function Database() {
         });
         return;
       }
-      setUser({ id: u?.userId, fname: u?.firstname, ttl: u?.title });
+      setUdata(u.userId + "&" + u.firstname + "&" + u.title);
       setTbData(res);
       setIsLoading((p) => p.replace(currDb + ",", ""));
     })();
@@ -60,20 +59,14 @@ export default function Database() {
   return (
     <div className="relative flex h-full w-full flex-col">
       {isLoading.includes(currDb) && <Loading />}
-      {addUsers.type == "newTb" && <AddUsers />}
-      <CreateTb uid={user.id || ""} db={currDb} i={0} />
+      {addUsers.type.includes("tb") && <AddUsers />}
+      <CreateTb uData={udata} db={currDb} i={0} />
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
         {tbData &&
           tbData.map((a, i) => (
-            <TableCard
-              key={i}
-              uid={user.id || ""}
-              Tb={a}
-              i={i + 1}
-              db={currDb}
-            />
+            <TableCard key={i} uData={udata} Tb={a} i={i + 1} dbName={currDb} />
           ))}
       </section>
     </div>

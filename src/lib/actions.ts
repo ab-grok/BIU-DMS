@@ -40,23 +40,24 @@ export async function listDatabases(): Promise<Array<db> | null> {
       return null;
     },
     [`databases-${token32}`],
-    { tags: [`databases-${token32}`, token32], revalidate: 3600 },
+    { tags: [`databases-${token32}`, "databases"], revalidate: 3600 },
   );
   const data = await dbList();
   return data;
 }
 
-export async function createDatabase(): Promise<boolean> {
-  //can you get the creatDatabase() working right with sessionId validation and cleared authencation for users with levels not less than 2
-  return true;
-}
+// export async function createDatabase(): Promise<boolean> {
+//   //can you get the creatDatabase() working right with sessionId validation and cleared authencation for users with levels not less than 2
+//   return true;
+// }
 
-export async function deleteDatabase(): Promise<boolean> {
-  //can you get the deleteDatabase() working right with sessionId validation for users with levels not less than 2 and are editors or the creator(which should be an editor)  to
-  // const result = await delDb(dbName.toLowerCase());
-  // res.status(201).send({ message: `${dbName} deleted!` });
-  return true;
-}
+// export async function deleteDatabase(): Promise<boolean> {
+//   const token32 = await getCookie()
+//   //can you get the deleteDatabase() working right with sessionId validation for users with levels not less than 2 and are editors or the creator(which should be an editor)  to
+//   // const result = await delDb(dbName.toLowerCase());
+//   // res.status(201).send({ message: `${dbName} deleted!` });
+//   return true;
+// }
 
 export type Tb = {
   tbName: string;

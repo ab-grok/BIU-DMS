@@ -34,7 +34,7 @@ export function QuickActions({
       setButton(0);
     }, 60);
   }
-  const actions = [action1, action2, action3, action4].filter(Boolean);
+  const actions = [action1, action2, action3, action4];
   // const g = [["group/a"]["group/a"], ["group/b"]["group/b"], ["group/c"]["group/c"], ["group/d"]["group/d"],];
 
   const hC = [
@@ -50,18 +50,18 @@ export function QuickActions({
     hoverColor4 &&
       action4 &&
       `hover:stroke-${hoverColor4}-600/70 hover:text-${hoverColor4}-600`,
-  ].filter(Boolean);
+  ];
 
   return (
     <div
       title="Quick actions"
-      className={`${hide && "hidden"} text-bw bg-sub-bg/30 border-main-bg/20 hover:bg-sub-bg sticky right-0 ml-2 flex h-full min-h-[5rem] w-[8rem] cursor-pointer flex-col justify-center gap-y-2 border-l-2 p-1 text-xs opacity-0 backdrop-blur-lg group-hover:opacity-100`}
+      className={`${hide && "hidden"} text-bw bg-sub-bg/30 border-main-bg/20 hover:bg-sub-bg sticky right-0 ml-2 flex h-full min-h-[5rem] w-[8rem] cursor-pointer flex-col justify-center gap-y-1 border-l-2 p-1 text-xs opacity-0 backdrop-blur-lg group-hover:opacity-100`}
     >
       {actions.map((a, i) => (
         <div
           key={i}
           onClick={() => handleClicked(i + 1)}
-          className={` ${button == i + 1 ? "scale-95" : ""} ${hC[i] || "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
+          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${hC[i] || "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
         >
           <QuickIcons name={actions[i] as string} />
           <span className={`transition-all group-hover:translate-x-0.5`}>

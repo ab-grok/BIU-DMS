@@ -31,7 +31,7 @@ import { createTb } from "@/lib/server";
 
 type tbType = {
   i: number;
-  uid: string;
+  uData: string; //uid&ttl&fname
   db: string;
 };
 
@@ -49,7 +49,7 @@ export type errSetter = {
   delPrifn?: (del: string) => void;
 } | null;
 
-export default function CreateTb({ i, uid, db }: tbType) {
+export default function CreateTb({ i, uData, db }: tbType) {
   const router = useRouter();
   const [cardClicked, setCardClick] = useState(false);
   const { notify, setNotify } = useNotifyContext();
@@ -114,9 +114,9 @@ export default function CreateTb({ i, uid, db }: tbType) {
     if (!createTbMeta.tbName) {
       setCreateTbMeta({
         dbName: db,
-        createdBy: uid,
         tbName: columns.name,
         desc: "",
+        // createdBy: uData, get from session
       });
       setCreateTbCol([]);
     } else if (!createTbMeta.desc) {
@@ -196,18 +196,15 @@ export default function CreateTb({ i, uid, db }: tbType) {
 
     const viewers = addUsers.viewers?.split(",").filter(Boolean);
     const editors = addUsers.editors?.split(",").filter(Boolean);
-    const { createdBy, ...meta } = createTbMeta;
 
     const postTb = {
       columns: createTbCol,
-      ...meta,
-      userId: createdBy,
+      ...createTbMeta,
       viewers,
       editors,
       isPrivate: 1,
     }; //change isprivate?
-    console.log("createTbMeta: ", createTbMeta);
-    console.log("postTb: ", createTbMeta);
+    console.log("in tableSubmitted, createTbMeta: ", createTbMeta);
 
     setIsLoading((p) => p + "createTb,");
     (async () => {
@@ -541,9 +538,9 @@ function LiveTable({
   function handleAddUsers(n: number) {
     if (n == 1) {
       setAddUsers((p) => {
-        if (p.type && p.type != "newTb") {
+        if (p.type && p.type != "New Table") {
           return {
-            type: "newTb",
+            type: "New Table",
             category: "viewers",
             editors: "",
             viewers: "",
@@ -551,7 +548,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "newTb",
+            type: "New Table",
             category: "viewers",
           };
         }
@@ -559,9 +556,9 @@ function LiveTable({
     }
     if (n == 2) {
       setAddUsers((p) => {
-        if (p.type && p.type != "newTb") {
+        if (p.type && p.type != "New Table") {
           return {
-            type: "newTb",
+            type: "New Table",
             category: "editors",
             editors: "",
             viewers: "",
@@ -569,7 +566,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "newTb",
+            type: "New Table",
             category: "editors",
           };
         }

@@ -16,7 +16,7 @@ export default function DbLayout() {
   const { isLoading, setIsLoading } = useLoading();
   const { create } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
-  const [user, setUser] = useState({} as validateSessionType);
+  const [udata, setUdata] = useState<string>();
 
   console.log("current isLoading: ", isLoading);
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function DbLayout() {
           });
           return;
         }
-        setUser(user);
+        setUdata(user.userId + "&" + user.firstname + "&" + user.title);
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));
@@ -70,21 +70,18 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb
-          uid={user?.userId || ""}
-          ttl={user?.title || ""}
-          fname={user?.firstname || ""}
-        />
+        <NewDb uData={udata || ""} />
       </div>
       <main
         ref={rowRef}
         onScroll={(e) => handleScroll(e)}
         className={`${create == "db" ? "mt-2 h-[30rem]" : "h-[36rem]"} overflow-auto pb-3 transition-transform`}
       >
-        {addUsers.type == "newDb" && <AddUsers height="h-[76%]" />}
+        {addUsers.type.includes("db") && <AddUsers height="h-[76%]" />}
 
         {isLoading.includes("databases") && <Loading />}
-        {db && db.map((a, i) => <Db key={i + 2} db={a} i={i} />)}
+        {db &&
+          db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata || ""} />)}
       </main>
     </div>
   );

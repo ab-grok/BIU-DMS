@@ -6,8 +6,65 @@ import { LogIn } from "lucide-react";
 import Index from "@/components";
 import Count from "@/components/count";
 import { db } from "@/lib/actions";
+import Marker from "@/components/marker";
+import { useEffect, useState } from "react";
+import { useSelection } from "../../selectcontext";
+import { delDb } from "@/lib/server";
+import { useAddUsers, useNotifyContext } from "@/app/dialogcontext";
 
-export default function Db({ db, i }: { db: db; i: number }) {
+export default function Db({
+  db,
+  i,
+  udata,
+}: {
+  db: db;
+  i: number;
+  udata: string;
+}) {
+  const { selectedDbUsers, setSelectedDbUsers } = useSelection();
+  const [viewerHovered, setViewerHovered] = useState(0);
+  const [editorHovered, setEditorHovered] = useState(0);
+  const { setNotify } = useNotifyContext();
+  const [uAccess, setUAccess] = useState({ edit: false, view: false });
+  const { addUsers, setAddUsers } = useAddUsers();
+
+  useEffect(() => {
+    let u = udata.split("&");
+    console.log("Db, uData: ", udata);
+    if (db.viewers.includes(u[0])) setUAccess({ edit: false, view: true });
+    if (db.createdBy.includes(u[0]) || db.editors.includes(u[0]))
+      setUAccess({ edit: true, view: true });
+  }, []);
+
+  function handleSelectedUsers(id: string) {}
+
+  function handleAddUsers(n: number) {
+    const vData = db.viewers.filter(Boolean).join(",");
+    const eData = db.editors.filter(Boolean).join(",");
+    if (n == 1) {
+      setAddUsers({
+        category: "viewers",
+        type: db.Database + ",db",
+        viewers: vData,
+        editors: eData,
+      });
+    }
+    if (n == 1) {
+      setAddUsers({
+        category: "editors",
+        type: db.Database + ",db",
+        viewers: vData,
+        editors: eData,
+      });
+    }
+  }
+
+  async function deleteDb() {
+    const { error } = await delDb(db.Database);
+    if (error) setNotify({ message: error, danger: true });
+    else setNotify({ message: "Database deleted successfully" });
+  }
+
   return (
     <div
       className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-bg/10"} hover:bg-bw/30`}
@@ -37,21 +94,59 @@ export default function Db({ db, i }: { db: db; i: number }) {
         />
         <Count date={db.createdAt} className="fill-blue-600/70" />
       </RowItem>
-      <RowItem extend i={2}>
+      <RowItem fn={() => handleAddUsers(1)} extend i={2}>
         {db.viewers ? (
           db.viewers.map((a, i) => {
             const v = a?.split("&");
-            return <UserTag key={i} name={v[2]} title={v[1]} />;
+            return (
+              <div
+                key={i}
+                onMouseEnter={() => setViewerHovered(i + 1)}
+                onMouseLeave={() => setViewerHovered(0)}
+                className="flex items-center"
+              >
+                <UserTag name={v[2]} title={v[1]} cap={15} />
+                <Marker
+                  hovered={viewerHovered == i + 1}
+                  selectContext={
+                    selectedDbUsers.viewers + selectedDbUsers.editors
+                  }
+                  uPath={v[0] + "?" + db.Database}
+                />
+              </div>
+            );
           })
         ) : (
           <UserTag name={""} />
         )}
       </RowItem>
-      <RowItem extend i={1}>
+      <RowItem
+        //can filter id for separate card and usertag clicks
+        fn={() => handleAddUsers(2)}
+        extend
+        i={1}
+      >
         {db.editors ? (
           db.editors.map((a, i) => {
             const e = a?.split("&");
-            return <UserTag key={i} name={e[2]} title={e[1]} />;
+            console.log("editors[i] = ", a);
+            return (
+              <div
+                key={i}
+                onMouseEnter={() => setEditorHovered(i + 1)}
+                onMouseLeave={() => setEditorHovered(0)}
+                className="flex items-center"
+              >
+                <UserTag name={e[2]} title={e[1]} cap={15} />
+                <Marker
+                  hovered={viewerHovered == i + 1}
+                  selectContext={
+                    selectedDbUsers.viewers + selectedDbUsers.editors
+                  }
+                  uPath={e[0] + "?" + db.Database}
+                />
+              </div>
+            );
           })
         ) : (
           <UserTag name={""} />
@@ -59,10 +154,12 @@ export default function Db({ db, i }: { db: db; i: number }) {
       </RowItem>
       <QuickActions
         action1="Delete"
+        action2={`${uAccess.edit ? "Add viewer" : !uAccess.view ? "Request view" : ""}`}
+        action3={`${uAccess.edit ? "Add editor" : ""}`}
         hoverColor1="red"
-        action2="Add viewer"
-        hoverColor2="blue"
-        action3="More Actions"
+        hoverColor2="green"
+        hoverColor3="blue"
+        fn1={() => deleteDb()}
       />
     </div>
   );

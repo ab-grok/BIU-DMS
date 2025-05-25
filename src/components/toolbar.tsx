@@ -23,7 +23,7 @@ type page = {
 export function Toolbar() {
   const [page, setPage] = useState({} as page);
   const [toolClicked, setToolClicked] = useState("");
-  const [selectedAll, setSelectedAll] = useState(0);
+  const [selectedAllTb, setSelectAllTb] = useState(false);
   const [count, setCount] = useState(0);
   const {
     create,
@@ -66,22 +66,23 @@ export function Toolbar() {
       //if (page.record) {}
       if (page.tb) create == "record" ? setCreate("") : setCreate("record");
       else if (page.db) create == "table" ? setCreate("") : setCreate("table");
-      console.log("create: ", create);
+      console.log("Toolbar's reRoute create: ", create);
     }
   }
 
   async function selectAllTb() {
     const tables = await ListTables(page.db);
     if (tables) {
-      if (selectedAll) {
+      if (selectedAllTb) {
         setSelectedTb("");
-        setSelectedAll(0);
+        //doesnt use multiSelectedTb
+        setSelectAllTb(false);
       } else {
+        setSelectedTb("");
         tables.forEach((a, i) => {
-          if (!selectedTb.includes(a.tbName + ","))
-            setSelectedTb(selectedTb + a.tbName + ",");
+          setSelectedTb(selectedTb + page.db + "/" + a.tbName + ",");
         });
-        setSelectedAll(1);
+        setSelectAllTb(true);
       }
     }
   }
@@ -128,7 +129,7 @@ export function Toolbar() {
             onClick={() => selAll()}
             className={` ${toolClicked.includes("selAll") && "font-bold ring-2"} ${pressAnim == "sA" && "scale-95"} ring-bg-sub-fg hover:bg-sub-fg flex h-full w-fit cursor-pointer items-center rounded-2xl px-3 text-center`}
           >
-            Select all
+            {selectedAllTb ? "Select all" : "unselect all"}
           </span>
           <span
             className={`${count > 1 ? "flex" : "hidden"} items-center justify-center pr-6`}

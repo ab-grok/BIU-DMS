@@ -11,25 +11,25 @@ export default function UserTag({
   className,
   hovered,
   clicked,
-  n,
   cap,
   colorCode,
   delFn,
   route,
   clickedColor,
+  // n,
 }: {
   name: string;
   id?: string;
   title?: string;
   className?: string;
-  hovered?: number; //shared context/state with the group
+  hovered?: boolean;
   clicked?: boolean | number; //shared w group inline
   colorCode?: number; //0-9 for the color array
   delFn?: (a: any, b?: any) => void;
-  n?: number; //i
   cap?: number; //word limit
   route?: string;
   clickedColor?: string;
+  // n?: number; //i
 }) {
   const router = useRouter();
   const [thisHover, setHover] = useState(0);
@@ -61,7 +61,7 @@ export default function UserTag({
       onMouseLeave={() => setHover(0)}
       onClick={pushRoute}
       className={cn(
-        `group/ut relative ${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? (clickedColor ?? colorHover) : n ? hovered == n && `ring-2` : hovered && "ring-2"} ${!hovered && thisHover && `${color} shadow-md`} text-bw min flex h-[1.3rem] w-fit max-w-[8rem] min-w-fit items-center justify-center rounded-[4px] px-1 shadow-2xs select-none`,
+        `group/ut relative ${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? (clickedColor ?? colorHover) : hovered && "ring-2"} ${!hovered && thisHover && `${color} shadow-md`} text-bw min flex h-[1.3rem] w-fit max-w-[8rem] min-w-fit items-center justify-center rounded-[4px] px-1 shadow-2xs select-none`,
         className,
       )}
     >
@@ -82,7 +82,7 @@ export default function UserTag({
         <span
           title="Delete"
           onClick={() => delFn(name, "del")}
-          className={` ${clicked ? (clickedColor ?? colorHover) : n && hovered == n && `ring-2`} ${!hovered && thisHover && color} absolute -right-[15px] flex h-full w-fit translate-x-1 cursor-pointer items-center rounded-r-[5px] pr-0.5 opacity-0 shadow-2xs backdrop-blur-3xl transition-all group-hover/ut:translate-x-0 group-hover/ut:opacity-100`}
+          className={` ${clicked ? (clickedColor ?? colorHover) : hovered && `ring-2`} ${!hovered && thisHover && color} absolute -right-[15px] flex h-full w-fit translate-x-1 cursor-pointer items-center rounded-r-[5px] pr-0.5 opacity-0 shadow-2xs backdrop-blur-3xl transition-all group-hover/ut:translate-x-0 group-hover/ut:opacity-100`}
         >
           <PlusCircle className="size-4 rotate-45 stroke-red-600 stroke-3" />
         </span>

@@ -1,25 +1,58 @@
 "use client";
 
-import { useAddUsers } from "@/app/dialogcontext";
+import { useAddUsers, useNotifyContext } from "@/app/dialogcontext";
 import Index from "@/components";
 import { useButtonAnim } from "@/components/count";
 import SearchBar from "@/components/searchbar";
 import { Button } from "@/components/ui/button";
 import UserTag from "@/components/usertag";
 import { getUsers, allUsers } from "@/lib/actions";
-import { revalidate } from "@/lib/sessions";
+import { changeUsers } from "@/lib/server";
 import { UIEvent, useEffect, useState } from "react";
 
 export default function AddUsers({ height }: { height?: string }) {
   const [users, setUsers] = useState([] as allUsers[]);
   const { addUsers, setAddUsers } = useAddUsers();
   const { pressAnim, setPressAnim } = useButtonAnim();
+  const { setNotify } = useNotifyContext();
 
   function handleClickOut(e: UIEvent<HTMLDivElement>) {
     const currId = (e.target as HTMLDivElement).id;
     if (e.currentTarget.id == currId) {
       setAddUsers((p) => ({ ...p, type: "" }));
     }
+  }
+
+  function usersCount(category: string) {
+    if (category == "e")
+      return addUsers.editors.split(",").filter(Boolean).length;
+    else return addUsers.editors.split(",").filter(Boolean).length;
+  }
+
+  async function submitChangedUsers() {
+    const isE = addUsers.category == "editors";
+    const vArr = addUsers.viewers.split(",").filter(Boolean);
+    const eArr = addUsers.editors.split(",").filter(Boolean);
+    const dbTb = addUsers.type.split(",")[0].split("/");
+    const { error } = await changeUsers({
+      dbName: dbTb[0],
+      tbName: dbTb[1],
+      viewers: vArr,
+      editors: eArr,
+      remove: "",
+    });
+    if (error)
+      setNotify({
+        message: error,
+        danger: true,
+      });
+    else
+      setNotify({
+        message: isE
+          ? `Changed ${dbTb[1] ? "table" : " database"} editors`
+          : `Changed ${dbTb[1] ? "table" : " database"} viewers`,
+        danger: true,
+      });
   }
 
   useEffect(() => {
@@ -44,10 +77,11 @@ export default function AddUsers({ height }: { height?: string }) {
         <header className="bg-main-fg flex h-[3.2rem] w-full border-b-2">
           <div className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
-            <span className="text-bw/70">Users</span>
+            <span className="text-bw/70">{addUsers.type.split(",")[0]}</span>
             <span className="text-bw/60 text-xs">
               {" "}
-              Add {addUsers.category.toLocaleLowerCase()}
+              Add {addUsers.category.toLocaleLowerCase()} {": "}{" "}
+              {addUsers.type == "editors" ? usersCount("e") : usersCount("v")}
             </span>
           </div>
           <div className="flex w-[60%] items-center px-2">
@@ -61,6 +95,7 @@ export default function AddUsers({ height }: { height?: string }) {
         <Button
           onClick={() => {
             setPressAnim("addUser");
+            addUsers.type.includes(",") && submitChangedUsers();
             setAddUsers((p) => ({ ...p, type: "" }));
           }}
           type="button"
@@ -96,27 +131,27 @@ function Users({ u, i }: Users) {
 
   //users are not formatted to uid?db/tb -- Idea is, there wouldnt be cases where multiple tables and/or databases would be created at once.
   function userClicked(id: string, title: string, firstname: string) {
-    const thisUser = id + "&" + title + "&" + firstname;
+    const thisUser = id + "&" + title + "&" + firstname + ",";
     if (addUsers.category == "viewers") {
       setAddUsers((p) => {
         if (p.viewers?.includes(thisUser))
-          return { ...p, viewers: p.viewers?.replace(thisUser + ",", "") };
+          return { ...p, viewers: p.viewers?.replace(thisUser, "") };
         else
           return {
             ...p,
-            editors: p.editors?.replace(thisUser + ",", ""),
-            viewers: p.viewers ? p.viewers + thisUser + "," : thisUser + ",",
+            editors: p.editors?.replace(thisUser, ""),
+            viewers: p.viewers ? p.viewers + thisUser : thisUser,
           };
       });
     } else if (addUsers.category == "editors") {
       setAddUsers((p) => {
         if (p.editors?.includes(thisUser))
-          return { ...p, editors: p.editors?.replace(thisUser + ",", "") };
+          return { ...p, editors: p.editors?.replace(thisUser, "") };
         else
           return {
             ...p,
-            viewers: p.viewers?.replace(thisUser + ",", ""),
-            editors: p.editors ? p.editors + thisUser + "," : thisUser + ",",
+            viewers: p.viewers?.replace(thisUser, ""),
+            editors: p.editors ? p.editors + thisUser : thisUser,
           };
       });
     }
@@ -147,7 +182,7 @@ function Users({ u, i }: Users) {
             }
           />
           <UserTag
-            hovered={hovered}
+            hovered={hovered == 1}
             name={u.firstname + " " + u.lastname}
             title={u.title}
             clicked={
@@ -184,7 +219,6 @@ function Users({ u, i }: Users) {
           )}
         </div>
       </section>
-      <div> </div>
     </div>
   );
 }
