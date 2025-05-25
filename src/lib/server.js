@@ -368,9 +368,9 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   let view = false;
   if (createdBy.includes(userId)) {
     edit = true; //change to creator
-  } else if (editors.includes(userId)) {
+  } else if (editors?.includes(userId)) {
     edit = true;
-  } else if (viewers.includes(userId)) {
+  } else if (viewers?.includes(userId)) {
     view = true;
   }
 
@@ -821,7 +821,7 @@ export async function getSession({ token32, update, getId }) {
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
   let rowTime = row[0].expiresAt.getTime();
-
+  console.log("in getSession, expiresAt.getTime(): ", rowTime);
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });
     throw { message: "Session expired!" };
@@ -836,7 +836,7 @@ export async function getSession({ token32, update, getId }) {
   const { userId, expiresAt, ...user1 } = row[0];
   let user = user1;
   if (getId) user = { userId, ...user1 };
-  if (update && sessionUpdated) user = { expiresAt, ...user1 };
+  if (update) user = { expiresAt, ...user1 };
   console.log("getUser from getSession: ", user);
   return user;
 }

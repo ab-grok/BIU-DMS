@@ -103,14 +103,14 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     const uPath = `${id}?${dbName}/${Tb.tbName},`;
     setSelectedTb(tbPath);
 
-    if (selectedTbUsers.viewers.includes(uPath)) {
+    if (selectedTbUsers.viewers?.includes(uPath)) {
       setSelectedTbUsers((p) => ({
         ...p,
         viewers: p.viewers.replace(uPath, ""),
       }));
     } else setSelectedTbUsers((p) => ({ ...p, viewers: p.viewers + uPath }));
 
-    if (selectedTbUsers.editors.includes(uPath)) {
+    if (selectedTbUsers.editors?.includes(uPath)) {
       setSelectedTbUsers((p) => ({
         ...p,
         editors: p.editors.replace(uPath, ""),
@@ -142,7 +142,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   function requestRole(n: number) {}
 
   function handleMultiTables() {
-    if (selectedTb.includes(tbPath)) {
+    if (selectedTb?.includes(tbPath)) {
       setSelectedTb((p) => p.replace(tbPath, ""));
     } else {
       setSelectedTb((p) => p + tbPath);
@@ -279,7 +279,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             </div>
             <div
               onClick={() => handleEnter("door")}
-              className={`${selectedTb.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter h-full w-1/3 cursor-pointer items-center justify-end pr-3`}
+              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter h-full w-1/3 cursor-pointer items-center justify-end pr-3`}
             >
               {!(uAccess.view || uAccess.edit) ? (
                 <LockIcon
@@ -416,7 +416,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                 />
               ) : (
                 <Edit
-                  className={`stroke-bw/50 ${selectedTb.includes(Tb.tbName) ? "fill-green-600/30" : ""}`}
+                  className={`stroke-bw/50 ${selectedTb?.includes(Tb.tbName) ? "fill-green-600/30" : ""}`}
                 />
               )}
             </div>

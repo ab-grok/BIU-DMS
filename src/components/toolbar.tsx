@@ -127,7 +127,7 @@ export function Toolbar() {
           </div>
           <span
             onClick={() => selAll()}
-            className={` ${toolClicked.includes("selAll") && "font-bold ring-2"} ${pressAnim == "sA" && "scale-95"} ring-bg-sub-fg hover:bg-sub-fg flex h-full w-fit cursor-pointer items-center rounded-2xl px-3 text-center`}
+            className={` ${toolClicked?.includes("selAll") && "font-bold ring-2"} ${pressAnim == "sA" && "scale-95"} ring-bg-sub-fg hover:bg-sub-fg flex h-full w-fit cursor-pointer items-center rounded-2xl px-3 text-center`}
           >
             {selectedAllTb ? "Select all" : "unselect all"}
           </span>
