@@ -1,10 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteSession } from "@/lib/sessions";
+import { deleteSession, revalidate } from "@/lib/sessions";
 
 export async function logOut(): Promise<{ error: string }> {
   try {
+    revalidate("session", "all");
     const { error } = await deleteSession();
     console.log("user logged out, error: ", error);
     if (!error) redirect("/login");
