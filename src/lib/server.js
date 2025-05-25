@@ -823,7 +823,14 @@ export async function getSession({ token32, update, getId }) {
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
   let rowTime = row[0].expiresAt.getTime();
-  console.log("in getSession, row ", row);
+  console.log(
+    "in getSession, token32 ",
+    token32,
+    "update: ",
+    update,
+    "...getId: ",
+    getId,
+  );
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });
     throw { message: "Session expired!" };
@@ -839,7 +846,7 @@ export async function getSession({ token32, update, getId }) {
   let user = user1;
   if (getId) user = { userId, ...user1 };
   if (update) user = { expiresAt, ...user1 };
-  console.log("getUser from getSession: ", user);
+  console.log("getUser from getSession: ", user, "..userId: ", userId);
   return user;
 }
 
