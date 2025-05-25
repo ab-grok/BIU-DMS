@@ -22,7 +22,9 @@ export default function DbLayout() {
   useEffect(() => {
     setIsLoading((p) => p + "databases,");
     (async () => {
+      console.log("DbLayout in useEffect, before listDatabases");
       const res = await listDatabases();
+      console.log("DbLayout in useEffect, after listDatabases, res: ", res);
       if (!res) {
         setNotify({
           message: "Can't get to the server right now.",
