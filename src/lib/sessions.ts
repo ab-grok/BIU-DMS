@@ -106,6 +106,7 @@ export async function validateSession() {
 export async function deleteSession(): Promise<{
   error: string;
 }> {
+  console.log("in delete session before token32");
   const token32 = (await cookies()).get("session")?.value;
   if (!token32) return { error: "Session not found!" };
   try {
