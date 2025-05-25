@@ -196,7 +196,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
   }
 
   let rowSel =
-    await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
+    await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and ${tbName ? auth`tb_name = ${tbName}` : auth`tb_name is null`}`;
   let viewers;
   let editors;
   console.log("getMetaData for " + dbName + " rowSel: ", rowSel);
@@ -794,10 +794,8 @@ export async function createSession({ userId, dcrPass, token32 }) {
 }
 
 export async function delSession({ userId }) {
-  console.log("deleteSession fired, userId: ", userId);
   const rowDel =
     await auth`delete from "user_session" where user_id = ${userId} returning *`;
-  console.log("deleteSession fired, row: ", rowDel);
   if (!rowDel[0]) return false;
   return true;
 }

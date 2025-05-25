@@ -111,10 +111,7 @@ export async function deleteSession(): Promise<{
   try {
     const user = await validateSession();
     if (!user) return { error: "User not logged in" };
-
-    console.log("in delete session after validateSession, user: ", user);
     await delSession({ userId: user.userId });
-    console.log("in deleteSession() got past delSession ");
   } catch (e: any) {
     return { error: e.customMessage };
   }
