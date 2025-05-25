@@ -16,7 +16,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { logUser } from "./actions";
 import PasswordInput from "@/components/password";
-import { useLoading, useNotifyContext } from "@/app/dialogcontext";
+import { useLoading } from "@/app/dialogcontext";
 import Loading from "@/components/loading";
 
 export default function LoginForm() {
@@ -42,16 +42,12 @@ export default function LoginForm() {
 
   const [errMsg, setErrMsg] = useState({ err1: "", err2: "" });
   const { setAuthPath, setIsLoading, isLoading } = useLoading();
-  const { setNotify } = useNotifyContext();
   const [isPending, startTransition] = useTransition();
 
   function logSubmit(values: loginType) {
     setErrMsg({ err1: "", err2: "" });
     setIsLoading("login,");
     startTransition(() => {
-      const done = new Promise((resolve, reject) => {
-        resolve(1);
-      });
       (async () => {
         const { error } = await logUser(values);
         // will get redirected here when there's no error (loading never ends)
@@ -66,12 +62,6 @@ export default function LoginForm() {
       })();
 
       setErrMsg({ err1: "", err2: "" });
-      setNotify({
-        message: "Welcome ${session.firstname}, You have 3 view requests",
-        danger: false,
-        exitable: false,
-      });
-
       setIsLoading((p) => p.replace("login,", ""));
     });
   }

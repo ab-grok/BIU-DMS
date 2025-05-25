@@ -22,21 +22,21 @@ export async function logUser(logIn: loginType): Promise<{ error: string }> {
       userId: "",
     });
 
-    if (!userId) throw { customMessage: "User not found" };
+    if (!userId) return { error: "Incorrect username or password" };
     const { expiresAt } = await createSession({
       userId,
       dcrPass: password,
       token32,
     });
-    if (!expiresAt) throw { customMessage: "Something went wrong!" };
+    if (!expiresAt) return { error: "Something went wrong!" };
 
-    console.log("this is expiresAt: " + expiresAt);
-    console.log("this is token32: " + token32);
+    console.log("logUser,  expiresAt: " + expiresAt);
+    console.log("logUser,  token32: " + token32);
 
     const cookieSet = await createSessionCookie({ token32, expiresAt });
     if (!cookieSet)
-      return { error: "Cookies weren't set, You may be signed out." };
-    redirect("/?signed_in");
+      return { error: "Cookies couldn't be set, You may be signed out." };
+    redirect("/?signed=success");
   } catch (e) {
     if (isRedirectError(e)) throw e;
     console.log(e);
