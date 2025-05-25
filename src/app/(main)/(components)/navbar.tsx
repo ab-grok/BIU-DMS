@@ -2,7 +2,7 @@
 import React from "react";
 import { IoBulb, IoBulbSharp } from "react-icons/io5";
 import { useTheme } from "next-themes";
-import { GalleryHorizontal, RectangleEllipsis } from "lucide-react";
+import { GalleryHorizontal, Menu, RectangleEllipsis } from "lucide-react";
 import { useSideContext } from "../layoutcontext";
 import logo from "@/assets/images/biu_blue_round.png";
 import Image from "next/image";
@@ -32,18 +32,18 @@ export default function Navbar() {
         <span
           onClick={menuClicked}
           title="Menu"
-          className="group/menu stroke-mainbg flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center bg-cyan-500 lg:hidden"
+          className="group/menu stroke-mainbg flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center lg:hidden"
         >
           {sidebarState.sbExpanded ? (
-            <GalleryHorizontal className="fill-main-bg animate-in size-6 rounded-xl transition-all group-hover/menu:rounded-none group-hover/menu:shadow-md" />
+            <Menu className="fill-main-bg size-6 rounded-xl transition-all group-hover/menu:rounded-none group-hover/menu:shadow-md" />
           ) : (
-            <RectangleEllipsis className="fill-main-fg rotate-90 group-hover/menu:shadow-md" />
+            <Menu className="fill-main-fg group-hover/menu:shadow-md" />
           )}
         </span>
-        <span className="bg-main-fg/50 flex size-11 items-center justify-center rounded-full">
+        <span className="bg-main-fg/50 flex size-11 flex-none items-center justify-center rounded-full">
           <Image src={logo} alt="Logo" className={`size-10`} />
         </span>
-        <span className="text-main-bg ml-1 text-xl font-bold select-none">
+        <span className="text-main-bg ml-1 hidden text-xl font-bold select-none sm:flex">
           {" "}
           BIU DMS{" "}
         </span>
