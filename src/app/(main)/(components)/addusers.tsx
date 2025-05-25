@@ -95,7 +95,7 @@ export default function AddUsers({ height }: { height?: string }) {
         <Button
           onClick={() => {
             setPressAnim("addUser");
-            addUsers.type.includes(",") && submitChangedUsers();
+            addUsers.type?.includes(",") && submitChangedUsers();
             setAddUsers((p) => ({ ...p, type: "" }));
           }}
           type="button"
