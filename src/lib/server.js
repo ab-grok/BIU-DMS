@@ -31,13 +31,14 @@ export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
 
-  console.log("in getTbCount");
+  console.log("in getDb");
   const rowsMetaPromise = rows?.map(async (a, i) => {
     if (getTbCount) {
       const count =
-        await main`Select count(table_name) as tbCount from information_schema.tables where table_schema = ${a.schema_name} `;
-      console.log(" getTbCount from getDb: ", count);
+        await main`Select count(table_name) as "tbCount" from information_schema.tables where table_schema = ${a.schema_name} `;
+      console.log(" getTbCount from getDb, count: ", count);
       let dbMeta = await getMetadata({ dbName: a.schema_name });
+      console.log(" getTbCount from getDb: getMetadata", dbMeta);
       return {
         Database: a.schema_name,
         tbCount: count[0].tbCount,
@@ -199,7 +200,6 @@ export async function getMetadata({ dbName, tbName, asString }) {
     await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
   let viewers;
   let editors;
-
   if (!rowSel.length) {
     console.log({ customMessage: "Metadata not found!" });
     return null;
@@ -432,7 +432,7 @@ export async function getTables(dbName, includeMeta) {
 
   let tableDataPromise = res.map(async (a, i) => {
     if (includeMeta) {
-      let rc = await main`select count(*) as rC from ${main([dbName, a.tb])}`;
+      let rc = await main`select count(*) as "rC" from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
@@ -738,6 +738,9 @@ export async function getAllUsers() {
 
   const meta =
     await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from "metadata"`;
+
+  console.log("getAllUsers, all users count, :", allUsers.length);
+  console.log("getAllUsers, all metadata count, :", meta.length);
   allUsers.forEach((u, i) => {
     const currU = {
       created: { db: [], tb: [] },
@@ -746,16 +749,16 @@ export async function getAllUsers() {
     };
 
     for (const [j, md] of meta.entries()) {
-      if (md.editors.includes(u.id)) {
+      if (md.editors?.some((e) => e.includes(u.id))) {
         md.tb
           ? currU.edits.tb.push(md.db + "/" + md.tb)
           : currU.edits.db.push(md.db);
-      } else if (md.viewers.includes(u.id)) {
+      } else if (md.viewers?.some((v) => v.includes(u.id))) {
         md.tb
           ? currU.views.tb.push(md.db + "/" + md.tb)
           : currU.views.db.push(md.db);
       }
-      if (md.cby.includes(u.id)) {
+      if (md.cby?.includes(u.id)) {
         md.tb
           ? currU.created.tb.push(md.db + "/" + md.tb)
           : currU.created.db.push(md.db);
