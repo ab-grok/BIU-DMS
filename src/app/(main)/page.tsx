@@ -10,16 +10,18 @@ export default function MainPage() {
   const { setNotify } = useNotifyContext();
   const signed = useSearchParams().get("signed");
   useEffect(() => {
-    (async () => {
-      const user = await validateSession();
-      if (user) {
-        setNotify({
-          message: `Welcome ${user.title} ${user.firstname}`,
-          danger: false,
-          exitable: false,
-        });
-      }
-    })();
+    if (signed) {
+      (async () => {
+        const user = await validateSession();
+        if (user) {
+          setNotify({
+            message: `Welcome ${user.title}${user.firstname}`,
+            danger: false,
+            exitable: false,
+          });
+        }
+      })();
+    }
   }, []);
   return <div></div>;
 }
