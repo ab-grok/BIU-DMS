@@ -36,9 +36,8 @@ export async function getDb(getTbCount) {
     if (getTbCount) {
       const count =
         await main`Select count(table_name) as "tbCount" from information_schema.tables where table_schema = ${a.schema_name} `;
-      console.log(" getTbCount from getDb, count: ", count);
       let dbMeta = await getMetadata({ dbName: a.schema_name });
-      console.log(" getTbCount from getDb: getMetadata", dbMeta);
+      console.log(" getDb, getTbCount: getMetadata", dbMeta);
       return {
         Database: a.schema_name,
         tbCount: count[0].tbCount,
@@ -200,6 +199,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
     await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and tb_name = ${tbName ? tbName : null}`;
   let viewers;
   let editors;
+  console.log("getMetaData for " + dbName + " rowSel: ", rowSel);
   if (!rowSel.length) {
     console.log({ customMessage: "Metadata not found!" });
     return null;

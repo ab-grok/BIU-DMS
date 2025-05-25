@@ -31,7 +31,6 @@ export async function logUser(logIn: loginType): Promise<{ error: string }> {
     if (!expiresAt) return { error: "Something went wrong!" };
 
     console.log("logUser,  expiresAt: " + expiresAt);
-    console.log("logUser,  token32: " + token32);
 
     const cookieSet = await createSessionCookie({ token32, expiresAt });
     if (!cookieSet)
