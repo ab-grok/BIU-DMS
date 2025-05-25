@@ -817,20 +817,12 @@ export async function getSession({ token32, update, getId }) {
     : null;
   let sessionUpdated = false;
 
-  console.log("sessionId from getSession: ", sessionId);
   const rowArr = auth`select us.expires_at as "expiresAt", u.username, u.firstname, u.lastname, u.title, u.joined, u.level, u.id as "userId", u.avatar from "user_session" us INNER JOIN "user" u on us.user_id = u.id where us.id = ${sessionId}`;
   let row = await auth`${rowArr}`;
   if (!row[0]) throw { customMessage: "Session does not exist." };
 
   let rowTime = row[0].expiresAt.getTime();
-  console.log(
-    "in getSession, token32 ",
-    token32,
-    "update: ",
-    update,
-    "...getId: ",
-    getId,
-  );
+  console.log("in getSession, token32 ", token32);
   if (!rowTime || Date.now() >= rowTime) {
     await delSession({ userId: row[0].userId });
     throw { message: "Session expired!" };
@@ -844,9 +836,8 @@ export async function getSession({ token32, update, getId }) {
 
   const { userId, expiresAt, ...user1 } = row[0];
   let user = user1;
-  if (getId) user = { userId, ...user1 };
-  if (update) user = { expiresAt, ...user1 };
-  console.log("getUser from getSession: ", user, "..userId: ", userId);
+  if (getId) user = { userId, ...user };
+  if (update) user = { expiresAt, ...user };
   return user;
 }
 
