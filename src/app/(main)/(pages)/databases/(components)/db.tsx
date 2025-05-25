@@ -26,10 +26,10 @@ export default function Db({
   const [editorHovered, setEditorHovered] = useState(0);
   const { setNotify } = useNotifyContext();
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
-  const { addUsers, setAddUsers } = useAddUsers();
+  const { setAddUsers } = useAddUsers();
 
   useEffect(() => {
-    let u = udata.split("&");
+    const u = udata.split("&");
     console.log("Db, uData: ", udata);
     if (db.viewers.includes(u[0])) setUAccess({ edit: false, view: true });
     if (db.createdBy.includes(u[0]) || db.editors.includes(u[0]))
@@ -139,7 +139,7 @@ export default function Db({
               >
                 <UserTag name={e[2]} title={e[1]} cap={15} />
                 <Marker
-                  hovered={viewerHovered == i + 1}
+                  hovered={editorHovered == i + 1}
                   selectContext={
                     selectedDbUsers.viewers + selectedDbUsers.editors
                   }
