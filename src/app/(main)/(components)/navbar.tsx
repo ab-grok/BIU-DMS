@@ -35,9 +35,9 @@ export default function Navbar() {
           className="group/menu stroke-mainbg flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center lg:hidden"
         >
           {sidebarState.sbExpanded ? (
-            <Menu className="fill-main-bg size-6 rounded-xl transition-all group-hover/menu:rounded-none group-hover/menu:shadow-md" />
+            <Menu className="size-6 rounded-xl transition-all group-hover/menu:rounded-none group-hover/menu:shadow-md" />
           ) : (
-            <Menu className="fill-main-fg group-hover/menu:shadow-md" />
+            <Menu className="stroke-2 group-hover/menu:shadow-md" />
           )}
         </span>
         <span className="bg-main-fg/50 flex size-11 flex-none items-center justify-center rounded-full">
