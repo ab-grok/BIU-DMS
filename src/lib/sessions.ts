@@ -109,9 +109,10 @@ export async function deleteSession(): Promise<{
   const token32 = (await cookies()).get("session")?.value;
   if (!token32) return { error: "Session not found!" };
   try {
-    console.log("in delete session after token32");
     const user = await validateSession();
     if (!user) return { error: "User not logged in" };
+
+    console.log("in delete session after validateSession, user: ", user);
     await delSession({ userId: user.userId });
     console.log("in deleteSession() got past delSession ");
   } catch (e: any) {
