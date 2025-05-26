@@ -12,6 +12,7 @@ import { UIEvent, useEffect, useState } from "react";
 
 export default function AddUsers({ height }: { height?: string }) {
   const [users, setUsers] = useState([] as allUsers[]);
+  const [usersCount, setUsersCount] = useState({ eCount: 0, vCount: 0 });
   const { addUsers, setAddUsers } = useAddUsers();
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { setNotify } = useNotifyContext();
@@ -23,17 +24,30 @@ export default function AddUsers({ height }: { height?: string }) {
     }
   }
 
-  function usersCount(category: "e" | "v") {
-    if (category == "e") {
+  useEffect(() => {
+    if (addUsers.editors) {
       const eCount = addUsers.editors?.split(",").filter(Boolean).length;
-      console.log("usersCount editors: ", eCount);
-      return eCount;
-    } else {
-      const vCount = addUsers.viewers?.split(",").filter(Boolean).length;
-      console.log("usersCount viewers: ", vCount);
-      return vCount;
+      setUsersCount((p) => ({ ...p, eCount: eCount }));
     }
-  }
+    if (addUsers.viewers) {
+      const vCount = addUsers.viewers?.split(",").filter(Boolean).length;
+      setUsersCount((p) => ({ ...p, vCount: vCount }));
+    }
+  }, []);
+
+  // function usersCount(category: string) {
+  //   if (category == "e") {
+  //     console.log(
+  //       "editor's count: ",
+  //     );
+  //     return addUsers.editors?.split(",").filter(Boolean).length;
+  //   } else {
+  //     console.log(
+  //       "viewer's count: ",
+  //     );
+  //   }
+  //   return addUsers.viewers?.split(",").filter(Boolean).length;
+  // }
 
   async function submitChangedUsers() {
     const isE = addUsers.category == "editors";
@@ -89,7 +103,9 @@ export default function AddUsers({ height }: { height?: string }) {
             <span className="text-bw/60 text-[10px] md:text-sm">
               {" "}
               Add {addUsers.category} {": "}{" "}
-              {addUsers.type == "editors" ? usersCount("e") : usersCount("v")}
+              {addUsers.type == "editors"
+                ? usersCount.eCount
+                : usersCount.vCount}
             </span>
           </div>
           <div className="flex w-[60%] items-center px-2">
