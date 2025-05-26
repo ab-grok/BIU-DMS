@@ -80,7 +80,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <span className="text-bw/70">{addUsers.type.split(",")[0]}</span>
             <span className="text-bw/60 text-xs">
               {" "}
-              Add {addUsers.category.toLocaleLowerCase()} {": "}{" "}
+              Add {addUsers.category} {": "}{" "}
               {addUsers.type == "editors" ? usersCount("e") : usersCount("v")}
             </span>
           </div>
