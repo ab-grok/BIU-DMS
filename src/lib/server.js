@@ -51,8 +51,9 @@ export async function getDb(getTbCount) {
 }
 
 async function checkDb(dbName) {
-  const { rows } = await getDb();
+  const { rowsMeta } = await getDb();
   let dbFound = false;
+  console.log("in checkDb, rows from getDb", rowsMeta);
   rows?.forEach((a, i) => {
     console.log("dbName: ", dbName, "rows.a", a.schema_name);
     if (a.schema_name == dbName) {

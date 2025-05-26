@@ -92,7 +92,7 @@ export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
         // console.log("tableData: ", tableData);
         return tableData as Tb[];
       } catch (e) {
-        console.log(`error in ListTables: ${e}`);
+        console.log(`error in ListTables: ${JSON.stringify(e)}`);
       }
       return null;
     },
