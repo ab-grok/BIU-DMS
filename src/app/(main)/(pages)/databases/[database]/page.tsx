@@ -69,8 +69,13 @@ export default function Database() {
           tbData.map((a, i) => (
             <TableCard key={i} uData={udata} Tb={a} i={i + 1} dbName={currDb} />
           ))
+        ) : create == "table" ? (
+          <div className="p-4 text-4xl italic">
+            {" "}
+            No tables yet. Create a table
+          </div>
         ) : (
-          <div className="text-4xl italic"> No tables yet. Create a table</div>
+          <div className="p-4 text-4xl italic"> Creating a table...</div>
         )}
       </section>
     </div>

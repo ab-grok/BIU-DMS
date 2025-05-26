@@ -69,6 +69,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   const { isLoading, setIsLoading } = useLoading();
   const [typeChange, setTypeChange] = useState(0);
   const [cardHovered, setCardHovered] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
   const colScroll = useRef<HTMLDivElement>(null);
   const currColInput = useRef<HTMLInputElement>(null);
   const currDesc = useRef<HTMLTextAreaElement>(null);
@@ -176,6 +177,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   }
 
   function tableSubmitted() {
+    setSubmitting(true);
     if (!createTbMeta.tbName) {
       setErrDialog({
         blurHandler: errDialogHandler,
@@ -420,6 +422,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
               </div>
               <Separator className="bg-bw/10" />
               <div className="relative h-fit w-full p-1">
+                {submitting && <Loading />}
                 <Button
                   type="submit"
                   onClick={() => setPressAnim("AddCol")}
@@ -428,7 +431,10 @@ export default function CreateTb({ i, uData, db }: tbType) {
                   Add
                 </Button>
                 <Button
-                  onClick={() => setPressAnim("SubmitTb")}
+                  onClick={() => {
+                    tableSubmitted();
+                    setPressAnim("SubmitTb");
+                  }}
                   type="button"
                   className={`${pressAnim == "SubmitTb" && "scale-95"} h-full w-1/2 cursor-pointer rounded-r-full bg-green-600/50 shadow-xs select-none hover:bg-green-600`}
                 >
@@ -445,6 +451,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
         setErr={setErrDialog}
         errDialogHandler={errDialogHandler}
         checkOrDelCol={checkOrDelCol}
+        submitting={submitting}
       />
     </div>
   );
@@ -455,6 +462,7 @@ type liveTable = {
   setErr: (e: any) => void;
   errDialogHandler: (e: any, press?: string) => void;
   checkOrDelCol: (colName: string, del?: string) => void;
+  submitting: boolean;
 };
 
 function LiveTable({
@@ -462,6 +470,7 @@ function LiveTable({
   setErr,
   errDialogHandler,
   checkOrDelCol,
+  submitting,
 }: liveTable) {
   const { createTbCol, setCreateTbCol, createTbMeta, setCreateTbMeta } =
     useSelection();
@@ -576,6 +585,7 @@ function LiveTable({
 
   return (
     <div className="bg-sub-bg absolute right-0 z-4 hidden h-[14rem] max-h-fit w-[30rem] flex-col gap-1 rounded-[5px] border-3 border-green-400/30 p-1 py-2 shadow-2xl xl:flex">
+      {submitting && <Loading />}
       <header className="bg-tb-row2/50 flex h-[3.5rem] w-full gap-1 rounded-2xl">
         <div className="flex h-full w-fit min-w-1/3 p-1 text-[1rem] font-medium">
           {" "}
