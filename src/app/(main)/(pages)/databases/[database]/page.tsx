@@ -60,7 +60,8 @@ export default function Database() {
   return (
     <div className="relative flex h-full w-full flex-col">
       {isLoading.includes(currDb) && <Loading />}
-      {addUsers.type?.includes("tb") && <AddUsers />}
+      {addUsers.type?.includes("tb") ||
+        (addUsers.type == "New Table" && <AddUsers />)}
       <CreateTb uData={udata} db={currDb} i={0} />
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}

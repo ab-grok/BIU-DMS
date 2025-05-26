@@ -481,7 +481,7 @@ export async function createTb({
   console.log("in createTb, token32: ", token32);
   const { userId, firstname, title } = await getSession({ token32 });
   const udata = userId + "&" + title + "&" + firstname;
-
+  console.log("udata from createTb (got session): ", udata);
   if (!(await checkDb(dbName))) return { error: `Unauthorized action` };
   if (await checkTb({ dbName, tbName })) {
     return {
