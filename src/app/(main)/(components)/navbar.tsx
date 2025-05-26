@@ -62,16 +62,16 @@ export default function Navbar() {
         {" "}
         <SearchBar placeholder="database, table or field " />
       </div>
-      <div className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end px-2">
+      <div className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end gap-0.5 px-2">
         {" "}
         <div
           onClick={() => handleReload()}
           title="Reload"
-          className="group shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
+          className="group/r shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme animate-spin" : "stroke-theme/60"} transition-all`}
+            className={`${refreshing ? "stroke-theme animate-spin" : "group-hover/r:stroke-theme stroke-neutral-500"} stroke-2 transition-all`}
           />
         </div>
         <div
