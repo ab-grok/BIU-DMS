@@ -316,7 +316,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
                     ref={colScroll}
                     className="scrollbar-custom flex h-full max-w-[20rem] min-w-[20rem] gap-3 overflow-x-scroll transition-all duration-500"
                   >
-                    {createTbCol.length > 0 &&
+                    {createTbCol.length &&
                       createTbCol.map((a, i) => (
                         <UserTag
                           key={a.name}
@@ -518,12 +518,13 @@ function LiveTable({
   }, [addUsers.editors, addUsers.viewers]);
 
   useEffect(() => {
-    if (liveColRef.current) liveColRef.current.scrollTop = 1;
+    liveColRef.current &&
+      (liveColRef.current.scrollTop = liveColRef.current.scrollHeight);
     console.log(
       "liveColRef.current?.scrollHeight: ",
       liveColRef.current?.scrollHeight,
       "\n liveColRef.current?.scrollTop: ",
-      liveColRef.current?.scrollHeight,
+      liveColRef.current?.scrollTop,
     );
   }, [createTbCol.length]);
 
@@ -604,7 +605,7 @@ function LiveTable({
               onMouseEnter={() => setViewersHovered(1)}
               onMouseLeave={() => setViewersHovered(0)}
               onClick={() => handleAddUsers(1)}
-              className="text-bw/70 bg-row-bg1/70 flex h-[1.6rem] w-full cursor-pointer items-center justify-between rounded-lg px-1 text-xs font-semibold select-none hover:bg-white/20"
+              className="text-bw/70 bg-row-bg1/70 flex h-[1.5rem] w-full cursor-pointer items-center justify-between rounded-lg px-1 text-xs font-semibold select-none hover:bg-white/20"
             >
               {" "}
               {viewersHovered ? (
@@ -614,7 +615,7 @@ function LiveTable({
                   {" "}
                   viewers
                   <span className="ml-2">
-                    {addUsers.viewers?.split(",")?.length - 1}{" "}
+                    {addUsers.viewers?.split(",")?.length - 1 || ""}{" "}
                   </span>
                 </span>
               )}
@@ -657,7 +658,7 @@ function LiveTable({
                   Editors
                   <span className="ml-2">
                     {" "}
-                    {addUsers.editors?.split(",")?.length - 1}{" "}
+                    {addUsers.editors?.split(",")?.length - 1 || ""}{" "}
                   </span>
                 </span>
               )}
@@ -704,6 +705,7 @@ function LiveTable({
                     name={a.name}
                     className="text-sm"
                     delFn={checkOrDelCol}
+                    cap={12}
                   />
                   <div className="flex gap-1">
                     {" "}
