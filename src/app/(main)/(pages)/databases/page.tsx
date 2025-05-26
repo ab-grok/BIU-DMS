@@ -81,7 +81,7 @@ export default function DbLayout() {
       >
         {addUsers.type?.includes("db") && (
           <AddUsers
-            height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[86%]"} `}
+            height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[96%]"} `}
           />
         )}
 

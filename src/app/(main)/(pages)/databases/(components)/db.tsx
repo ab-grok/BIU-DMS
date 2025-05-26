@@ -83,7 +83,7 @@ export default function Db({
           <LogIn className="absolute top-0 right-0 hidden size-5 group-hover:flex" />
         </div>
       </RowItem>
-      <RowItem extend i={2}>
+      <RowItem itemsStart={true} extend i={2}>
         {db.description ?? <div className="italic"> No description yet</div>}
       </RowItem>
       <RowItem i={1}>
@@ -95,7 +95,7 @@ export default function Db({
         <Count date={db.createdAt} className="fill-blue-600/70" />
       </RowItem>
       <RowItem fn={() => handleAddUsers(1)} extend i={2}>
-        {db.viewers ? (
+        {db.viewers?.length ? (
           db.viewers.map((a, i) => {
             const v = a?.split("&");
             return (
@@ -124,7 +124,7 @@ export default function Db({
         extend
         i={1}
       >
-        {db.editors ? (
+        {db.editors?.length ? (
           db.editors.map((a, i) => {
             const e = a?.split("&");
             console.log("editors[i] = ", a);
