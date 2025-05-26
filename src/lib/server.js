@@ -200,7 +200,7 @@ export async function getMetadata({ dbName, tbName, asString }) {
     await auth`select viewers, editors, created_by, created_at, updated_at, updated_by, private, description from "metadata" where db_name = ${dbName} and ${tbName ? auth`tb_name = ${tbName}` : auth`tb_name is null`}`;
   let viewers;
   let editors;
-  console.log("getMetaData for " + dbName + " rowSel: ", rowSel);
+  // console.log("getMetaData for " + dbName + " rowSel: ", rowSel);
   if (!rowSel.length) {
     console.log({ customMessage: "Metadata not found!" });
     return null;
