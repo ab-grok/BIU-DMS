@@ -33,7 +33,7 @@ export default function AddUsers({ height }: { height?: string }) {
       const vCount = addUsers.viewers?.split(",").filter(Boolean).length;
       setUsersCount((p) => ({ ...p, vCount: vCount }));
     }
-  }, []);
+  }, [addUsers.editors, addUsers.viewers]);
 
   // function usersCount(category: string) {
   //   if (category == "e") {
