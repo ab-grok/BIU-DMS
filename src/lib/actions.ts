@@ -72,14 +72,18 @@ export type Tb = {
   editors: string[];
 };
 
-export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
+export type ListTbsType = {
+  tbArr: Tb[] | null;
+  error: string | null;
+};
+
+export async function ListTables(db_name: string): Promise<ListTbsType> {
   const { token32 } = await getCookie();
-  if (!token32) return null;
+  if (!token32) return { tbArr: null, error: "Unauthorized action" };
   console.log("~~~~~~~~~~in ListTables before unstable_cache");
   const Tables = unstable_cache(
     async () => {
-      console.log("~~~~~~~~~~in ListTables");
-      console.log("dbName: ", db_name);
+      console.log("~~~~~~~~~~in ListTables dbName: ", db_name);
       try {
         //expiresAt, username, firstname, lastname, title, joined, level, userId, avatarUrl
         const { userId } = await getSession({
@@ -90,10 +94,13 @@ export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
         if (!userId) throw { customMessage: "Couldnt get session" };
         const { tableData } = await getTables(db_name, true);
         // console.log("tableData: ", tableData);
-        return tableData as Tb[];
-      } catch (e) {
+        return { tbArr: tableData as Tb[], error: null };
+      } catch (e: any) {
         console.log(`error in ListTables: ${JSON.stringify(e)}`);
-        return null;
+        return {
+          tbArr: null,
+          error: e.customMessage || "Couldn't get tables",
+        };
       }
     },
     [`tables-${token32}`],

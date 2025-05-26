@@ -440,7 +440,7 @@ export async function getTables(dbName, includeMeta) {
     } else return { tbName: a.tb };
   });
   const tableData = await Promise.all(tableDataPromise); //
-  // console.log(JSON.stringify(tables));
+  console.log(JSON.stringify("tableData fr getTables: ", tableData));
   return { tableData };
 }
 
