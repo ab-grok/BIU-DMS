@@ -257,7 +257,7 @@
   --main-fg: rgb(168, 124, 124);
   --sub-bg: rgb(161, 161, 161);
   --sub-fg: rgb(255, 255, 255);
-  --card-section-background: rgb(251, 251, 252);
+  --theme: rgb(251, 251, 252);
   --sub-grad-start: rgb(255, 255, 255);
   --sub-grad-end: rgb(150, 150, 150);
   --sub-grad-hover-start: rgb(198, 228, 191);
@@ -285,7 +285,7 @@
   --main-fg: rgb(0, 0, 0);
   --sub-bg: rgb(56, 56, 56);
   --sub-fg: rgb(96, 96, 96);
-  --card-section-background: rgb(251, 251, 252);
+  --theme: rgb(4, 4, 4);
   --ring: oklch(0.704 0.04 256.788);
   --sub-grad-start: rgb(75, 75, 75);
   --sub-grad-end: rgb(42, 41, 41);
@@ -308,7 +308,7 @@
   --color-main-fg: var(--main-fg);
   --color-sub-bg: var(--sub-bg);
   --color-sub-fg: var(--sub-fg);
-  --color-card-section-background: var(--card-section-background);
+  --color-theme: var(--theme);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -328,7 +328,7 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-card-background: var(--card-background);
-  --color-card-section-background: var(--card-section-background);
+  --color-theme: var(--theme);
   --color-card-section-foreground: var(--card-section-foreground);
   --color-popover: var(--popover);
   --color-db-foreground: var(--db-foreground);

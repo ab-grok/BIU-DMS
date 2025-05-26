@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
-import { IoBulb, IoBulbSharp } from "react-icons/io5";
+import { IoBulb, IoBulbSharp, IoReloadCircleOutline } from "react-icons/io5";
 import { useTheme } from "next-themes";
 import { GalleryHorizontal, Menu, RectangleEllipsis } from "lucide-react";
 import { useSideContext } from "../layoutcontext";
 import logo from "@/assets/images/biu_blue_round.png";
 import Image from "next/image";
 import SearchBar from "@/components/searchbar";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const { setSidebarState, sidebarState } = useSideContext().context;
-
+  const [refreshing, setRefreshing] = React.useState(false);
+  const router = useRouter();
   function menuClicked() {
     setSidebarState((prev) => ({
       ...prev,
@@ -21,6 +23,14 @@ export default function Navbar() {
           : false,
     }));
   }
+  function handleReload() {
+    router.refresh();
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2500);
+  }
+
   function switchMode() {
     theme == "light" ? setTheme("dark") : setTheme("light");
   }
@@ -52,8 +62,18 @@ export default function Navbar() {
         {" "}
         <SearchBar placeholder="database, table or field " />
       </div>
-      <div className="bg-bw/10 flex h-full w-[10rem] items-center justify-end px-2">
+      <div className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end px-2">
         {" "}
+        <div
+          onClick={() => handleReload()}
+          title="Reload"
+          className="group shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
+        >
+          <IoReloadCircleOutline
+            size={25}
+            className={`${refreshing ? "stroke-theme animate-spin" : "stroke-theme/60"} `}
+          />
+        </div>
         <div
           onClick={() => switchMode()}
           title="Theme"
