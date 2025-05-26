@@ -519,13 +519,13 @@ function LiveTable({
 
   useEffect(() => {
     liveColRef.current &&
-      (liveColRef.current.scrollTop = liveColRef.current.scrollHeight);
-    console.log(
-      "liveColRef.current?.scrollHeight: ",
-      liveColRef.current?.scrollHeight,
-      "\n liveColRef.current?.scrollTop: ",
-      liveColRef.current?.scrollTop,
-    );
+      // (liveColRef.current.scrollTop = liveColRef.current.scrollHeight);
+      console.log(
+        "liveColRef.current?.scrollHeight: ",
+        liveColRef.current?.scrollHeight,
+        "\n liveColRef.current?.scrollTop: ",
+        liveColRef.current?.scrollTop,
+      );
   }, [createTbCol.length]);
 
   function onKeysChange(colName: string, keyName: string, keyVal: number) {
