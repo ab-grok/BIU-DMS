@@ -103,7 +103,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <span className="text-bw/60 text-[10px] md:text-sm">
               {" "}
               Add {addUsers.category} {": "}{" "}
-              {addUsers.type == "editors"
+              {addUsers.category == "editors"
                 ? usersCount.eCount
                 : usersCount.vCount}
             </span>
