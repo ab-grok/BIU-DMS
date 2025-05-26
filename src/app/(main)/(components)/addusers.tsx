@@ -12,7 +12,6 @@ import { UIEvent, useEffect, useState } from "react";
 
 export default function AddUsers({ height }: { height?: string }) {
   const [users, setUsers] = useState([] as allUsers[]);
-  const [usersCount, setUsersCount] = useState({ eCount: 0, vCount: 0 });
   const { addUsers, setAddUsers } = useAddUsers();
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { setNotify } = useNotifyContext();
@@ -24,36 +23,17 @@ export default function AddUsers({ height }: { height?: string }) {
     }
   }
 
-  useEffect(() => {
-    if (addUsers.editors) {
-      const eCount = addUsers.editors?.split(",").filter(Boolean).length;
-      setUsersCount((p) => ({ ...p, eCount: eCount }));
-    }
-    if (addUsers.viewers) {
-      const vCount = addUsers.viewers?.split(",").filter(Boolean).length;
-      setUsersCount((p) => ({ ...p, vCount: vCount }));
-    }
-  }, [addUsers.editors, addUsers.viewers]);
-
-  // function usersCount(category: string) {
-  //   if (category == "e") {
-  //     console.log(
-  //       "editor's count: ",
-  //     );
-  //     return addUsers.editors?.split(",").filter(Boolean).length;
-  //   } else {
-  //     console.log(
-  //       "viewer's count: ",
-  //     );
-  //   }
-  //   return addUsers.viewers?.split(",").filter(Boolean).length;
-  // }
+  function usersCount(category: string) {
+    if (category == "e")
+      return addUsers.editors.split(",").filter(Boolean).length;
+    else return addUsers.viewers?.split(",").filter(Boolean).length;
+  }
 
   async function submitChangedUsers() {
     const isE = addUsers.category == "editors";
     const vArr = addUsers.viewers?.split(",").filter(Boolean);
-    const eArr = addUsers.editors?.split(",").filter(Boolean);
-    const dbTb = addUsers.type?.split(",")[0].split("/");
+    const eArr = addUsers.editors.split(",").filter(Boolean);
+    const dbTb = addUsers.type.split(",")[0].split("/");
     const { error } = await changeUsers({
       dbName: dbTb[0],
       tbName: dbTb[1],
@@ -104,8 +84,8 @@ export default function AddUsers({ height }: { height?: string }) {
               {" "}
               Add {addUsers.category} {": "}{" "}
               {addUsers.category == "editors"
-                ? usersCount.eCount
-                : usersCount.vCount}
+                ? usersCount("e")
+                : usersCount("v")}
             </span>
           </div>
           <div className="flex w-[60%] items-center px-2">

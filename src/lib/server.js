@@ -426,12 +426,12 @@ export async function getTables(dbName, includeMeta) {
   //must call with includeMeta to get table metadata
   // tableData = {tbName} | {tbName, ...metadata}
   if (!(await checkDb(dbName))) {
-    throw { error: "Database does not exist" };
+    throw { customMessage: "Database does not exist" };
   }
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
-  if (!res[0]) return { error: "Database has no tables" };
   console.log("in getTables, res: ", res);
+  if (!res[0]) return { error: "Database has no tables" };
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {
       let rc = await main`select count(*) as "rC" from ${main([dbName, a.tb])}`;
@@ -459,6 +459,7 @@ export async function checkTb({ dbName, tbName }) {
   console.log("checktb dbName: ", dbName, " ...tbName: ", tbName);
   const { tableData } = await getTables(dbName);
   let tbFound = false;
+  if (!tableData) return tbFound;
   for (const a of tableData) {
     if (a.tbName == tbName) {
       tbFound = true;
