@@ -92,7 +92,7 @@ export default function AddUsers({ height }: { height?: string }) {
         <main className="h-[78%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}
         </main>
-        <section className="mb-1 flex h-[3rem] w-full">
+        <section className="mb-1 flex h-[3rem] w-full items-center bg-amber-300">
           <Button
             onClick={() => {
               setPressAnim("addUser");
