@@ -37,7 +37,7 @@ export async function getDb(getTbCount) {
       const count =
         await main`Select count(table_name) as "tbCount" from information_schema.tables where table_schema = ${a.schema_name} `;
       let dbMeta = await getMetadata({ dbName: a.schema_name });
-      console.log(" getDb, getTbCount: getMetadata", dbMeta);
+      // console.log(" getDb, getTbCount: getMetadata", dbMeta);
       return {
         Database: a.schema_name,
         tbCount: count[0].tbCount,
@@ -54,14 +54,13 @@ async function checkDb(dbName) {
   const { rowsMeta } = await getDb();
   console.log("in checkDb, rowsMeta: ", rowsMeta);
   let dbFound = false;
-  rowsMeta?.forEach((a, i) => {
-    console.log("dbName: ", dbName, "rows.a", a.schema_name);
-    if (a.schema_name == dbName) {
+  for (const { Database } of rowsMeta) {
+    console.log("in checkDb dbName: ", dbName, "rows.a", Database);
+    if (Database == dbName) {
       dbFound = true;
       return;
     }
-  });
-  console.log("in checkDb, dbFound?", dbFound);
+  }
   return dbFound;
 }
 

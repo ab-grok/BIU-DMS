@@ -100,7 +100,7 @@ export default function AddUsers({ height }: { height?: string }) {
               setAddUsers((p) => ({ ...p, type: "" }));
             }}
             type="button"
-            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] ${!addUsers.type?.includes(",") ? "w-1/2 rounded-full" : "w-1/4 rounded-l-full"} cursor-pointer bg-green-300/70 hover:bg-green-500`}
+            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/2 rounded-full" : "w-1/4 rounded-l-full"} cursor-pointer bg-green-300/70 hover:bg-green-500`}
           >
             Ok
           </Button>
@@ -111,7 +111,7 @@ export default function AddUsers({ height }: { height?: string }) {
                 setAddUsers((p) => ({ ...p, type: "" }));
               }}
               type="button"
-              className={`${pressAnim == "cancelAU" && "scale-95"} hover h-[3rem] w-1/4 cursor-pointer rounded-r-full bg-red-300/70 hover:bg-red-500`}
+              className={`${pressAnim == "cancelAU" && "scale-95"} hover h-[3rem] w-1/4 cursor-pointer rounded-r-full bg-red-300/70 select-none hover:bg-red-500`}
             >
               Cancel
             </Button>
