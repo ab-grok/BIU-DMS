@@ -55,7 +55,7 @@ export default function SideBar() {
           <div
             onBlur={() => showAvatar(1)}
             id="avatar"
-            className={`ring-main-bg flex ring-2 ${quickActions ? "h-[5rem] w-[6rem] rounded-[5px]" : !sidebarState.sbExpanded ? "size-[3rem] rounded-full lg:size-[5rem]" : "size-[5rem] rounded-full"} ${!sidebarState.sbExpanded && ""} bg-main-fg shadow-shadow-bw text-bw cursor-pointer items-center self-center overflow-hidden text-xs shadow-md transition-all duration-200`}
+            className={`ring-main-bg flex ring-2 ${quickActions ? "h-[5rem] w-[6rem] rounded-[5px]" : !sidebarState.sbExpanded ? "size-[2rem] rounded-full lg:size-[5rem]" : "size-[5rem] rounded-full"} bg-main-fg shadow-shadow-bw text-bw cursor-pointer items-center self-center overflow-hidden text-xs shadow-md transition-all duration-200`}
             onClick={() => showAvatar()}
           >
             {!quickActions ? (
@@ -65,7 +65,7 @@ export default function SideBar() {
             )}
           </div>
           <span
-            className={`${quickActions && "hidden"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
+            className={`${(quickActions || !sidebarState.sbExpanded) && "hidden"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
           >
             <span>
               {u?.title}
@@ -101,7 +101,7 @@ function Avatar({ expanded }: { expanded: boolean }) {
       title="Click to show actions"
       id="avatar"
       onClick={() => setSidebarState((p) => ({ ...p, sbExpanded: true }))}
-      className={`${!expanded ? "size-[3rem] lg:size-[5rem]" : "size-[5rem]"} bg-main-bg/50 text-bw absolute flex items-center justify-center rounded-full p-1 text-xs transition-all`}
+      className={`${!expanded ? "size-[2rem] lg:size-[5rem]" : "size-[5rem]"} bg-main-bg/50 text-bw absolute flex items-center justify-center rounded-full p-1 text-xs transition-all`}
     >
       <FaUserAlt className="fill-bg-sub-grad size-8 stroke-1" />
     </div>
