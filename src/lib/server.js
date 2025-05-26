@@ -430,7 +430,7 @@ export async function getTables(dbName, includeMeta) {
   }
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
-  if (!res[0]) throw { customMessage: "Database has no tables" };
+  if (!res[0]) return { customMessage: "Database has no tables" };
 
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {

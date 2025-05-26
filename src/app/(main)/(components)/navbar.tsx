@@ -44,11 +44,9 @@ export default function Navbar() {
           title="Menu"
           className="group/menu stroke-mainbg flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center lg:hidden"
         >
-          {sidebarState.sbExpanded ? (
-            <Menu className="size-6 rounded-xl transition-all group-hover/menu:rounded-none group-hover/menu:shadow-md" />
-          ) : (
-            <Menu className="stroke-2 group-hover/menu:shadow-md" />
-          )}
+          <Menu
+            className={` ${sidebarState.sbExpanded ? "scale-x-125" : "scale-x-90"} size-6 rounded-xl transition-all group-hover/menu:shadow-md`}
+          />
         </span>
         <span className="bg-main-fg/50 flex size-11 flex-none items-center justify-center rounded-full">
           <Image src={logo} alt="Logo" className={`size-10`} />

@@ -71,15 +71,15 @@ export function Toolbar() {
   }
 
   async function selectAllTb() {
-    const tables = await ListTables(page.db);
-    if (tables) {
+    const { tbArr } = await ListTables(page.db);
+    if (tbArr && tbArr.length) {
       if (selectedAllTb) {
         setSelectedTb("");
         //doesnt use multiSelectedTb
         setSelectAllTb(false);
       } else {
         setSelectedTb("");
-        tables.forEach((a, i) => {
+        tbArr.forEach((a, i) => {
           setSelectedTb(selectedTb + page.db + "/" + a.tbName + ",");
         });
         setSelectAllTb(true);
