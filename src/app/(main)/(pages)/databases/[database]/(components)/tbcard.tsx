@@ -103,14 +103,14 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     const uPath = `${id}?${dbName}/${Tb.tbName},`;
     setSelectedTb(tbPath);
 
-    if (selectedTbUsers.viewers?.includes(uPath)) {
+    if (selectedTbUsers?.viewers?.includes(uPath)) {
       setSelectedTbUsers((p) => ({
         ...p,
         viewers: p.viewers.replace(uPath, ""),
       }));
     } else setSelectedTbUsers((p) => ({ ...p, viewers: p.viewers + uPath }));
 
-    if (selectedTbUsers.editors?.includes(uPath)) {
+    if (selectedTbUsers?.editors?.includes(uPath)) {
       setSelectedTbUsers((p) => ({
         ...p,
         editors: p.editors.replace(uPath, ""),
@@ -382,7 +382,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                     >
                       <Marker
                         hovered={viewerHover == i + 1}
-                        selectContext={selectedTbUsers.viewers}
+                        selectContext={selectedTbUsers?.viewers}
                         uPath={a.id + "?" + dbName + "/" + Tb.tbName}
                       />
                     </span>
@@ -456,7 +456,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                     >
                       <Marker
                         hovered={editorHover == i + 1}
-                        selectContext={selectedTbUsers.editors}
+                        selectContext={selectedTbUsers?.editors}
                         uPath={a.id + "?" + dbName + "/" + Tb.tbName}
                       />
                     </span>
