@@ -485,7 +485,7 @@ function LiveTable({
     editors: [] as user,
     viewers: [] as user,
   });
-  const liveColRef = useRef<HTMLElement | null>(null);
+  const liveColRef = useRef<HTMLElement>(null);
 
   type user = {
     title: string;
@@ -519,13 +519,14 @@ function LiveTable({
 
   useEffect(() => {
     liveColRef.current &&
-      // (liveColRef.current.scrollTop = liveColRef.current.scrollHeight);
-      console.log(
-        "liveColRef.current?.scrollHeight: ",
-        liveColRef.current?.scrollHeight,
-        "\n liveColRef.current?.scrollTop: ",
-        liveColRef.current?.scrollTop,
-      );
+      ((liveColRef.current as HTMLElement).scrollTop =
+        liveColRef.current.scrollHeight);
+    console.log(
+      "liveColRef.current?.scrollHeight: ",
+      liveColRef.current?.scrollHeight,
+      "\n liveColRef.current?.scrollTop: ",
+      liveColRef.current?.scrollTop,
+    );
   }, [createTbCol.length]);
 
   function onKeysChange(colName: string, keyName: string, keyVal: number) {
@@ -550,7 +551,7 @@ function LiveTable({
       setAddUsers((p) => {
         if (p.type && p.type != "New Table") {
           return {
-            type: "New Table",
+            type: "New Table,tb",
             category: "viewers",
             editors: "",
             viewers: "",
@@ -558,7 +559,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "New Table",
+            type: "New Table,tb",
             category: "viewers",
           };
         }
