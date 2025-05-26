@@ -108,9 +108,7 @@ export default function Db({
                 <UserTag name={v[2]} title={v[1]} cap={15} />
                 <Marker
                   hovered={viewerHovered == i + 1}
-                  selectContext={
-                    selectedDbUsers.viewers + selectedDbUsers.editors
-                  }
+                  selectContext={selectedDbUsers?.viewers}
                   uPath={v[0] + "?" + db.Database}
                 />
               </div>
@@ -140,9 +138,7 @@ export default function Db({
                 <UserTag name={e[2]} title={e[1]} cap={15} />
                 <Marker
                   hovered={editorHovered == i + 1}
-                  selectContext={
-                    selectedDbUsers.viewers + selectedDbUsers.editors
-                  }
+                  selectContext={selectedDbUsers?.editors}
                   uPath={e[0] + "?" + db.Database}
                 />
               </div>
