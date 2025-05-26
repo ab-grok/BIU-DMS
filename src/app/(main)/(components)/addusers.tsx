@@ -92,17 +92,31 @@ export default function AddUsers({ height }: { height?: string }) {
         <main className="h-[78%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}
         </main>
-        <Button
-          onClick={() => {
-            setPressAnim("addUser");
-            addUsers.type?.includes(",") && submitChangedUsers();
-            setAddUsers((p) => ({ ...p, type: "" }));
-          }}
-          type="button"
-          className={`${pressAnim == "addUser" && "scale-95"} hover mb-1 h-[3rem] w-1/2 cursor-pointer rounded-full bg-green-300/70 hover:bg-green-500`}
-        >
-          Ok
-        </Button>
+        <section className="mb-1 flex h-[3rem] w-1/2">
+          <Button
+            onClick={() => {
+              setPressAnim("addUser");
+              addUsers.type?.includes(",") && submitChangedUsers();
+              setAddUsers((p) => ({ ...p, type: "" }));
+            }}
+            type="button"
+            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] ${!addUsers.type?.includes(",") ? "w-1/2 rounded-full" : "w-1/4 rounded-l-full"} cursor-pointer bg-green-300/70 hover:bg-green-500`}
+          >
+            Ok
+          </Button>
+          {addUsers.type?.includes(",") && (
+            <Button
+              onClick={() => {
+                setPressAnim("cancelAU");
+                setAddUsers((p) => ({ ...p, type: "" }));
+              }}
+              type="button"
+              className={`${pressAnim == "cancelAU" && "scale-95"} hover h-[3rem] w-1/4 cursor-pointer rounded-r-full bg-red-300/70 hover:bg-red-500`}
+            >
+              Cancel
+            </Button>
+          )}
+        </section>
       </div>
     </div>
   );
