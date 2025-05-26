@@ -23,17 +23,23 @@ export default function AddUsers({ height }: { height?: string }) {
     }
   }
 
-  function usersCount(category: string) {
-    if (category == "e")
-      return addUsers.editors.split(",").filter(Boolean).length;
-    else return addUsers.viewers?.split(",").filter(Boolean).length;
+  function usersCount(category: "e" | "v") {
+    if (category == "e") {
+      const eCount = addUsers.editors?.split(",").filter(Boolean).length;
+      console.log("usersCount editors: ", eCount);
+      return eCount;
+    } else {
+      const vCount = addUsers.viewers?.split(",").filter(Boolean).length;
+      console.log("usersCount viewers: ", vCount);
+      return vCount;
+    }
   }
 
   async function submitChangedUsers() {
     const isE = addUsers.category == "editors";
     const vArr = addUsers.viewers?.split(",").filter(Boolean);
-    const eArr = addUsers.editors.split(",").filter(Boolean);
-    const dbTb = addUsers.type.split(",")[0].split("/");
+    const eArr = addUsers.editors?.split(",").filter(Boolean);
+    const dbTb = addUsers.type?.split(",")[0].split("/");
     const { error } = await changeUsers({
       dbName: dbTb[0],
       tbName: dbTb[1],
