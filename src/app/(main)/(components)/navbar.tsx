@@ -71,7 +71,7 @@ export default function Navbar() {
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme animate-spin" : "stroke-theme/60"} `}
+            className={`${refreshing ? "stroke-theme animate-spin" : "stroke-theme/60"} transition-all`}
           />
         </div>
         <div
