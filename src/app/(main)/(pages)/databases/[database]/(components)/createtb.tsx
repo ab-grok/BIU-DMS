@@ -66,7 +66,6 @@ export default function CreateTb({ i, uData, db }: tbType) {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { addUsers } = useAddUsers();
   const [errDialog, setErrDialog] = useState({} as errSetter);
-  const { isLoading, setIsLoading } = useLoading();
   const [typeChange, setTypeChange] = useState(0);
   const [cardHovered, setCardHovered] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -185,6 +184,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
         button1Press: "Ok",
         pressAnim: pressAnim,
       });
+      setSubmitting(false);
       return;
     } else if (createTbCol.length < 2) {
       setErrDialog({
@@ -193,6 +193,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
         button1Press: "Ok",
         pressAnim: pressAnim,
       });
+      setSubmitting(false);
       return;
     }
 
@@ -206,9 +207,8 @@ export default function CreateTb({ i, uData, db }: tbType) {
       editors,
       isPrivate: 1,
     }; //change isprivate?
-    console.log("in tableSubmitted, createTbMeta: ", createTbMeta);
+    console.log("in tableSubmitted, postTb: ", postTb);
 
-    setIsLoading((p) => p + "createTb,");
     (async () => {
       const { error } = await createTb(postTb);
       if (!error)
@@ -221,7 +221,6 @@ export default function CreateTb({ i, uData, db }: tbType) {
           message: error,
           danger: true,
         });
-      setIsLoading((p) => p.replace("createTb,", ""));
     })();
   }
 
@@ -296,7 +295,6 @@ export default function CreateTb({ i, uData, db }: tbType) {
         }}
         className={`${selectedTb.includes("createNew") && "ring-2 ring-green-700/40"} border-sub-fg/50 items-center-2 bg-main-fg m-1 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-sm ring-blue-700/20 hover:ring-2`}
       >
-        {isLoading.includes("createTb") && <Loading />}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(colSubmitted)}

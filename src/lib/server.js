@@ -484,7 +484,18 @@ export async function createTb({
       error: "Table already exists.",
     };
   }
-  if (!columns.length) return { error: "Empty columns" };
+  const udata = userId + "&" + title + "&" + firstname;
+  console.log(
+    "in create tb dbName: ",
+    dbName,
+    "...tbName: ",
+    tbName,
+    "...columns",
+    columns,
+    "...udata: ",
+    udata,
+  );
+  if (!columns.length) return { error: "Empty columns " };
 
   let colArr = [];
   let primaryFound = false;
@@ -536,6 +547,7 @@ export async function createTb({
   const res =
     await main`create table ${main([dbName, tbName])} (${cols}, updated_at timestamp, updated_by text)`;
 
+  console.log("got past create table");
   const metaAdded = await addMetadata({
     createdBy: udata,
     isPrivate,
