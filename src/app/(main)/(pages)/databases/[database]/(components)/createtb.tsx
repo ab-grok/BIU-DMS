@@ -548,9 +548,9 @@ function LiveTable({
   function handleAddUsers(n: number) {
     if (n == 1) {
       setAddUsers((p) => {
-        if (p.type && p.type != "New Table,tb") {
+        if (p.type && p.type != "New Table") {
           return {
-            type: "New Table,tb",
+            type: "New Table",
             category: "viewers",
             editors: "",
             viewers: "",
@@ -558,7 +558,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "New Table,tb",
+            type: "New Table",
             category: "viewers",
           };
         }
@@ -566,9 +566,9 @@ function LiveTable({
     }
     if (n == 2) {
       setAddUsers((p) => {
-        if (p.type && p.type != "New Table,tb") {
+        if (p.type && p.type != "New Table") {
           return {
-            type: "New Table,tb",
+            type: "New Table",
             category: "editors",
             editors: "",
             viewers: "",
@@ -576,7 +576,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "New Table,tb",
+            type: "New Table",
             category: "editors",
           };
         }
