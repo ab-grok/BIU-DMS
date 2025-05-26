@@ -58,10 +58,9 @@ async function checkDb(dbName) {
     console.log("in checkDb dbName: ", dbName, "rows.a", Database);
     if (Database == dbName) {
       dbFound = true;
-      return;
+      break;
     }
   }
-  console.log("in checkDb dbFOund: ", dbFound);
   return dbFound;
 }
 
