@@ -60,7 +60,7 @@ export default function Navbar() {
         {" "}
         <SearchBar placeholder="database, table or field " />
       </div>
-      <div className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end gap-0.5 px-2">
+      <section className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end gap-0.5 px-2">
         {" "}
         <div
           onClick={() => handleReload()}
@@ -69,7 +69,7 @@ export default function Navbar() {
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme animate-spin" : "group-hover/r:stroke-theme stroke-neutral-500"} stroke-2 transition-all`}
+            className={`${refreshing ? "stroke-theme animate-spin" : "group-hover/r:stroke-theme fill-theme"} stroke-4 transition-all`}
           />
         </div>
         <div
@@ -91,7 +91,7 @@ export default function Navbar() {
             />
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

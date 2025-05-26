@@ -65,7 +65,7 @@ export default function SideBar() {
             )}
           </div>
           <span
-            className={`${(quickActions || !sidebarState.sbExpanded) && "hidden"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
+            className={`${quickActions && "hidden"} ${!sidebarState.sbExpanded && "hidden md:visible"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
           >
             <span>
               {u?.title}
