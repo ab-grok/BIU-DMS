@@ -5,7 +5,7 @@ import TableCard from "./(components)/tbcard";
 import { validateSession } from "@/lib/sessions";
 import Loading from "@/components/loading";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
-import { ListTables, Tb } from "@/lib/actions";
+import { ListTables, Tb, ListTbsType } from "@/lib/actions";
 import CreateTb from "./(components)/createtb";
 import { useSelection } from "../../selectcontext";
 import AddUsers from "@/app/(main)/(components)/addusers";
@@ -38,17 +38,18 @@ export default function Database() {
         return;
       }
       console.log("User from [database]'s validateSession call", u);
-      const res = await ListTables(currDb);
-      if (!res) {
+      const { tbArr, error } = await ListTables(currDb);
+
+      if (error) {
         setNotify({
-          message: "Couldn't reach the server.",
+          message: error,
           danger: true,
           exitable: true,
         });
-        return;
+      } else {
+        setUdata(u.userId + "&" + u.firstname + "&" + u.title);
+        setTbData(tbArr);
       }
-      setUdata(u.userId + "&" + u.firstname + "&" + u.title);
-      setTbData(res);
       setIsLoading((p) => p.replace(currDb + ",", ""));
     })();
 
@@ -64,10 +65,13 @@ export default function Database() {
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
-        {tbData &&
+        {tbData ? (
           tbData.map((a, i) => (
             <TableCard key={i} uData={udata} Tb={a} i={i + 1} dbName={currDb} />
-          ))}
+          ))
+        ) : (
+          <div className="text-4xl italic"> No tables yet. Create a table</div>
+        )}
       </section>
     </div>
   );
