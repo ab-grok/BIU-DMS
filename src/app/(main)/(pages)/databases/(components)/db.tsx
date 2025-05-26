@@ -49,7 +49,7 @@ export default function Db({
         editors: eData,
       });
     }
-    if (n == 1) {
+    if (n == 2) {
       setAddUsers({
         category: "editors",
         type: db.Database + ",db",

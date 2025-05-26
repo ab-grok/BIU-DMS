@@ -26,7 +26,7 @@ export default function AddUsers({ height }: { height?: string }) {
   function usersCount(category: string) {
     if (category == "e")
       return addUsers.editors.split(",").filter(Boolean).length;
-    else return addUsers.editors.split(",").filter(Boolean).length;
+    else return addUsers.viewers.split(",").filter(Boolean).length;
   }
 
   async function submitChangedUsers() {
