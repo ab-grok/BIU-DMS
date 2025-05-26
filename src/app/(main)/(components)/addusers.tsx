@@ -80,7 +80,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <span className="sm:text-md text-bw/70 text-[10px]">
               {addUsers.type.split(",")[0]}
             </span>
-            <span className="text-bw/60 text-[5px] sm:text-xs">
+            <span className="text-bw/60 text-[5px] sm:text-sm">
               {" "}
               Add {addUsers.category} {": "}{" "}
               {addUsers.type == "editors" ? usersCount("e") : usersCount("v")}
