@@ -75,6 +75,7 @@ export type Tb = {
 export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
   const { token32 } = await getCookie();
   if (!token32) return null;
+  console.log("~~~~~~~~~~in ListTables before unstable_cache");
   const Tables = unstable_cache(
     async () => {
       console.log("~~~~~~~~~~in ListTables");

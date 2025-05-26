@@ -61,6 +61,7 @@ async function checkDb(dbName) {
       return;
     }
   }
+  console.log("in checkDb dbFOund: ", dbFound);
   return dbFound;
 }
 
