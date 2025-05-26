@@ -87,14 +87,13 @@ export async function ListTables(db_name: string): Promise<Array<Tb> | null> {
           update: false,
         });
         if (!userId) throw { customMessage: "Couldnt get session" };
-
         const { tableData } = await getTables(db_name, true);
         // console.log("tableData: ", tableData);
         return tableData as Tb[];
       } catch (e) {
         console.log(`error in ListTables: ${JSON.stringify(e)}`);
+        return null;
       }
-      return null;
     },
     [`tables-${token32}`],
     { tags: [`tables-${token32}`, token32] },

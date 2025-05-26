@@ -176,7 +176,7 @@ function Users({ u, i }: Users) {
     <div
       onMouseEnter={() => setHovered(1)}
       onMouseLeave={() => setHovered(0)}
-      className={`${addUsers.category == "viewers" ? addUsers.editors?.includes(u.id) && "text-bw/30 hover bg-red-400/30 hover:bg-red-400/10" : addUsers.viewers?.includes(u.id) && "text-bw/30 bg-blue-600/30 hover:bg-blue-600/10"} hover:bg-bw/30 border-bw/30 relative flex h-[3rem] w-full min-w-[10rem] items-center gap-2 border-b-2 p-0.5`}
+      className={`${addUsers.category == "viewers" ? addUsers.editors?.includes(u.id) && "text-bw/30 hover hover:bg-red-4'00/10 bg-red-400/30" : addUsers.viewers?.includes(u.id) && "text-bw/30 bg-blue-600/30 hover:bg-blue-600/10"} hover:bg-bw/30 border-bw/30 relative flex h-[3rem] w-full min-w-[10rem] items-center gap-2 border-b-2 p-0.5`}
     >
       <section className="flex w-[80%] justify-between">
         <div

@@ -53,7 +53,6 @@ export async function getDb(getTbCount) {
 async function checkDb(dbName) {
   const { rowsMeta } = await getDb();
   let dbFound = false;
-  console.log("in checkDb, rows from getDb", rowsMeta);
   rows?.forEach((a, i) => {
     console.log("dbName: ", dbName, "rows.a", a.schema_name);
     if (a.schema_name == dbName) {
@@ -61,6 +60,7 @@ async function checkDb(dbName) {
       return;
     }
   });
+  console.log("in checkDb, dbFound?", dbFound);
   return dbFound;
 }
 
@@ -430,9 +430,10 @@ export async function getTables(dbName, includeMeta) {
   }
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
+  if (!res[0]) throw { customMessage: "Database has no tables" };
 
-  let tableDataPromise = res.map(async (a, i) => {
-    if (includeMeta) {
+  let tableDataPromise = res?.map(async (a, i) => {
+    if (includeMeta && a.tb) {
       let rc = await main`select count(*) as "rC" from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
