@@ -426,11 +426,11 @@ export async function getTables(dbName, includeMeta) {
   //must call with includeMeta to get table metadata
   // tableData = {tbName} | {tbName, ...metadata}
   if (!(await checkDb(dbName))) {
-    throw { customMessage: "Database does not exist" };
+    throw { error: "Database does not exist" };
   }
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
-  if (!res[0]) return { customMessage: "Database has no tables" };
+  if (!res[0]) return { error: "Database has no tables" };
   console.log("in getTables, res: ", res);
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {
@@ -479,10 +479,12 @@ export async function createTb({
 }) {
   const { token32 } = await getCookie();
   console.log("in createTb, token32: ", token32);
-  const { userId, firstname, title } = await getSession({ token32 });
+  const { userId, firstname, title } = await getSession({
+    token32,
+    getId: true,
+  });
   const udata = userId + "&" + title + "&" + firstname;
-  console.log("udata from createTb (got session): ", udata);
-  if (!(await checkDb(dbName))) return { error: `Unauthorized action` };
+  console.log("udata from createTb (got session): udata", udata);
   if (await checkTb({ dbName, tbName })) {
     return {
       error: "Table already exists.",
