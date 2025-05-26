@@ -184,7 +184,7 @@ function UsersTable() {
     }
     if (addUsers.viewers) {
       console.log("addUsers.viewers: ", addUsers.viewers);
-      const edArr = addUsers.viewers.split(",").filter(Boolean);
+      const edArr = addUsers.viewers?.split(",").filter(Boolean);
       edArr.forEach((a) => {
         const u = a.split("&");
         viewers.push({ id: u[0], title: u[1], firstname: u[2] });

@@ -26,12 +26,12 @@ export default function AddUsers({ height }: { height?: string }) {
   function usersCount(category: string) {
     if (category == "e")
       return addUsers.editors.split(",").filter(Boolean).length;
-    else return addUsers.viewers.split(",").filter(Boolean).length;
+    else return addUsers.viewers?.split(",").filter(Boolean).length;
   }
 
   async function submitChangedUsers() {
     const isE = addUsers.category == "editors";
-    const vArr = addUsers.viewers.split(",").filter(Boolean);
+    const vArr = addUsers.viewers?.split(",").filter(Boolean);
     const eArr = addUsers.editors.split(",").filter(Boolean);
     const dbTb = addUsers.type.split(",")[0].split("/");
     const { error } = await changeUsers({
