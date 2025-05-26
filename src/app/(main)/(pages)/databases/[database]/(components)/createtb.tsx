@@ -107,9 +107,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   const { setValue } = form;
 
   function colSubmitted(values: createTbType) {
-    console.log("values from colSubmitted: ", values);
     const columns = createTbSchema.parse(values);
-    console.log("columns from colSubmitted: ", columns);
     //if !title set error
     if (!createTbMeta.tbName) {
       setCreateTbMeta({
@@ -207,9 +205,12 @@ export default function CreateTb({ i, uData, db }: tbType) {
       editors,
       isPrivate: 1,
     }; //change isprivate?
-    console.log("in tableSubmitted, postTb: ", postTb);
 
     (async () => {
+      console.log(
+        "in tableSubmitted's async before createTB, postTb: ",
+        postTb,
+      );
       const { error } = await createTb(postTb);
       if (!error)
         setNotify({
@@ -496,7 +497,7 @@ function LiveTable({
     const viewers: user = [];
 
     if (addUsers.editors) {
-      console.log("addUsers.editors: ", addUsers.editors);
+      // console.log("addUsers.editors: ", addUsers.editors);
       const edArr = addUsers.editors.split(",").filter(Boolean);
       edArr.forEach((a) => {
         const u = a.split("&");
@@ -504,7 +505,7 @@ function LiveTable({
       });
     }
     if (addUsers.viewers) {
-      console.log("addUsers.viewers: ", addUsers.viewers);
+      // console.log("addUsers.viewers: ", addUsers.viewers);
       const edArr = addUsers.viewers?.split(",").filter(Boolean);
       edArr.forEach((a) => {
         const u = a.split("&");

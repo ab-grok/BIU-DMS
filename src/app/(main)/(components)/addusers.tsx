@@ -77,10 +77,10 @@ export default function AddUsers({ height }: { height?: string }) {
         <header className="bg-main-fg flex h-[3.2rem] w-full border-b-2">
           <div className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
-            <span className="sm:text-md text-bw/70 text-[10px]">
+            <span className="md:text-md text-bw/70 text-[15px]">
               {addUsers.type.split(",")[0]}
             </span>
-            <span className="text-bw/60 text-[5px] sm:text-sm">
+            <span className="text-bw/60 text-[10px] md:text-sm">
               {" "}
               Add {addUsers.category} {": "}{" "}
               {addUsers.type == "editors" ? usersCount("e") : usersCount("v")}

@@ -28,7 +28,7 @@ export default function Navbar() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 2500);
+    }, 3500);
   }
 
   function switchMode() {
@@ -69,7 +69,7 @@ export default function Navbar() {
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme animate-spin" : "group-hover/r:stroke-theme fill-theme"} stroke-4 transition-all`}
+            className={`${refreshing ? "stroke-theme animate-spin" : "group-hover/r:stroke-theme fill-theme"} stroke-3 transition-all`}
           />
         </div>
         <div

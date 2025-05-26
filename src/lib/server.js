@@ -52,7 +52,7 @@ export async function getDb(getTbCount) {
 
 async function checkDb(dbName) {
   const { rowsMeta } = await getDb();
-  console.log("in checkDb, rowsMeta: ", rowsMeta);
+  console.log("in checkDb, dbName", dbName, " ...rowsMeta: ", rowsMeta);
   let dbFound = false;
   for (const { Database } of rowsMeta) {
     console.log("in checkDb dbName: ", dbName, "rows.a", Database);
@@ -431,11 +431,12 @@ export async function getTables(dbName, includeMeta) {
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
   if (!res[0]) return { customMessage: "Database has no tables" };
-
+  console.log("in getTables, res: ", res);
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {
       let rc = await main`select count(*) as "rC" from ${main([dbName, a.tb])}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
+      console.log("in getTables, rowCOunt for ", tbName, ":", rc[0].rC);
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
   });
@@ -455,7 +456,7 @@ export async function getTbSchema({ dbName, tbName }) {
 }
 
 export async function checkTb({ dbName, tbName }) {
-  console.log("dbname from checktb: " + dbName);
+  console.log("checktb dbName: ", dbName, " ...tbName: ", tbName);
   const { tableData } = await getTables(dbName);
   let tbFound = false;
   for (const a of tableData) {
@@ -477,14 +478,26 @@ export async function createTb({
   editors,
 }) {
   const { token32 } = await getCookie();
+  console.log("in createTb, token32: ", token32);
   const { userId, firstname, title } = await getSession({ token32 });
+  const udata = userId + "&" + title + "&" + firstname;
+  console.log(
+    "in createTb, got session: udata ",
+    udata,
+    "...dbName",
+    dbName,
+    "... tbName",
+    tbName,
+    "...columns",
+    columns,
+  );
+
   if (!(await checkDb(dbName))) return { error: `Unauthorized action` };
   if (await checkTb({ dbName, tbName })) {
     return {
       error: "Table already exists.",
     };
   }
-  const udata = userId + "&" + title + "&" + firstname;
   console.log(
     "in create tb dbName: ",
     dbName,
@@ -500,7 +513,7 @@ export async function createTb({
   let colArr = [];
   let primaryFound = false;
   const nameCheck = /^[A-Z0-9_£$%&!#]*$/i;
-  if (!nameCheck.test(tbName)) return { message: "Not a valid table name" };
+  if (!nameCheck.test(tbName)) return { error: "Not a valid table name" };
 
   for (const col of columns) {
     //fn to screen value digits for number, etc
