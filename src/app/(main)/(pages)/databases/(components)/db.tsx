@@ -69,6 +69,7 @@ export default function Db({
   }
 
   async function deleteDb() {
+    console.log("got in delDb");
     const { error } = await delDb(db.Database);
     console.log("got past delDb, error: ", error);
     if (error) setNotify({ message: error, danger: true });
