@@ -28,8 +28,8 @@ export default function ConfirmDialog() {
       <div
         className={`${confirmDialog.action == "delete" ? "ring-red-600/50" : "bg-main-bg/60"} bg-main-fg relative flex h-fit w-[90%] max-w-[30rem] flex-col items-center justify-center rounded-lg p-4 py-10 shadow-lg ring-2 backdrop-blur-md`}
       >
-        <h1 className="text-md font-semibold sm:text-xl">
-          Are you sure you want to
+        <h1 className="text-md text-center font-normal sm:text-xl">
+          Are you sure you want to{" "}
           <span
             className={`${confirmDialog.action == "delete" ? "text-red-500" : "text-green-500"} font-bold`}
           >
@@ -37,14 +37,14 @@ export default function ConfirmDialog() {
           </span>{" "}
           {" the " + confirmDialog.type + " "}
         </h1>
-        <span>
+        <span className="flex gap-0.5">
           <UserTag name={confirmDialog.name} cap={25} />
-          {" ?"}
+          {"?"}
         </span>
         {confirmDialog.message && (
           <p className="sm:text-md text-bw text-sm">{confirmDialog.message}</p>
         )}
-        <div className="mt-4 flex space-x-2">
+        <div className="mt-4 flex">
           <button
             onClick={() => {
               handleYes();
@@ -57,7 +57,7 @@ export default function ConfirmDialog() {
             onClick={() =>
               setConfirmDialog((p) => ({ ...p, type: "", delFn: undefined }))
             }
-            className="text-bw rounded-r-full bg-gray-300 px-4 py-2 hover:bg-gray-400"
+            className="text-bw rounded-r-full bg-gray-700 px-4 py-2 hover:bg-gray-900"
           >
             No
           </button>
