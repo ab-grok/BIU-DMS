@@ -79,7 +79,7 @@ export function RowItem({
         className={`${extend && clicked ? "h-fit min-h-[4rem]" : "h-full min-h-[90%]"} flex w-full items-center`}
       >
         <div
-          className={`${hovered ? "text-bw" : ""} ${bold ? "font-medium" : ""} ${textSize ? textSize : "text-xs"} ${childCount > 2 || childStringLen > cap ? "justify-start" : "justify-center"} ${itemsStart ? "items-start text-start" : "items-center text-center"} ${italics && "italic"} text-sub-text scrollbar-custom relative flex h-[80%] min-w-full flex-col gap-1 overflow-clip p-1`}
+          className={`${hovered ? "text-bw" : ""} ${bold ? "font-medium" : ""} ${textSize ? textSize : "text-xs"} ${childCount > 1 || childStringLen > cap ? "justify-start" : "justify-center"} ${itemsStart ? "items-start text-start" : "items-center text-center"} ${italics && "italic"} text-sub-text scrollbar-custom relative flex h-[80%] min-w-full flex-col gap-1 overflow-clip p-1`}
         >
           {typeof children == "string" && childStringLen > cap && !clicked ? (
             children?.slice(0, cap) + "..."
