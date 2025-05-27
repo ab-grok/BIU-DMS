@@ -1,11 +1,12 @@
 "use server";
-//auth.array handles fragments (tagged) not raw stings
-//auth.array can escape array values as is
-//postgres(column) for columns, auth`${values}` for values
-//auth`somethign ${value}` treats value as paramterized and something as string -- must use ${} to be parameterized
-//cant escape a value in the position of an identifier, have postgres(value) for that.
+//?auth.array handles fragments (tagged) not raw stings
+//?auth.array can escape array values as is
+//auth`somethign ${value}` treats value as paramterized and 'something' as literal -- must use ${} to be parameterized
+//${string} parameterizes string, unless its a tagged template.
 //identifiers must be quoted "users"
-//auth.array(vals) inserts parenthesis per array (nested arrays have nested parenthesis?)
+//auth([values]) also escapes an array of values not just identifier names. based on inference
+
+//?auth.array(vals) inserts parenthesis per array (nested arrays have nested parenthesis?)
 import { v4 as uuidv4 } from "uuid";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
@@ -130,45 +131,54 @@ async function addMetadata({
 
   console.log("viewers from addMetadata: ", viewers);
   console.log("viewers from addMetadata: ", editors);
-  const values = [
-    db ? auth`${db}` : ndb ? auth`${ndb}` : "",
-    tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
-    editors ? auth`${editors}` : "",
-    viewers ? auth`${viewers}` : "",
-    desc ? auth`${desc}` : "",
-    createdBy ? auth`${createdBy}` : "",
-    updatedBy ? auth`${updatedBy}` : "",
-    now ? auth`${now}` : "",
-    typeof prv != null ? auth`${prv}` : "",
-  ].filter(Boolean);
+  const rawValues = [
+    db,
+    tb,
+    editors,
+    viewers,
+    desc,
+    createdBy,
+    updatedBy,
+    now,
+    prv,
+  ].filter((p) => p != undefined && p != null && p != "");
+  const values = rawValues.map((v) => auth`${v}`);
+  // const values = [
+  //   db ? auth`${db}` : ndb ? auth`${ndb}` : "",
+  //   tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
+  //   editors ? auth`${editors}` : "",
+  //   viewers ? auth`${viewers}` : "",
+  //   desc ? auth`${desc}` : "",
+  //   createdBy ? auth`${createdBy}` : "",
+  //   updatedBy ? auth`${updatedBy}` : "",
+  //   now ? auth`${now}` : "",
+  //   typeof prv != null ? auth`${prv}` : "",
+  // ].filter(Boolean);
 
-  const updWhere = auth`db_name = ${db} and tb_name = ${tb ? tb : null}`; //see if aupwhere works
-  let valStr = values.reduce(
-    (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
-    auth``,
-  );
+  // let valStr = values.reduce(
+  //   (agg, val, i) => (i == 0 ? val : auth`${agg}, ${val}`),
+  //   auth``,
+  // );
 
   let row =
     await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
   // console.log("values from metadata: ", values);
 
   if (!row[0]) {
-    console.log(
-      "in metadata, row does not exist, db_name: ",
-      db,
-      "...tb_name: ",
-      tb,
-    );
+    console.log("in metadata, no row found, db_name: ", db, "..tb_name: ", tb);
+
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${valStr}) returning *`; // auth(values) should work
+      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`; // use auth.array()?
     console.log("row2 from metadata: ", row2);
+
     if (!row2[0]) return false;
   } else {
+    const updWhere = auth`db_name = ${db} and tb_name = ${tb ? tb : null}`; //see if aupwhere works
     const updClause = [];
     console.log("in metadata, row exists");
     if (ndb) updClause.push(auth`db_name = ${ndb}`);
     if (ntb) updClause.push(auth`tb_name = ${ntb}`);
-    if (prv) updClause.push(auth`private = ${prv}`);
+    if (typeof prv == "boolean") updClause.push(auth`private = ${prv}`);
     if (editors) updClause.push(auth`editors = ${editors}`);
     if (viewers) updClause.push(auth`viewers = ${viewers}`);
     if (desc) updClause.push(auth`description = ${desc}`);
@@ -551,7 +561,7 @@ export async function createTb({
     auth``,
   );
   const res =
-    await main`create table ${main([dbName, tbName])} (${cols}, updated_at timestamp, updated_by text)`;
+    await main`create table ${main(dbName)}.${main(tbName)} (${cols}, updated_at timestamp, updated_by text)`;
 
   console.log("got past create table");
   const metaAdded = await addMetadata({
