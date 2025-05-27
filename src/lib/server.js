@@ -165,7 +165,9 @@ async function addMetadata({
       prv,
     ].filter((p) => p != undefined && p != null && p != "");
 
-    const values = rawValues.map((v) => auth`${v},`).filter(Boolean);
+    const values = rawValues.map((v, i) =>
+      i != rawValues.length - 1 ? auth`${v},` : auth`${v}`,
+    );
     console.log("filtered rawValues from addMetadata: ", rawValues);
 
     let row2 =

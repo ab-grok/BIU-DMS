@@ -301,7 +301,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
       <Index
         i={0}
         morph="create"
-        className="sticky h-[14rem] w-[2.55rem] self-center group-hover/card:bg-green-900"
+        className="sticky h-[14rem] w-[2.55rem] self-center group-hover/card:bg-green-900/70"
         size={6}
       />
       <div
@@ -309,7 +309,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
         onClick={(e) => {
           handleCardClicked(e);
         }}
-        className={`${selectedTb.includes("createNew") && "ring-2 ring-green-700/40"} border-sub-fg/50 items-center-2 bg-main-fg m-1 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-sm ring-blue-700/20 hover:ring-2`}
+        className={`${selectedTb.includes("createNew") && "ring-2 ring-green-700/40"} border-sub-fg/50 items-center-2 bg-main-fg m-1 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-sm hover:ring-2`}
       >
         <Form {...form}>
           <form
@@ -602,7 +602,7 @@ function LiveTable({
   }
 
   return (
-    <div className="bg-sub-bg absolute right-0 z-4 hidden h-[14rem] max-h-fit w-[30rem] flex-col gap-1 rounded-[5px] border-3 border-green-400/30 p-1 py-2 shadow-2xl xl:flex">
+    <div className="bg-sub-bg absolute right-0 z-4 hidden h-[14rem] max-h-fit w-[30rem] flex-col gap-1 rounded-[5px] border-3 border-green-700/40 p-1 py-2 shadow-md xl:flex">
       {submitting && <Loading />}
       <header className="bg-tb-row2/50 flex h-[3.5rem] w-full gap-1 rounded-2xl">
         <div className="flex h-full w-fit min-w-1/3 p-1 text-[1rem] font-medium">
