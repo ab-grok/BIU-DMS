@@ -39,11 +39,10 @@ export default function Db({
 
   useEffect(() => {
     const u = udata.split("&");
-    console.log("Db, uData: ", udata);
+    // console.log("Db, uData: ", udata);
     if (db.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
     if (db.createdBy?.includes(u[0]) || db.editors?.includes(u[0]))
       setUAccess({ edit: true, view: true });
-    console.log("in Db db.createdBy: ", db.createdBy);
   }, []);
 
   function handleSelectedUsers(id: string) {}
@@ -71,6 +70,7 @@ export default function Db({
 
   async function deleteDb() {
     const { error } = await delDb(db.Database);
+    console.log("got past delDb, error: ", error);
     if (error) setNotify({ message: error, danger: true });
     else setNotify({ message: "Database deleted successfully" });
     router.refresh();
