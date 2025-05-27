@@ -169,7 +169,7 @@ async function addMetadata({
     console.log("filtered rawValues from addMetadata: ", rawValues);
 
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`;
+      await auth`Insert into "metadata" (${auth(columns)}) values (${values}) returning *`;
     console.log("row2 from metadata: ", row2);
 
     if (!row2[0]) return false;
