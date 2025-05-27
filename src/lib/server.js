@@ -535,7 +535,7 @@ export async function createTb({
     let notnull = col.notnull ? "not null" : null;
 
     if (col.name && col.type) {
-      let colData = main`${main(name)} ${auth.raw(type)}`;
+      let colData = main`${main(name)} ${type}`;
       unique && (colData = main`${colData} unique`);
       primary && (colData = main`${colData} primary key`);
       notnull && (colData = main`${colData} not null`);
@@ -569,9 +569,7 @@ export async function createTb({
     return { error: "An error occured." };
   }
 
-  console.log("sql from createTb: ", sql);
-
-  return { success: true };
+  return { error: null };
 }
 
 export async function changeUsers({
