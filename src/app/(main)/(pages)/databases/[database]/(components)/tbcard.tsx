@@ -52,7 +52,6 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   } = useSelection();
 
   useEffect(() => {
-    console.log("Tb from tbcard: ", Tb);
     (async () => {
       const u = uData.split("&")[0];
       Tb.viewers?.forEach((a) => {
@@ -316,7 +315,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                 TbMeta.map((a, i) => (
                   <UserTag
                     key={i + 4}
-                    name={TbMeta[i][0] || i == 0 ? "Admin" : ""}
+                    name={TbMeta[i][0]}
                     title={TbMeta[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
                   />
