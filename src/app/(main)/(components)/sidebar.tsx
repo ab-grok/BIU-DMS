@@ -78,7 +78,7 @@ export default function SideBar() {
         <section className="bg-bw/5 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
           {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}{" "}
           <SideCard name="Databases" route="databases" />
-          <SideCard name="Create a database" fn={() => setCreate("db")} />
+          <SideCard name="Create a database" route="databases?create=db" />
           <SideCard name="View requests" route="requests" />
           <SideCard name="Private message" route="chat" />
           <SideCard name="Users" route="users" />

@@ -15,15 +15,17 @@ import AddUsers from "../../(components)/addusers";
 import NewDb from "./(components)/newdb";
 import { validateSession, validateSessionType } from "@/lib/sessions";
 import ConfirmDialog from "../../(components)/confirmdialog";
+import { useSearchParams } from "next/navigation";
 
 export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
   const { addUsers } = useAddUsers();
   const { isLoading, setIsLoading } = useLoading();
-  const { create } = useSelection();
+  const { create, setCreate } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
   const [udata, setUdata] = useState<string>();
   const { confirmDialog } = useConfirmDialog();
+  const createParam = useSearchParams().get("create") || "";
 
   console.log("current isLoading: ", isLoading);
   useEffect(() => {
@@ -55,6 +57,8 @@ export default function DbLayout() {
       }
       setIsLoading((p) => p.replace("databases,", ""));
     })();
+
+    createParam == "db" && setCreate("db");
   }, []);
 
   const headerList = [
