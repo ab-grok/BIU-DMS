@@ -57,7 +57,7 @@ export function RowItem({
   }
 
   function handleClicked() {
-    setPressAnim("ri" + i);
+    setPressAnim(`ri${i}`);
     setClicked(true);
     load && setIsLoading((p) => p + load + ",");
     if (route) router.push(`${route}`);

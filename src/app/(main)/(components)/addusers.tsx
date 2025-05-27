@@ -72,15 +72,15 @@ export default function AddUsers({ height }: { height?: string }) {
       className={`absolute z-7 flex ${height ? height : "h-[92%]"} w-full items-center justify-center backdrop-blur-md`}
     >
       <div
-        className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[60%] min-w-[13rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 md:w-[40%]`}
+        className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[20rem]`}
       >
         <header className="bg-main-fg flex h-[3.2rem] w-full border-b-2">
           <div className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
-            <span className="text-bw/80 text-[15px] md:text-[20px]">
+            <span className="text-bw/80 text-[8px] md:text-[13px]">
               {addUsers.type.split(",")[0]}
             </span>
-            <span className="text-bw/60 text-[12px] md:text-sm">
+            <span className="text-bw/60 text-[6px] md:text-[10px]">
               {" "}
               Add {addUsers.category} {": "}{" "}
               {addUsers.category == "editors"
@@ -114,7 +114,6 @@ export default function AddUsers({ height }: { height?: string }) {
               addUsers.category == "editors"
                 ? setAddUsers((p) => ({ ...p, editors: "" }))
                 : setAddUsers((p) => ({ ...p, viewers: "" }));
-              setAddUsers((p) => ({ ...p, type: "" }));
             }}
             type="button"
             className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5 rounded-none" : "w-1/4 rounded-r-full"} cursor-pointer bg-red-200/70 hover:bg-red-500`}
