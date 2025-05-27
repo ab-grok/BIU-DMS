@@ -18,14 +18,14 @@ type sideContextType = {
 };
 
 export type sideContextState = {
-  sidebarState: sideContextType;
+  sbState: sideContextType;
   setSidebarState: Dispatch<SetStateAction<sideContextType>>;
 };
 
 export const sideContext = createContext({} as sideContextState);
 export function useSideContext() {
   const context = useContext(sideContext);
-  const db = context.sidebarState.database;
+  const db = context.sbState.database;
   return { context, db };
 }
 
@@ -34,11 +34,11 @@ export default function LayoutContext({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarState, setSidebarState] = useState({
+  const [sbState, setSidebarState] = useState({
     sbExpanded: true,
   } as sideContextType);
   return (
-    <sideContext.Provider value={{ sidebarState, setSidebarState }}>
+    <sideContext.Provider value={{ sbState, setSidebarState }}>
       <Navbar />
       <div className="relative top-[4rem] flex h-screen max-h-[90%] w-screen max-w-[100%] space-x-2">
         {" "}

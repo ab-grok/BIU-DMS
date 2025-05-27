@@ -4,7 +4,7 @@ import { RowItem } from "./rowitems";
 import { QuickActions } from "./quickactions";
 import { LogIn } from "lucide-react";
 import Index from "@/components";
-import Count from "@/components/count";
+import Count, { useButtonAnim } from "@/components/count";
 import { db } from "@/lib/actions";
 import Marker from "@/components/marker";
 import { useEffect, useState } from "react";
@@ -29,11 +29,13 @@ export default function Db({
   const { selectedDbUsers, setSelectedDbUsers } = useSelection();
   const [viewerHovered, setViewerHovered] = useState(0);
   const [editorHovered, setEditorHovered] = useState(0);
+  const [cardClicked, setCardClicked] = useState(0);
   const { setNotify } = useNotifyContext();
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
   const { setAddUsers } = useAddUsers();
   const { confirmDialog, setConfirmDialog } = useConfirmDialog();
   const router = useRouter();
+  const { pressAnim } = useButtonAnim();
 
   useEffect(() => {
     const u = udata.split("&");
@@ -88,13 +90,20 @@ export default function Db({
             <span>tables:</span>
             <Count n={db.tbCount} />
           </div>{" "}
-          <LogIn className="absolute top-0 right-0 hidden size-5 group-hover:flex" />
+          <LogIn
+            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 group-hover:flex`}
+          />
         </div>
       </RowItem>
-      <RowItem itemsStart={true} extend i={2}>
-        {db.description ?? <div className="italic"> No description yet</div>}
+      <RowItem
+        itemsStart={db.description ? true : false}
+        italics={db.description ? true : false}
+        extend
+        i={2}
+      >
+        {db.description || "No description yet"}
       </RowItem>
-      <RowItem i={1}>
+      <RowItem i={3}>
         <UserTag
           name={db?.createdBy?.split("&")[2] ?? "Admin"}
           title={db?.createdBy?.split("&")[1]}
@@ -102,7 +111,7 @@ export default function Db({
         />
         <Count date={db.createdAt} className="fill-blue-600/70" />
       </RowItem>
-      <RowItem fn={() => handleAddUsers(1)} extend i={2}>
+      <RowItem fn={() => handleAddUsers(1)} extend i={4}>
         {db.viewers?.length ? (
           db.viewers.map((a, i) => {
             const v = a?.split("&");
@@ -130,7 +139,7 @@ export default function Db({
         //can filter id for separate card and usertag clicks
         fn={() => handleAddUsers(2)}
         extend
-        i={1}
+        i={5}
       >
         {db.editors?.length ? (
           db.editors.map((a, i) => {

@@ -9,12 +9,12 @@ export default function PageLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { sidebarState, setSidebarState } = useSideContext().context;
+  const { sbState, setSidebarState } = useSideContext().context;
 
   return (
     <SelectionContext>
       <div
-        className={` ${sidebarState.route ? "scale-100" : "scale-0"} ${sidebarState.sbExpanded ? "" : ""} ring-main-bg absolute left-[18%] flex h-[40rem] max-h-screen w-full max-w-[80%] items-center justify-center rounded-[5px] shadow-lg ring-2 shadow-black transition-all duration-200 sm:left-[15%] lg:relative lg:left-[5%] lg:max-w-[71%] xl:max-w-[74%]`}
+        className={` ${sbState.route ? "scale-100" : "scale-0"} ${sbState.sbExpanded ? "" : ""} ring-main-bg absolute left-[18%] flex h-[40rem] max-h-screen w-full max-w-[80%] items-center justify-center rounded-[5px] shadow-lg ring-2 shadow-black transition-all duration-200 sm:left-[15%] lg:relative lg:left-[5%] lg:max-w-[71%] xl:max-w-[74%]`}
       >
         {" "}
         <div className="h-[99.8%] w-[99.8%] overflow-hidden rounded-[5px]">

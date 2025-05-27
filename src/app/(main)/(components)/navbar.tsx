@@ -11,16 +11,14 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
-  const { setSidebarState, sidebarState } = useSideContext().context;
+  const { setSidebarState, sbState } = useSideContext().context;
   const [refreshing, setRefreshing] = React.useState(false);
   const router = useRouter();
   function menuClicked() {
     setSidebarState((prev) => ({
       ...prev,
       sbExpanded:
-        typeof sidebarState.sbExpanded == "boolean"
-          ? !sidebarState.sbExpanded
-          : false,
+        typeof sbState.sbExpanded == "boolean" ? !sbState.sbExpanded : false,
     }));
   }
   function handleReload() {
@@ -45,7 +43,7 @@ export default function Navbar() {
           className="group/menu stroke-mainbg flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center lg:hidden"
         >
           <Menu
-            className={` ${sidebarState.sbExpanded ? "scale-x-125" : "scale-x-90"} size-6 rounded-xl transition-all group-hover/menu:shadow-md`}
+            className={` ${sbState.sbExpanded ? "scale-x-125" : "scale-x-90"} size-6 rounded-xl transition-all group-hover/menu:shadow-md`}
           />
         </span>
         <span className="bg-main-fg/50 flex size-11 flex-none items-center justify-center rounded-full">

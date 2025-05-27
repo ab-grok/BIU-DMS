@@ -13,7 +13,7 @@ import { validateSessionType, validateSession } from "@/lib/sessions";
 import { useSelection } from "../(pages)/selectcontext";
 
 export default function SideBar() {
-  const { sidebarState, setSidebarState } = useSideContext().context;
+  const { sbState, setSidebarState } = useSideContext().context;
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
   const [u, setUser] = useState({} as validateSessionType);
@@ -45,7 +45,7 @@ export default function SideBar() {
   return (
     <div
       onClick={() => showAvatar(1)}
-      className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
+      className={` ${(sbState.sbExpanded ?? true) && sbState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sbState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
     >
       <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1 ring-2">
         <section
@@ -54,17 +54,17 @@ export default function SideBar() {
           <div
             onBlur={() => showAvatar(1)}
             id="avatar"
-            className={`ring-main-bg flex ring-2 ${quickActions ? "h-[5rem] w-[6rem] rounded-[5px]" : !sidebarState.sbExpanded ? "size-[2rem] rounded-full lg:size-[5rem]" : "size-[5rem] rounded-full"} bg-main-fg shadow-shadow-bw text-bw cursor-pointer items-center self-center overflow-hidden text-xs shadow-md transition-all duration-200`}
+            className={`ring-main-bg flex ring-2 ${quickActions ? "h-[5rem] w-[6rem] rounded-[5px]" : !sbState.sbExpanded ? "size-[2rem] rounded-full lg:size-[5rem]" : "size-[5rem] rounded-full"} bg-main-fg shadow-shadow-bw text-bw cursor-pointer items-center self-center overflow-hidden text-xs shadow-md transition-all duration-200`}
             onClick={() => showAvatar()}
           >
             {!quickActions ? (
-              <Avatar expanded={sidebarState.sbExpanded} />
+              <Avatar expanded={sbState.sbExpanded} />
             ) : (
               <SBQuickActions fn2={() => logOut()} />
             )}
           </div>
           <span
-            className={`${quickActions && "hidden"} ${!sidebarState.sbExpanded && "hidden md:visible"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
+            className={`${quickActions && "hidden"} ${!sbState.sbExpanded && "hidden md:flex"} text-bw/60 absolute right-0 bottom-1 flex h-[3rem] w-[32%] flex-col justify-end text-[10px] font-semibold`}
           >
             <span>
               {u?.title}

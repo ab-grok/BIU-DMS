@@ -24,7 +24,7 @@ export default function SideCard({
   const router = useRouter();
   const [clicked, setClicked] = useState("");
   const [isHovered, setHovered] = useState(false);
-  const { setSidebarState, sidebarState } = useSideContext().context;
+  const { setSidebarState, sbState } = useSideContext().context;
 
   function handleClicked() {
     if (route) {
@@ -42,13 +42,13 @@ export default function SideCard({
   }
 
   useEffect(() => {
-    console.log("sidebarState.route: ", sidebarState.route);
-    if (typeof sidebarState.route == "undefined")
+    console.log("sbState.route: ", sbState.route);
+    if (typeof sbState.route == undefined)
       setSidebarState((prev) => ({
         ...prev,
         route: pathname?.replace("/", "") || "",
       }));
-  }, [sidebarState.route]);
+  }, [sbState.route]);
   return (
     <div
       className={`justify-content flex max-h-full min-h-[3.5rem] w-[100%] flex-none flex-col items-center overflow-hidden transition-all duration-200`}
@@ -57,13 +57,13 @@ export default function SideCard({
         onClick={() => handleClicked()}
         onMouseOver={() => hovered()}
         onMouseLeave={() => unHovered()}
-        className={`group/sb ${route && sidebarState.route?.includes(route) && isHovered ? "bg-sub-grad-hover" : isHovered ? `bg-sub-grad shadow-bw/70 shadow-xs` : ``} ${route && sidebarState.route?.includes(route) ? "bg-main-fg border-2 border-blue-400 font-bold shadow-sm" : ""} relative top-0 m-[4px] flex h-[3rem] min-h-[3rem] w-[96%] cursor-pointer items-center space-x-2 rounded-2xl p-2`}
+        className={`group/sb ${route && sbState.route?.includes(route) && isHovered ? "bg-sub-grad-hover" : isHovered ? `bg-sub-grad shadow-bw/70 shadow-xs` : ``} ${route && sbState.route?.includes(route) ? "bg-main-fg border-2 border-blue-400 font-bold shadow-sm" : ""} relative top-0 m-[4px] flex h-[3rem] min-h-[3rem] w-[96%] cursor-pointer items-center space-x-2 rounded-2xl p-2`}
       >
         <div>
-          <Icon name={name} clicked={sidebarState.route == route} />
+          <Icon name={name} clicked={sbState.route == route} />
         </div>
         <div
-          className={`relative ${sidebarState.sbExpanded ? "flex" : pathname == "/" ? "flex" : "hidden lg:flex"} flex-none transition-all`}
+          className={`relative ${sbState.sbExpanded ? "flex" : pathname == "/" ? "flex" : "hidden lg:flex"} flex-none transition-all`}
         >
           {name}{" "}
         </div>
