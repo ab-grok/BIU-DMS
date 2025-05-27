@@ -84,7 +84,7 @@ export default function DbLayout() {
       <main
         ref={rowRef}
         onScroll={(e) => handleScroll(e)}
-        className={`${create == "db" ? "mt-2 h-[30rem]" : "h-[37rem]"} relative overflow-auto pb-3 transition-transform`}
+        className={`${create == "db" ? "mt-2 h-[30.5rem]" : "h-[36.5rem]"} relative overflow-auto pb-3 transition-transform`}
       >
         {addUsers.type?.includes("db") && (
           <AddUsers

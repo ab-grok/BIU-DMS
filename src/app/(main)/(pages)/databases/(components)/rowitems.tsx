@@ -37,7 +37,7 @@ export function RowItem({
   const { pressAnim, setPressAnim } = useButtonAnim();
 
   const textSize = text ? `text-${text}` : ""; //if text=xs -- len cap = ?
-  const cap = text == "xs" ? 40 : 20;
+  const cap = text == "xs" ? 60 : 30;
   const childStr = typeof children == "string";
   const childCount = React.Children.count(children);
   const firstChild = (children as Array<any>)[0];

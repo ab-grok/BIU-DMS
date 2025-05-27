@@ -37,23 +37,25 @@ export function QuickActions({
   const actions = [action1, action2, action3, action4];
   // const g = [["group/a"]["group/a"], ["group/b"]["group/b"], ["group/c"]["group/c"], ["group/d"]["group/d"],];
 
-  const hC = [
+  const hc1 =
     hoverColor1 &&
-      action1 &&
-      `hover:stroke-${hoverColor1}-600/70 hover:text-${hoverColor1}-600`,
+    action1 &&
+    `hover:stroke-${hoverColor1}-600/70 hover:text-${hoverColor1}-600`;
+  const hc2 =
     hoverColor2 &&
-      action2 &&
-      `hover:stroke-${hoverColor2}-600/70 hover:text-${hoverColor2}-600`,
+    action2 &&
+    `hover:stroke-${hoverColor2}-600/70 hover:text-${hoverColor2}-600`;
+  const hc3 =
     hoverColor3 &&
-      action3 &&
-      `hover:stroke-${hoverColor3}-600/70 hover:text-${hoverColor3}-600`,
+    action3 &&
+    `hover:stroke-${hoverColor3}-600/70 hover:text-${hoverColor3}-600`;
+  const hc4 =
     hoverColor4 &&
-      action4 &&
-      `hover:stroke-${hoverColor4}-600/70 hover:text-${hoverColor4}-600`,
-  ];
+    action4 &&
+    `hover:stroke-${hoverColor4}-600/70 hover:text-${hoverColor4}-600`;
 
-  console.log("quickActions, actions: ", actions);
-  console.log("quickActions, hC: ", hC);
+  // console.log("quickActions, actions: ", actions);
+  // console.log("quickActions, hC: ", hC);
   return (
     <div
       title="Quick actions"
@@ -63,7 +65,7 @@ export function QuickActions({
         <div
           key={i}
           onClick={() => handleClicked(i + 1)}
-          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${hC[i] ? hC[i] : "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex h-[1rem] w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
+          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${i == 0 ? hc1 : i == 1 ? hc2 : i == 2 ? hc3 : i == 3 ? hc4 : "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex h-[1.5rem] w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
         >
           <QuickIcons name={actions[i] as string} />
           <span className={`transition-all group-hover:translate-x-0.5`}>

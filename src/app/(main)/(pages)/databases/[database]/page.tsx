@@ -24,14 +24,6 @@ export default function Database() {
     console.log("isLoading start: " + isLoading);
     setIsLoading((p) => p + currDb + ",");
     (async () => {
-      const nav = performance.getEntriesByType(
-        "navigation",
-      ) as PerformanceNavigationTiming[];
-      // if (nav.length > 0 && nav[0].type == "reload") {
-      //   useRevalidate("tables");
-      //   useRevalidate("session");
-      // }
-
       const u = await validateSession();
       if (!u) {
         setNotify({ message: "Unauthorized", danger: true });

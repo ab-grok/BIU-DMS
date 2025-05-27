@@ -123,11 +123,11 @@ export default function Db({
                 className="flex items-center"
               >
                 <UserTag name={v[2]} title={v[1]} cap={15} />
-                <Marker
+                {/* <Marker
                   hovered={viewerHovered == i + 1}
                   selectContext={selectedDbUsers?.viewers}
                   uPath={v[0] + "?" + db.Database}
-                />
+                /> */}
               </div>
             );
           })
