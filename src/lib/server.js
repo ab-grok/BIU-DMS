@@ -491,96 +491,103 @@ export async function createTb({
 }) {
   const { token32 } = await getCookie();
   console.log("in createTb, token32: ", token32);
-  const { userId, firstname, title } = await getSession({
-    token32,
-    getId: true,
-  });
-  const udata = userId + "&" + title + "&" + firstname;
-  console.log("udata from createTb (got session): ", udata);
-  if (await checkTb({ dbName, tbName })) {
-    return {
-      error: "Table already exists.",
-    };
-  }
-  console.log(
-    "in create tb dbName: ",
-    dbName,
-    "...tbName: ",
-    tbName,
-    "...columns",
-    columns,
-    "...udata: ",
-    udata,
-  );
-  if (!columns.length) return { error: "Empty columns " };
-
-  let colArr = [];
-  let primaryFound = false;
-  const nameCheck = /^[A-Z0-9_£$%&!#]*$/i;
-  if (!nameCheck.test(tbName)) return { error: "Not a valid table name" };
-
-  for (const col of columns) {
-    //fn to screen value digits for number, etc
-    let name = nameCheck.test(col.name)
-      ? col.name
-      : `Random_name${Math.floor(Math.random() * 1000)}`;
-    let type =
-      col.type == "number"
-        ? col.ai
-          ? `integer`
-          : `real`
-        : col.type == "boolean"
-          ? `boolean`
-          : col.type == "file"
-            ? `bytea`
-            : col.type == "date"
-              ? `timestamp`
-              : `text`;
-    let def =
-      col.defaultNum && (type == "number" || type == "boolean")
-        ? Number(col.def)
-        : col.defaultStr && type == "text" && filterInput(col.defaultStr);
-    let unique = col.unique ? "unique" : null;
-    let primary = !primaryFound && col.primary ? "primary key" : null;
-    !primaryFound && col.primary && (primaryFound = true);
-    let notnull = col.notnull ? "not null" : null;
-
-    if (col.name && col.type) {
-      let colData = main`${main(name)} ${main.unsafe(type)}`;
-      unique && (colData = main`${colData} unique`);
-      primary && (colData = main`${colData} primary key`);
-      notnull && (colData = main`${colData} not null`);
-      def && (colData = main`${colData} default ${main.unsafe(def)}`);
-
-      colArr.push(colData);
+  try {
+    const { userId, firstname, title } = await getSession({
+      token32,
+      getId: true,
+    });
+    const udata = userId + "&" + title + "&" + firstname;
+    console.log("udata from createTb (got session): ", udata);
+    if (await checkTb({ dbName, tbName })) {
+      return {
+        error: "Table already exists.",
+      };
     }
-  }
-  //reduce aggretes each entry to the previous adding auth`` each time,
-  //columns is an auth`string` which evaluates as a literal
-  const cols = colArr.reduce(
-    (agg, col, j) => (j == 0 ? col : auth`${agg}, ${col}`),
-    auth``,
-  );
-  const res =
-    await main`create table ${main(dbName)}.${main(tbName)} (${cols}, updated_at timestamp, updated_by text)`;
+    console.log(
+      "in create tb dbName: ",
+      dbName,
+      "...tbName: ",
+      tbName,
+      "...columns",
+      columns,
+      "...udata: ",
+      udata,
+    );
+    if (!columns.length) return { error: "Empty columns " };
 
-  console.log("got past create table");
-  const metaAdded = await addMetadata({
-    createdBy: udata,
-    isPrivate,
-    dbName,
-    tbName,
-    desc,
-    viewers,
-    editors,
-  });
-  if (!metaAdded) {
-    //undo created table
-    console.log(`metaData not added for database: ${dbName}, table: ${tbName}`);
-    return { error: "An error occured." };
-  }
+    let colArr = [];
+    let primaryFound = false;
+    const nameCheck = /^[A-Z0-9_£$%&!#]*$/i;
+    if (!nameCheck.test(tbName)) return { error: "Not a valid table name" };
 
-  return { error: null };
+    for (const col of columns) {
+      //fn to screen value digits for number, etc
+      let name = nameCheck.test(col.name)
+        ? col.name
+        : `Random_name${Math.floor(Math.random() * 1000)}`;
+      let type =
+        col.type == "number"
+          ? col.ai
+            ? `integer`
+            : `real`
+          : col.type == "boolean"
+            ? `boolean`
+            : col.type == "file"
+              ? `bytea`
+              : col.type == "date"
+                ? `timestamp`
+                : `text`;
+      let def =
+        col.defaultNum && (type == "number" || type == "boolean")
+          ? Number(col.def)
+          : col.defaultStr && type == "text" && filterInput(col.defaultStr);
+      let unique = col.unique ? "unique" : null;
+      let primary = !primaryFound && col.primary ? "primary key" : null;
+      !primaryFound && col.primary && (primaryFound = true);
+      let notnull = col.notnull ? "not null" : null;
+
+      if (col.name && col.type) {
+        let colData = main`${main(name)} ${main.unsafe(type)}`;
+        unique && (colData = main`${colData} unique`);
+        primary && (colData = main`${colData} primary key`);
+        notnull && (colData = main`${colData} not null`);
+        def && (colData = main`${colData} default ${main.unsafe(def)}`);
+
+        colArr.push(colData);
+      }
+    }
+    //reduce aggretes each entry to the previous adding auth`` each time,
+    //columns is an auth`string` which evaluates as a literal
+    const cols = colArr.reduce(
+      (agg, col, j) => (j == 0 ? col : auth`${agg}, ${col}`),
+      auth``,
+    );
+    const res =
+      await main`create table ${main(dbName)}.${main(tbName)} (${cols}, updated_at timestamp, updated_by text)`;
+
+    console.log("got past create table");
+    const metaAdded = await addMetadata({
+      createdBy: udata,
+      isPrivate,
+      dbName,
+      tbName,
+      desc,
+      viewers,
+      editors,
+    });
+    if (!metaAdded) {
+      //undo created table
+      console.log(
+        `metaData not added for database: ${dbName}, table: ${tbName}`,
+      );
+      return { error: "An error occured." };
+    }
+
+    return { error: null };
+  } catch (e) {
+    console.log("Error in createTb: ", e);
+    return { error: "Something went wrong." };
+  }
 }
 
 export async function changeUsers({
