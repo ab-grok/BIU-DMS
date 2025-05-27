@@ -23,7 +23,7 @@ export default function ConfirmDialog() {
     <div
       id="confirm dialog"
       onClick={(e) => handleClickOut(e)}
-      className={`absolute z-7 flex h-[92%] w-full items-center justify-center backdrop-blur-md`}
+      className={`absolute z-7 flex h-[100%] w-full items-center justify-center backdrop-blur-md`}
     >
       <div
         className={`${confirmDialog.action == "delete" ? "ring-red-600/50" : "bg-main-bg/60"} bg-main-fg relative flex h-fit w-[90%] max-w-[30rem] flex-col items-center justify-center rounded-lg p-4 py-10 shadow-lg ring-2 backdrop-blur-md`}

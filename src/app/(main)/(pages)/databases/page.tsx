@@ -85,20 +85,25 @@ export default function DbLayout() {
       <div className="scrollbar-custom relative overflow-x-scroll">
         <NewDb uData={udata || ""} />
       </div>
-      <main
-        ref={rowRef}
-        onScroll={(e) => handleScroll(e)}
-        className={`${create == "db" ? "mt-2 h-[30.5rem]" : "h-[36.5rem]"} relative overflow-auto pb-3 transition-transform`}
-      >
-        {addUsers.type?.includes("db") && (
-          <AddUsers
-            height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[96%]"} `}
-          />
-        )}
-        {confirmDialog.type == "database" && <ConfirmDialog />}
-        {isLoading.includes("databases") && <Loading />}
-        {db &&
-          db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata || ""} />)}
+
+      <main className="relative">
+        <section
+          ref={rowRef}
+          onScroll={(e) => handleScroll(e)}
+          className={`${create == "db" ? "mt-2 h-[30rem]" : "h-[37rem]"} overflow-auto pb-3 transition-transform`}
+        >
+          {addUsers.type?.includes("db") && (
+            <AddUsers
+              height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[96%]"} `}
+            />
+          )}
+          {confirmDialog.type == "database" && <ConfirmDialog />}
+          {isLoading.includes("databases") && <Loading />}
+          {db &&
+            db.map((a, i) => (
+              <Db key={i + 2} db={a} i={i} udata={udata || ""} />
+            ))}
+        </section>
       </main>
     </div>
   );
