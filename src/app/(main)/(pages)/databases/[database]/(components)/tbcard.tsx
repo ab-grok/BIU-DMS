@@ -202,9 +202,6 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   ];
 
   function dateAbrev(d?: Date) {
-    if (!d) {
-      return "Nil";
-    }
     console.log("type of date in dateAbrev: ", typeof d);
     console.log("date in dateAbrev: ", d);
     const date = d || new Date();
@@ -318,6 +315,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                     name={TbMeta[i][0]}
                     title={TbMeta[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
+                    cap={15}
                   />
                 ))}
             </div>
