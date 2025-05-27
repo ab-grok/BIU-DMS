@@ -316,13 +316,15 @@ export default function CreateTb({ i, uData, db }: tbType) {
                     className="scrollbar-custom flex h-full max-w-[20rem] min-w-[20rem] gap-3 overflow-x-scroll transition-all duration-500"
                   >
                     {createTbCol.length &&
-                      createTbCol.map((a, i) => (
-                        <UserTag
-                          key={a.name}
-                          name={a.name}
-                          delFn={checkOrDelCol}
-                        />
-                      ))}
+                      createTbCol
+                        .filter(Boolean)
+                        .map((a, i) => (
+                          <UserTag
+                            key={a.name}
+                            name={a.name}
+                            delFn={checkOrDelCol}
+                          />
+                        ))}
                   </div>
                 </div>
               </header>

@@ -485,7 +485,7 @@ export async function createTb({
     getId: true,
   });
   const udata = userId + "&" + title + "&" + firstname;
-  console.log("udata from createTb (got session): udata", udata);
+  console.log("udata from createTb (got session): ", udata);
   if (await checkTb({ dbName, tbName })) {
     return {
       error: "Table already exists.",
@@ -535,11 +535,11 @@ export async function createTb({
     let notnull = col.notnull ? "not null" : null;
 
     if (col.name && col.type) {
-      let colData = main`${main(name)} ${type}`;
+      let colData = main`${main(name)} ${main.unsafe(type)}`;
       unique && (colData = main`${colData} unique`);
       primary && (colData = main`${colData} primary key`);
       notnull && (colData = main`${colData} not null`);
-      def && (colData = main`${colData} default ${def}`);
+      def && (colData = main`${colData} default ${main.unsafe(def)}`);
 
       colArr.push(colData);
     }
@@ -743,7 +743,7 @@ async function searchField() {
 
 //--------- user auth
 
-export async function getAllUsers() {
+export async function getAllUsers(addMeta) {
   //users = {id, title, firstname, lastname, username, level, created{}, views{}, edits{}}
   const allUsers =
     await auth`select id, title, firstname, lastname, username, level from "user" `;
@@ -751,39 +751,41 @@ export async function getAllUsers() {
     console.log("allUsers HAS NO rows");
     return null;
   }
+  console.log("getAllUsers, all users count, :", allUsers.length);
 
   const users = []; //{created, views, edits} : each: {db:[], tb:[]} : tb: db/tb, db
 
-  const meta =
-    await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from "metadata"`;
+  if (!addMeta) {
+    const meta =
+      await auth`select db_name as db, tb_name as tb, created_by as cby, viewers, editors from "metadata"`;
+    console.log("getAllUsers, all metadata count, :", meta.length);
 
-  console.log("getAllUsers, all users count, :", allUsers.length);
-  console.log("getAllUsers, all metadata count, :", meta.length);
-  allUsers.forEach((u, i) => {
-    const currU = {
-      created: { db: [], tb: [] },
-      views: { db: [], tb: [] },
-      edits: { db: [], tb: [] },
-    };
+    allUsers.forEach((u, i) => {
+      const currU = {
+        created: { db: [], tb: [] },
+        views: { db: [], tb: [] },
+        edits: { db: [], tb: [] },
+      };
 
-    for (const [j, md] of meta.entries()) {
-      if (md.editors?.some((e) => e.includes(u.id))) {
-        md.tb
-          ? currU.edits.tb.push(md.db + "/" + md.tb)
-          : currU.edits.db.push(md.db);
-      } else if (md.viewers?.some((v) => v.includes(u.id))) {
-        md.tb
-          ? currU.views.tb.push(md.db + "/" + md.tb)
-          : currU.views.db.push(md.db);
+      for (const [j, md] of meta.entries()) {
+        if (md.editors?.some((e) => e.includes(u.id))) {
+          md.tb
+            ? currU.edits.tb.push(md.db + "/" + md.tb)
+            : currU.edits.db.push(md.db);
+        } else if (md.viewers?.some((v) => v.includes(u.id))) {
+          md.tb
+            ? currU.views.tb.push(md.db + "/" + md.tb)
+            : currU.views.db.push(md.db);
+        }
+        if (md.cby?.includes(u.id)) {
+          md.tb
+            ? currU.created.tb.push(md.db + "/" + md.tb)
+            : currU.created.db.push(md.db);
+        }
       }
-      if (md.cby?.includes(u.id)) {
-        md.tb
-          ? currU.created.tb.push(md.db + "/" + md.tb)
-          : currU.created.db.push(md.db);
-      }
-    }
-    users.push({ ...u, currU });
-  });
+      users.push({ ...u, currU });
+    });
+  } else users = allUsers;
 
   return users;
 }
