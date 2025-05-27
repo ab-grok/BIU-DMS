@@ -64,7 +64,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
     setCreateTbCol,
   } = useSelection();
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const { addUsers } = useAddUsers();
+  const { addUsers, setAddUsers } = useAddUsers();
   const [errDialog, setErrDialog] = useState({} as errSetter);
   const [typeChange, setTypeChange] = useState(0);
   const [cardHovered, setCardHovered] = useState(0);
@@ -212,12 +212,13 @@ export default function CreateTb({ i, uData, db }: tbType) {
         postTb,
       );
       const { error } = await createTb(postTb);
-      if (!error)
+      if (!error) {
         setNotify({
           message: "Table created",
           danger: false,
         });
-      else
+        resetCreateTb();
+      } else
         setNotify({
           message: error,
           danger: true,
@@ -227,6 +228,18 @@ export default function CreateTb({ i, uData, db }: tbType) {
     })();
   }
 
+  function resetCreateTb() {
+    setCreate("");
+    // form.reset();
+    setCreateTbMeta({ dbName: "", tbName: "", desc: "" });
+    setCreateTbCol([]);
+
+    setAddUsers((p) => ({
+      ...p,
+      type: "",
+    }));
+    router.refresh();
+  }
   //error handller : primary found returns primary
   function findPrimary(del?: string) {
     console.log("first param from findPrimary: ", del);

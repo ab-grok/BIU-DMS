@@ -21,14 +21,14 @@ export type createTbCol = {
   type: number; //1- text, 2- number, 3- boolean, 4- date, 5-file
 }[];
 
-export type createTbMeta = {
+export interface createTbMeta {
   dbName: string;
   tbName: string;
   desc: string | undefined;
   // createdBy: string; //uid&ttl&fname
   // editors: string; //not needed
   // viewers: string;
-};
+}
 export type createDbMeta = {
   createdBy: string;
   editors: string[];
