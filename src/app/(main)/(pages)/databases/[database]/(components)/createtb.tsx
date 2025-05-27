@@ -517,16 +517,16 @@ function LiveTable({
   }, [addUsers.editors, addUsers.viewers]);
 
   useEffect(() => {
-    liveColRef.current &&
-      ((liveColRef.current as HTMLElement).scrollTop =
-        liveColRef.current.scrollHeight);
+    // liveColRef.current &&
+    //   (liveColRef.current.scrollTop =
+    //     liveColRef.current.scrollHeight);
     console.log(
       "liveColRef.current?.scrollHeight: ",
       liveColRef.current?.scrollHeight,
       "\n liveColRef.current?.scrollTop: ",
       liveColRef.current?.scrollTop,
     );
-  }, [createTbCol.length]);
+  }, [liveColRef.current?.scrollHeight]);
 
   function onKeysChange(colName: string, keyName: string, keyVal: number) {
     const key = keyName.toLowerCase().replace(" ", "");
