@@ -297,7 +297,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           </header>
           <div
             id="Table meta"
-            className="bg-bw/10 flex h-fit min-h-[6rem] w-full gap-x-[1%] rounded-2xl p-1 shadow-sm"
+            className="bg-bw/10 flex h-fit min-h-[6rem] w-full gap-x-[1%] rounded-2xl p-0.5 shadow-sm"
           >
             <div className="flex h-full min-w-[50%] flex-col justify-center gap-y-1.5 text-[12px]">
               {items.map((a, i) => (
