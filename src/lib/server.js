@@ -130,19 +130,7 @@ async function addMetadata({
   ].filter(Boolean);
 
   console.log("viewers from addMetadata: ", viewers);
-  console.log("viewers from addMetadata: ", editors);
-  const rawValues = [
-    db,
-    tb,
-    editors,
-    viewers,
-    desc,
-    createdBy,
-    updatedBy,
-    now,
-    prv,
-  ].filter((p) => p != undefined && p != null && p != "");
-  const values = rawValues.map((v) => auth`${v}`);
+  console.log("editors from addMetadata: ", editors);
   // const values = [
   //   db ? auth`${db}` : ndb ? auth`${ndb}` : "",
   //   tb ? auth`${tb}` : ndb ? auth`${ntb}` : "",
@@ -162,13 +150,26 @@ async function addMetadata({
 
   let row =
     await auth`select * from "metadata" where db_name = ${db} and tb_name = ${tb ? tb : null}`;
-  // console.log("values from metadata: ", values);
 
   if (!row[0]) {
     console.log("in metadata, no row found, db_name: ", db, "..tb_name: ", tb);
+    const rawValues = [
+      db,
+      tb,
+      editors,
+      viewers,
+      desc,
+      createdBy,
+      updatedBy,
+      now,
+      prv,
+    ].filter((p) => p != undefined && p != null && p != "");
+    const values = rawValues.map((v) => auth`${v}`);
+    console.log("filtered rawValues from addMetadata: ", rawValues);
+    console.log("tagged rawWalues from addMetadata: ", values);
 
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`; // use auth.array()?
+      await auth`Insert into "metadata" (${auth(columns)}) values (${auth.array(values)}) returning *`; // use auth.array()?
     console.log("row2 from metadata: ", row2);
 
     if (!row2[0]) return false;
