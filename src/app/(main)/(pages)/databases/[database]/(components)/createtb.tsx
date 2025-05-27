@@ -214,14 +214,16 @@ export default function CreateTb({ i, uData, db }: tbType) {
       const { error } = await createTb(postTb);
       if (!error)
         setNotify({
-          message: "Table has been created",
+          message: "Table created",
           danger: false,
         });
       else
         setNotify({
           message: error,
           danger: true,
+          exitable: true,
         });
+      setSubmitting(false);
     })();
   }
 
