@@ -471,7 +471,8 @@ export async function getTables(dbName, includeMeta) {
   if (!res[0]) return { error: "Database has no tables" };
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {
-      let rc = await main`select count(*) as "rC" from ${main([dbName, a.tb])}`;
+      let rc =
+        await main`select count(*) as "rC" from ${main(dbName)}.${main(a.tb)}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
       console.log("in getTables, rowCOunt for ", tbName, ":", rc[0].rC);
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
@@ -657,7 +658,7 @@ export async function deleteTb({ dbName, tbName, userId }) {
   const { edit, level } = await getUserAccess({ dbName, tbName, token32 });
   if (edit || level > 3) {
     try {
-      let del = await main`drop table ${main([dbName, tbName])}`;
+      let del = await main`drop table ${main(dbName)}.${main(tbName)}`;
       return { error: null };
     } catch (e) {
       console.log("Error deleting table: ", e);
@@ -679,7 +680,7 @@ export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   const whereCol = filterInput(where?.col);
   const whereVal = filterInput(where?.val);
   const res =
-    await main`Select * from ${main([dbName, tbName])} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
+    await main`Select * from ${main(dbName)}.${main(tbName)} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
   console.log("TB data from getTBData: ", JSON.stringify(res));
   if (!res[0]) console.log({ customMessage: "No table data exists" });
   return { rows: res };
@@ -716,7 +717,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
   if (!updatedAtFound || !updatedByFound) {
     try {
       let updRes =
-        await main`alter table ${main([dbName, tbName])} ${!updatedAtFound ? main.raw("add column updated_at timestamp") : main.raw("")} ${!updatedByFound ? main.raw(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.raw("")}`;
+        await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main.raw("add column updated_at timestamp") : main.raw("")} ${!updatedByFound ? main.raw(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.raw("")}`;
     } catch (e) {
       throw {
         customMessage: "metacolumns not found and failed to create them!",
@@ -750,7 +751,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
     main``,
   );
   const res =
-    await main`insert into ${main([dbName, tbName])} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)} returning *`;
 
   if (!res[0]) throw { customMessage: "insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: userId });
@@ -769,13 +770,13 @@ export async function renameTable({ dbName, tbName, userId, newTbName }) {
   //getUserAccess
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Unauthorized!" };
-  await auth`alter table ${auth([dbName, tbName])} rename to ${newTbName} `;
+  await auth`alter table ${auth(dbName)}.${auth(tbName)} rename to ${newTbName} `;
 }
 
 export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
-  await auth`alter schema ${auth([dbName])} rename to ${newDbName} `;
+  await auth`alter schema ${auth(dbName)} rename to ${newDbName} `;
 }
 
 async function searchField() {
