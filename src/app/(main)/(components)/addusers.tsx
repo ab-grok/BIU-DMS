@@ -93,7 +93,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <SearchBar />
           </div>
         </header>
-        <main className="h-[78%] w-full overflow-auto">
+        <main className="scrollbar-tb-row1 h-[78%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}
         </main>
         <section className="mb-1 flex h-[3rem] w-full justify-center">
@@ -104,9 +104,22 @@ export default function AddUsers({ height }: { height?: string }) {
               setAddUsers((p) => ({ ...p, type: "" }));
             }}
             type="button"
-            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/2 rounded-full" : "w-1/4 rounded-l-full"} cursor-pointer bg-green-300/70 hover:bg-green-500`}
+            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/5" : "w-1/4"} cursor-pointer rounded-l-full bg-green-300/70 hover:bg-green-500`}
           >
             Ok
+          </Button>
+          <Button
+            onClick={() => {
+              setPressAnim("resetU");
+              addUsers.category == "editors"
+                ? setAddUsers((p) => ({ ...p, editors: "" }))
+                : setAddUsers((p) => ({ ...p, viewers: "" }));
+              setAddUsers((p) => ({ ...p, type: "" }));
+            }}
+            type="button"
+            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/5" : "w-1/4"} cursor-pointer bg-red-200/70 hover:bg-red-500`}
+          >
+            reset
           </Button>
           {addUsers.type?.includes(",") && (
             <Button
@@ -115,7 +128,7 @@ export default function AddUsers({ height }: { height?: string }) {
                 setAddUsers((p) => ({ ...p, type: "" }));
               }}
               type="button"
-              className={`${pressAnim == "cancelAU" && "scale-95"} hover h-[3rem] w-1/4 cursor-pointer rounded-r-full bg-red-300/70 select-none hover:bg-red-500`}
+              className={`${pressAnim == "cancelAU" && "scale-95"} hover h-[3rem] w-1/5 cursor-pointer rounded-r-full bg-red-300/70 select-none hover:bg-red-500`}
             >
               Cancel
             </Button>
@@ -180,7 +193,7 @@ function Users({ u, i }: Users) {
     <div
       onMouseEnter={() => setHovered(1)}
       onMouseLeave={() => setHovered(0)}
-      className={`${addUsers.category == "viewers" ? addUsers.editors?.includes(u.id) && "text-bw/30 hover hover:bg-red-4'00/10 bg-red-400/30" : addUsers.viewers?.includes(u.id) && "text-bw/30 bg-blue-600/30 hover:bg-blue-600/10"} hover:bg-bw/30 border-bw/30 relative flex h-[3rem] w-full min-w-[10rem] items-center gap-2 border-b-2 p-0.5`}
+      className={`${addUsers.category == "viewers" ? addUsers.editors?.includes(u.id) && "text-bw/30 hover bg-red-400/30 hover:bg-red-400/10" : addUsers.viewers?.includes(u.id) && "text-bw/30 bg-blue-600/30 hover:bg-blue-600/10"} hover:bg-bw/30 border-bw/30 relative flex h-[3rem] w-full min-w-[10rem] items-center gap-2 border-b-2 p-0.5`}
     >
       <section className="flex w-[80%] justify-between">
         <div
