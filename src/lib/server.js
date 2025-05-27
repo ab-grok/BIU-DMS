@@ -473,9 +473,8 @@ export async function getTables(dbName, includeMeta) {
     if (includeMeta && a.tb) {
       let rc =
         await main`select count(*) as "rC" from ${main(dbName)}.${main(a.tb)}`;
-      console.log("in getTables, rowCount for ", a.tb, ":", rc);
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
-      console.log("in getTables, got past getMetadata ");
+      console.log("in getTables, got past getMetadata : ", tableMeta);
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
   });

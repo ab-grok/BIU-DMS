@@ -211,7 +211,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
       day: "numeric",
       year: "2-digit",
     });
-
+    console.log("formatted dateString: ", dateStr);
     return dateStr;
   }
 
