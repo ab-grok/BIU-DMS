@@ -1,6 +1,6 @@
 "use server";
-//?auth.array handles fragments (tagged) not raw stings
-//?auth.array can escape array values as is
+//?auth.array handles fragments (tagged) not raw stings == FALSE
+//?auth.array can escape array values as is == FALSE
 //auth`somethign ${value}` treats value as paramterized and 'something' as literal -- must use ${} to be parameterized
 //${string} parameterizes string, unless its a tagged template.
 //identifiers must be quoted "users"
@@ -154,21 +154,22 @@ async function addMetadata({
   if (!row[0]) {
     console.log("in metadata, no row found, db_name: ", db, "..tb_name: ", tb);
     const rawValues = [
-      [db],
-      [tb],
-      [editors],
-      [viewers],
-      [desc],
-      [createdBy],
-      [updatedBy],
-      [now],
-      [prv],
+      db,
+      tb,
+      editors,
+      viewers,
+      desc,
+      createdBy,
+      updatedBy,
+      now,
+      prv,
     ].filter((p) => p != undefined && p != null && p != "");
+
     const values = rawValues.map((v) => auth`${v}`);
     console.log("filtered rawValues from addMetadata: ", rawValues);
 
     let row2 =
-      await auth`Insert into "metadata" (${auth(columns)}) values (${auth.array(values)}) returning *`; // use auth.array()?
+      await auth`Insert into "metadata" (${auth(columns)}) values (${auth(values)}) returning *`;
     console.log("row2 from metadata: ", row2);
 
     if (!row2[0]) return false;

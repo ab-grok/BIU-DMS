@@ -64,7 +64,7 @@ export default function NotificationBar() {
       className={`absolute top-2 z-10 flex max-w-full justify-center self-center ${msg.end ? "scale-50" : "scale-100"} transition-all delay-700 duration-200`}
     >
       <div
-        className={` ${msg.start ? "animate-logo-pulse flex" : "hidden"} relative h-20 self-center ${msg.msg && !msg.end ? "w-full" : "w-20"} bg-main-fg items-center overflow-hidden rounded-full border-2 shadow-xl shadow-black backdrop-blur-2xl transition-all duration-[0.7s]`}
+        className={` ${msg.start ? "animate-logo-pulse flex" : "hidden"} relative h-20 self-center ${msg.msg && !msg.end ? "w-full" : "w-20"} bg-main-fg items-center overflow-hidden rounded-full border-2 shadow-lg shadow-black/80 backdrop-blur-2xl transition-all duration-[0.7s]`}
       >
         <Image
           src={logo}
