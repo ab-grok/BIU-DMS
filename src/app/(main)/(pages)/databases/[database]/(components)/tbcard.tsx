@@ -52,7 +52,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   } = useSelection();
 
   useEffect(() => {
-    // console.log("u from tbcard: ", u);
+    console.log("Tb from tbcard: ", Tb);
     (async () => {
       const u = uData.split("&")[0];
       Tb.viewers?.forEach((a) => {
@@ -202,7 +202,10 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     [Tb.updatedBy?.split("&")[2], Tb.updatedBy?.split("&")[1]],
   ];
 
-  function dateAbrev(d: Date) {
+  function dateAbrev(d?: Date) {
+    if (!d) {
+      return "Nil";
+    }
     console.log("type of date in dateAbrev: ", typeof d);
     console.log("date in dateAbrev: ", d);
     const date = d || new Date();

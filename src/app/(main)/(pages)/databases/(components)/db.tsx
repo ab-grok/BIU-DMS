@@ -98,7 +98,7 @@ export default function Db({
       </RowItem>
       <RowItem
         itemsStart={db.description ? true : false}
-        italics={db.description ? true : false}
+        italics={!db.description ? true : false}
         extend
         i={2}
       >
