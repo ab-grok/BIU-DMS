@@ -30,8 +30,8 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
   type userType = { id: string; ttl: string; fname: string }[];
 
-  const [viewers, setViewers] = useState([] as userType);
-  const [editors, setEditors] = useState([] as userType);
+  // const [viewers, setViewers] = useState([] as userType);
+  // const [editors, setEditors] = useState([] as userType);
   const tbPath = dbName + "/" + Tb.tbName + ",";
   const [metaHover, setMetaHover] = useState(0);
   const [viewerHover, setViewerHover] = useState(0);
@@ -54,17 +54,18 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   useEffect(() => {
     (async () => {
       const u = uData.split("&")[0];
+      console.log("uData in TableCard: ", uData);
       Tb.viewers?.forEach((a) => {
         if (a.includes(u[0])) setUAccess({ view: true, edit: false });
-        setViewers((p) => {
-          return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
-        });
+        // setViewers((p) => {
+        //   return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
+        // });
       });
       Tb.editors?.forEach((a) => {
         if (a.includes(u[0])) setUAccess({ view: true, edit: true });
-        setEditors((p) => {
-          return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
-        });
+        // setEditors((p) => {
+        //   return [...p, { id: u[0], ttl: u[0], fname: u[0] }].filter(Boolean);
+        // });
       });
 
       if (Tb.createdBy?.includes(u[0])) setUAccess({ edit: true, view: true });
@@ -349,47 +350,44 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
               )}
             </div>
             <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
-              {viewers ? (
-                viewers.map((a, i) => (
-                  <div
-                    key={i}
-                    onMouseEnter={() => setViewerHover(i + 1)}
-                    onMouseLeave={() => setViewerHover(0)}
-                    className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
-                  >
-                    {" "}
-                    <span
-                      onClick={() =>
-                        handleUserSel(a.id + "&" + a.ttl + "&" + a.fname)
-                      }
+              {Tb.viewers ? (
+                Tb.viewers.map((a, i) => {
+                  const v = a.split("&");
+                  return (
+                    <div
+                      key={i}
+                      onMouseEnter={() => setViewerHover(i + 1)}
+                      onMouseLeave={() => setViewerHover(0)}
+                      className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                     >
-                      <Index
-                        size={4}
-                        i={i + 1}
-                        className="w-fit bg-transparent text-[10px] backdrop-blur-none"
-                        hovered={viewerHover}
-                      />
-                    </span>
-                    <UserTag
-                      name={a.fname}
-                      title={a.ttl}
-                      className="w-fit justify-start text-xs font-normal"
-                      hovered={viewerHover == i + 1}
-                    />
-                    <span
-                      onClick={() =>
-                        handleUserSel(a.id + "&" + a.ttl + "&" + a.fname)
-                      }
-                      className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
-                    >
-                      <Marker
+                      {" "}
+                      <span onClick={() => handleUserSel(v[0])}>
+                        <Index
+                          size={4}
+                          i={i + 1}
+                          className="w-fit bg-transparent text-[10px] backdrop-blur-none"
+                          hovered={viewerHover}
+                        />
+                      </span>
+                      <UserTag
+                        name={v[2]}
+                        title={v[1]}
+                        className="w-fit justify-start text-xs font-normal"
                         hovered={viewerHover == i + 1}
-                        selectContext={selectedTbUsers?.viewers}
-                        uPath={a.id + "?" + dbName + "/" + Tb.tbName}
                       />
-                    </span>
-                  </div>
-                ))
+                      <span
+                        onClick={() => handleUserSel(v[0])}
+                        className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
+                      >
+                        <Marker
+                          hovered={viewerHover == i + 1}
+                          selectContext={selectedTbUsers?.viewers}
+                          uPath={v[0] + "?" + dbName + "/" + Tb.tbName}
+                        />
+                      </span>
+                    </div>
+                  );
+                })
               ) : (
                 <div className="top-1/2 self-center text-xs font-light italic">
                   {" "}
@@ -423,47 +421,44 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
               )}
             </div>
             <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
-              {editors ? (
-                editors.map((a, i) => (
-                  <div
-                    key={i}
-                    onMouseEnter={() => setEditorHover(i + 1)}
-                    onMouseLeave={() => setEditorHover(0)}
-                    className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
-                  >
-                    {" "}
-                    <span
-                      onClick={() =>
-                        handleUserSel(a.id + "&" + a.ttl + "&" + a.fname)
-                      }
+              {Tb.editors ? (
+                Tb.editors.map((a, i) => {
+                  const e = a.split("&");
+                  return (
+                    <div
+                      key={i}
+                      onMouseEnter={() => setEditorHover(i + 1)}
+                      onMouseLeave={() => setEditorHover(0)}
+                      className="relative flex h-fit cursor-pointer gap-0.5 pl-[1.5rem]"
                     >
-                      <Index
-                        size={4}
-                        i={i + 1}
-                        className="w-fit bg-transparent text-[10px] backdrop-blur-none"
-                        hovered={editorHover}
-                      />
-                    </span>
-                    <UserTag
-                      name={a.fname}
-                      title={a.ttl}
-                      className="w-fit justify-start text-xs font-normal"
-                      hovered={editorHover == i + 1}
-                    />
-                    <span
-                      onClick={() =>
-                        handleUserSel(a.id + "&" + a.ttl + "&" + a.fname)
-                      }
-                      className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
-                    >
-                      <Marker
+                      {" "}
+                      <span onClick={() => handleUserSel(e[0])}>
+                        <Index
+                          size={4}
+                          i={i + 1}
+                          className="w-fit bg-transparent text-[10px] backdrop-blur-none"
+                          hovered={editorHover}
+                        />
+                      </span>
+                      <UserTag
+                        name={e[2]}
+                        title={e[1]}
+                        className="w-fit justify-start text-xs font-normal"
                         hovered={editorHover == i + 1}
-                        selectContext={selectedTbUsers?.editors}
-                        uPath={a.id + "?" + dbName + "/" + Tb.tbName}
                       />
-                    </span>
-                  </div>
-                ))
+                      <span
+                        onClick={() => handleUserSel(e[0])}
+                        className="absolute right-2.5 flex h-fit w-[15%] items-center justify-center py-1"
+                      >
+                        <Marker
+                          hovered={editorHover == i + 1}
+                          selectContext={selectedTbUsers?.editors}
+                          uPath={e[0] + "?" + dbName + "/" + Tb.tbName}
+                        />
+                      </span>
+                    </div>
+                  );
+                })
               ) : (
                 <div className="top-1/2 self-center text-xs font-light italic">
                   {" "}
