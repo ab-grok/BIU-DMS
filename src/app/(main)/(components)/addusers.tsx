@@ -104,7 +104,7 @@ export default function AddUsers({ height }: { height?: string }) {
               setAddUsers((p) => ({ ...p, type: "" }));
             }}
             type="button"
-            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/5" : "w-1/4"} cursor-pointer rounded-l-full bg-green-300/70 hover:bg-green-500`}
+            className={`${pressAnim == "addUser" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5" : "w-1/4"} cursor-pointer rounded-l-full bg-green-300/70 hover:bg-green-500`}
           >
             Ok
           </Button>
@@ -117,7 +117,7 @@ export default function AddUsers({ height }: { height?: string }) {
               setAddUsers((p) => ({ ...p, type: "" }));
             }}
             type="button"
-            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${!addUsers.type?.includes(",") ? "w-1/5" : "w-1/4 rounded-r-full"} cursor-pointer bg-red-200/70 hover:bg-red-500`}
+            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5" : "w-1/4 rounded-r-full"} cursor-pointer bg-red-200/70 hover:bg-red-500`}
           >
             reset
           </Button>
