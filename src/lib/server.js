@@ -77,15 +77,24 @@ export async function delDb(dbName) {
   const { token32 } = await getCookie();
   if (!token32) return { error: "Unauthorized action" };
   const { edit, level } = await getUserAccess({ dbName, token32 });
-  if (!edit || level < 3)
+  console.log(
+    "in delDb, dbName: ",
+    dbName,
+    " ...edit: ",
+    edit,
+    " ...level: ",
+    level,
+  );
+  if (!edit || !level || level < 3)
     return { error: "You do not have permission to perform this action" };
   try {
-    const dbFound = await checkDb(dbName);
-    if (!dbFound) {
-      return { error: "database does not exist" };
-    }
     const res = await main`drop schema ${dbName} cascade`;
     console.log("database deleted from deldb, res: ", res);
+    const { error } = await delMetadata({ dbName });
+    if (error) {
+      console.log("Error deleting metadata: ", error);
+      throw new Error(error);
+    }
     return { error: null };
   } catch (e) {
     console.log("Error in delDb: ", e);
@@ -238,6 +247,21 @@ export async function getMetadata({ dbName, tbName, asString }) {
     viewers,
     editors,
   };
+}
+
+async function delMetadata({ dbName, tbName }) {
+  if (!dbName && !tbName) return { error: "Unauthorized" }; //no db or tb specified
+  if (!tbName) {
+    if (!(await checkDb(dbName))) {
+      return { error: "Database does not exist!" };
+    }
+  } else if (!(await checkTb({ dbName, tbName }))) {
+    return { error: "Table does not exist!" };
+  }
+  const res =
+    await auth`delete from "metadata" where db_name = ${dbName} and ${tbName ? auth`tb_name = ${tbName}` : auth`tb_name is null`} returning *`;
+  if (!res[0]) return { error: "Metadata not found!" };
+  return { error: null };
 }
 
 // async function viewersToArr({ viewers, editors }) { //obsolete

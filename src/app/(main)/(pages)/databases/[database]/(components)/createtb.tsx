@@ -28,6 +28,7 @@ import Loading from "@/components/loading";
 import { KeysButton } from "@/components/keysbutton";
 import { PlusIcon } from "lucide-react";
 import { createTb } from "@/lib/server";
+import { revalidate } from "@/lib/sessions";
 
 type tbType = {
   i: number;
@@ -207,14 +208,14 @@ export default function CreateTb({ i, uData, db }: tbType) {
     }; //change isprivate?
 
     (async () => {
-      console.log(
-        "in tableSubmitted's async before createTB, postTb: ",
-        postTb,
-      );
+      // console.log(
+      //   "in tableSubmitted's async before createTB, postTb: ",
+      //   postTb,
+      // );
       const { error } = await createTb(postTb);
       if (!error) {
         setNotify({
-          message: "Table created",
+          message: "Table created!",
           danger: false,
         });
         resetCreateTb();
@@ -229,6 +230,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   }
 
   function resetCreateTb() {
+    revalidate("tables", "all");
     setCreate("");
     // form.reset();
     setCreateTbMeta({ dbName: "", tbName: "", desc: "" });

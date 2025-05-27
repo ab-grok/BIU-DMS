@@ -1,7 +1,7 @@
 "use client";
 import { useLoading } from "@/app/dialogcontext";
 import { useButtonAnim } from "@/components/count";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useState } from "react";
 
@@ -39,14 +39,14 @@ export function RowItem({
   const textSize = text ? `text-${text}` : ""; //if text=xs -- len cap = ?
   const cap = text == "xs" ? 40 : 20;
   const childStr = typeof children == "string";
-  const childStringLen = childStr ? children.length : 0;
   const childCount = React.Children.count(children);
   const firstChild = (children as Array<any>)[0];
-  const title =
+  const childStringLen = childStr ? children.length : 0;
+  const label =
     childCount == 1 && childStr
       ? (children as string)
       : typeof firstChild == "string"
-        ? firstChild
+        ? (firstChild as string)
         : undefined;
 
   function hover(n: number) {
@@ -65,11 +65,11 @@ export function RowItem({
   }
 
   // console.log(
-  //   "rI: \n title: " + title + "\n typeof children" + typeof children,
+  //   "rI: \n label: " + label + "\n typeof children" + typeof children,
   // );
   return (
     <div
-      title={title}
+      title={label}
       onClick={handleClicked}
       onMouseLeave={() => hover(1)}
       onMouseOver={() => hover(0)}

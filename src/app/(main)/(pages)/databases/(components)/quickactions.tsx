@@ -52,6 +52,8 @@ export function QuickActions({
       `hover:stroke-${hoverColor4}-600/70 hover:text-${hoverColor4}-600`,
   ];
 
+  console.log("quickActions, actions: ", actions);
+  console.log("quickActions, hC: ", hC);
   return (
     <div
       title="Quick actions"
@@ -61,7 +63,7 @@ export function QuickActions({
         <div
           key={i}
           onClick={() => handleClicked(i + 1)}
-          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${hC[i] || "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
+          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${hC[i] ? hC[i] : "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex h-[1rem] w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
         >
           <QuickIcons name={actions[i] as string} />
           <span className={`transition-all group-hover:translate-x-0.5`}>

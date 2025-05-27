@@ -10,7 +10,12 @@ import Marker from "@/components/marker";
 import { useEffect, useState } from "react";
 import { useSelection } from "../../selectcontext";
 import { delDb } from "@/lib/server";
-import { useAddUsers, useNotifyContext } from "@/app/dialogcontext";
+import {
+  useAddUsers,
+  useConfirmDialog,
+  useNotifyContext,
+} from "@/app/dialogcontext";
+import { useRouter } from "next/navigation";
 
 export default function Db({
   db,
@@ -27,6 +32,8 @@ export default function Db({
   const { setNotify } = useNotifyContext();
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
   const { setAddUsers } = useAddUsers();
+  const { confirmDialog, setConfirmDialog } = useConfirmDialog();
+  const router = useRouter();
 
   useEffect(() => {
     const u = udata.split("&");
@@ -63,6 +70,7 @@ export default function Db({
     const { error } = await delDb(db.Database);
     if (error) setNotify({ message: error, danger: true });
     else setNotify({ message: "Database deleted successfully" });
+    router.refresh();
   }
 
   return (
@@ -155,7 +163,14 @@ export default function Db({
         hoverColor1="red"
         hoverColor2="green"
         hoverColor3="blue"
-        fn1={() => deleteDb()}
+        fn1={() => {
+          setConfirmDialog({
+            type: "database",
+            action: "delete",
+            name: db.Database,
+            confirmFn: deleteDb,
+          });
+        }}
       />
     </div>
   );

@@ -76,7 +76,7 @@ export default function RowHeader({
           />
         </div>
       </div>
-      <div className="ml-[2.6rem] flex">
+      <div className="ml-[2.5rem] flex">
         {headerList.map((a, i) => (
           <div
             key={i}

@@ -2,13 +2,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import RowHeader from "./(components)/rowheader";
 import Db from "./(components)/db";
-import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
+import {
+  useAddUsers,
+  useConfirmDialog,
+  useLoading,
+  useNotifyContext,
+} from "@/app/dialogcontext";
 import { db, listDatabases } from "@/lib/actions";
 import Loading from "@/components/loading";
 import { useSelection } from "../selectcontext";
 import AddUsers from "../../(components)/addusers";
 import NewDb from "./(components)/newdb";
 import { validateSession, validateSessionType } from "@/lib/sessions";
+import ConfirmDialog from "../../(components)/confirmdialog";
 
 export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
@@ -17,6 +23,7 @@ export default function DbLayout() {
   const { create } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
   const [udata, setUdata] = useState<string>();
+  const { confirmDialog } = useConfirmDialog();
 
   console.log("current isLoading: ", isLoading);
   useEffect(() => {
@@ -84,7 +91,7 @@ export default function DbLayout() {
             height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[96%]"} `}
           />
         )}
-
+        {confirmDialog.type == "database" && <ConfirmDialog />}
         {isLoading.includes("databases") && <Loading />}
         {db &&
           db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata || ""} />)}

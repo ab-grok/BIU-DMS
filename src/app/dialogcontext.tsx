@@ -21,8 +21,8 @@ type dialogTypes = {
   setNotify: Dispatch<SetStateAction<notificationStateType>>;
   addUsers: addUsers;
   setAddUsers: Dispatch<React.SetStateAction<addUsers>>;
-  // addUsersCategory: string; //viewers, editors
-  // setAddUsersCategory: Dispatch<React.SetStateAction<string>>;
+  confirmDialog: confirmDialogType; //viewers, editors
+  setConfirmDialog: Dispatch<React.SetStateAction<confirmDialogType>>;
 };
 
 type addUsers = {
@@ -30,6 +30,14 @@ type addUsers = {
   viewers: string; //"new" for createTb
   type: string; //"db: New Database,db,, tables ends with ',tb' : New Table,tb | [tbName],tb
   category: "editors" | "viewers";
+};
+
+type confirmDialogType = {
+  type: "database" | "" | "table" | "row" | "user";
+  action: "delete" | "edit" | "add" | "remove" | "share" | "unshare" | "";
+  name: string;
+  message?: string;
+  confirmFn?: () => void;
 };
 
 const loadingContext = createContext({} as dialogTypes);
@@ -50,6 +58,11 @@ export const useNotifyContext = () => {
   return { notify, setNotify };
 };
 
+export const useConfirmDialog = () => {
+  const { confirmDialog, setConfirmDialog } = useContext(loadingContext);
+  return { confirmDialog, setConfirmDialog };
+};
+
 export function useAddUsers() {
   const { addUsers, setAddUsers } = useContext(loadingContext);
   return { addUsers, setAddUsers };
@@ -65,6 +78,7 @@ export default function DialogContexts({
   const [authPath, setAuthPath] = useState(0);
   const [sidebarEditable, setSidebarEdit] = useState(false);
   const [addUsers, setAddUsers] = useState({} as addUsers);
+  const [confirmDialog, setConfirmDialog] = useState({} as confirmDialogType);
 
   return (
     <loadingContext.Provider
@@ -79,6 +93,8 @@ export default function DialogContexts({
         setNotify,
         addUsers,
         setAddUsers,
+        confirmDialog,
+        setConfirmDialog,
       }}
     >
       <div className="flex justify-center">
