@@ -104,7 +104,7 @@ export async function ListTables(db_name: string): Promise<ListTbsType> {
       }
     },
     [`tables-${token32}`],
-    { tags: [`tables-${token32}`, token32] },
+    { tags: [`tables-${token32}`, token32, "tables"] },
   );
   const tbs = await Tables();
   return tbs;
