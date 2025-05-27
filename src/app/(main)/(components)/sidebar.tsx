@@ -37,17 +37,16 @@ export default function SideBar() {
     })();
   }, []);
 
-  useEffect(() => {
-    console.log("isLoading in sidebar" + isLoading);
-    if (path == "/") setSidebarState((p) => ({ ...p, route: "" }));
-  }, [path]);
+  // useEffect(() => {
+  //   console.log("isLoading in sidebar" + isLoading);
+  //   if (path == "/") setSidebarState((p) => ({ ...p, route: "" }));
+  // }, [path]);
 
   return (
     <div
       onClick={() => showAvatar(1)}
       className={` ${(sidebarState.sbExpanded ?? true) && sidebarState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sidebarState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 z-5 flex h-[40rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
     >
-      {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}
       <main className="bg-main-fg ring-main-bg/50 relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1 ring-2">
         <section
           className={`group bg-bw/5 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px]`}
@@ -77,7 +76,7 @@ export default function SideBar() {
         <Separator className="bg-card-background max-w-[95%] self-center" />
 
         <section className="bg-bw/5 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
-          {" "}
+          {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}{" "}
           <SideCard name="Databases" route="databases" />
           <SideCard name="Create a database" fn={() => setCreate("db")} />
           <SideCard name="View requests" route="requests" />

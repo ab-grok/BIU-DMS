@@ -28,7 +28,7 @@ export default function Navbar() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 3500);
+    }, 4500);
   }
 
   function switchMode() {
