@@ -69,18 +69,18 @@ export default function AddUsers({ height }: { height?: string }) {
     <div
       id="addUser"
       onClick={(e) => handleClickOut(e)}
-      className={`absolute z-7 flex ${height ? height : "h-[92%]"} w-full items-center justify-center backdrop-blur-md`}
+      className={`absolute z-7 flex ${height ? height : "h-[100%]"} w-full items-center justify-center backdrop-blur-md`}
     >
       <div
-        className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[20rem]`}
+        className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[25rem]`}
       >
-        <header className="bg-main-fg flex h-[3.2rem] w-full border-b-2">
+        <header className="bg-main-fg flex h-[4rem] w-full border-b-2">
           <div className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
-            <span className="text-bw/80 text-[8px] md:text-[13px]">
+            <span className="text-bw/80 text-[12px] sm:text-[20px]">
               {addUsers.type.split(",")[0]}
             </span>
-            <span className="text-bw/60 text-[6px] md:text-[10px]">
+            <span className="text-bw/60 text-[10px] md:text-[14px]">
               {" "}
               Add {addUsers.category} {": "}{" "}
               {addUsers.category == "editors"

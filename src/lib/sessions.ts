@@ -125,7 +125,7 @@ type revalidate = "databases" | "tables" | "session" | "tableData" | "users";
 export async function revalidate(name: revalidate, all?: string) {
   const { token32 } = await getCookie();
   if (all) {
-    revalidateTag(`${name}`);
+    revalidateTag(name);
   } else {
     revalidateTag(`${name}-${token32}`);
   }
