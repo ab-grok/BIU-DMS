@@ -69,6 +69,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
 
       if (Tb.createdBy?.includes(u[0])) setUAccess({ edit: true, view: true });
     })();
+    console.log("Tb in TableCard: ", Tb);
   }, []);
 
   function handleMetaHover(n: number) {
