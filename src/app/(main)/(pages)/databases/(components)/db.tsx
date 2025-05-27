@@ -43,6 +43,7 @@ export default function Db({
     if (db.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
     if (db.createdBy?.includes(u[0]) || db.editors?.includes(u[0]))
       setUAccess({ edit: true, view: true });
+    console.log("in Db db.createdBy: ", db.createdBy);
   }, []);
 
   function handleSelectedUsers(id: string) {}
