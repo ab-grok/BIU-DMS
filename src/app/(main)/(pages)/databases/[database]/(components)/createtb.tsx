@@ -335,7 +335,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
                     ref={colScroll}
                     className="scrollbar-custom flex h-full max-w-[20rem] min-w-[20rem] gap-3 overflow-x-scroll transition-all duration-500"
                   >
-                    {createTbCol.filter(Boolean).length &&
+                    {createTbCol.length > 0 &&
                       createTbCol.map((a, i) => (
                         <UserTag
                           key={a.name}
