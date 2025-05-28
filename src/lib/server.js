@@ -381,6 +381,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     token32,
     getId: true,
   });
+  console.log("in getUserAccess, level: ", level, "...userId: ", userId);
   if (!level || !userId) {
     console.log("getUserAccess, Couldn't get session");
     return none;
