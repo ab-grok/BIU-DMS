@@ -256,7 +256,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
         onClick={(e) => {
           handleCardClicked(e);
         }}
-        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} ${i % 2 == 0 ? "bg-row-bg2/80" : "bg-row-bg2/50"} border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
+        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} ${i % 2 == 0 ? "bg-row-bg1/80" : "bg-row-bg1/50"} border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
       >
         <section
           id="table"

@@ -84,7 +84,7 @@ export default function Db({
 
   return (
     <div
-      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-bg/10"} hover:bg-bw/30`}
+      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-bg/40"} hover:bg-bw/30`}
     >
       {" "}
       <Index i={i + 1} className="sticky h-[5rem] max-w-[2rem]" />
@@ -98,7 +98,7 @@ export default function Db({
             <Count n={db.tbCount} />
           </div>{" "}
           <LogIn
-            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 group-hover:flex group-hover/dr:-translate-x-5`}
+            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
           />
         </div>
       </RowItem>

@@ -73,13 +73,13 @@ export function RowItem({
       onClick={handleClicked}
       onMouseLeave={() => hover(1)}
       onMouseOver={() => hover(0)}
-      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i == 1 ? "bg-row-bg1/40" : "bg-row-bg1"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
+      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i == 1 ? "bg-row-bg1/50" : "bg-row-bg1"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
     >
       <div
         className={`${extend && clicked ? "h-fit min-h-[4rem]" : "h-full min-h-[90%]"} flex w-full items-center`}
       >
         <div
-          className={`${hovered ? "text-bw" : ""} ${bold ? "font-medium" : ""} ${textSize ? textSize : "text-xs"} ${childCount > 1 ? "justify-start" : "justify-center"} ${itemsStart ? "items-start text-start" : "items-center text-center"} ${italics && "italic"} text-sub-text scrollbar-custom relative flex h-[90%] min-w-full flex-col gap-0.5 overflow-clip p-1`}
+          className={`${hovered ? "text-bw" : ""} ${bold ? "font-medium" : ""} ${textSize ? textSize : "text-xs"} ${childCount > 1 ? "justify-start" : "justify-center"} ${itemsStart ? "items-start text-start" : "items-center text-center"} ${italics && "italic"} text-sub-text scrollbar-custom relative flex h-[90%] min-w-full flex-col gap-0.5 overflow-clip overflow-y-auto p-1`}
         >
           {typeof children == "string" && childStringLen > cap && !clicked ? (
             children?.slice(0, cap) + "..."
