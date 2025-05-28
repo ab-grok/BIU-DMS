@@ -15,6 +15,17 @@ export default function AddUsers({ height }: { height?: string }) {
   const { addUsers, setAddUsers } = useAddUsers();
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { setNotify } = useNotifyContext();
+  const [dbTb, setDbTb] = useState({ db: "", tb: "" });
+
+  useEffect(() => {
+    const type = addUsers.type.split(",")[0];
+    const dbRTb = type.split("/");
+    if (!dbRTb[1]) {
+      setDbTb({ db: dbRTb[0], tb: "" });
+    } else {
+      setDbTb({ db: dbRTb[0], tb: dbRTb[1] });
+    }
+  }, []);
 
   function handleClickOut(e: UIEvent<HTMLDivElement>) {
     const currId = (e.target as HTMLDivElement).id;
@@ -74,12 +85,19 @@ export default function AddUsers({ height }: { height?: string }) {
       <div
         className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[25rem]`}
       >
-        <header className="bg-main-fg flex h-[4rem] w-full border-b-2">
-          <div className="flex h-full w-[40%] flex-col items-center px-2 select-none">
+        <header className="bg-main-fg flex h-[4rem] w-full min-w-fit border-b-2">
+          <section className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
-            <span className="text-bw/80 text-[12px] sm:text-[20px]">
-              {addUsers.type.split(",")[0]}
-            </span>
+            <div className={`text-bw/80 flex`}>
+              <span
+                className={` ${dbTb.tb ? "text-bw/60 text-[5px] md:text-[7px]" : "text-[10px] md:text-[15px]"} `}
+              >
+                {dbTb.tb}
+              </span>
+              {dbTb.tb && (
+                <span className="text-[10px] md:text-[15px]">/{dbTb.tb}</span>
+              )}
+            </div>
             <span className="text-bw/60 text-[10px] md:text-[14px]">
               {" "}
               Add {addUsers.category} {": "}{" "}
@@ -87,11 +105,11 @@ export default function AddUsers({ height }: { height?: string }) {
                 ? usersCount("e")
                 : usersCount("v")}
             </span>
-          </div>
-          <div className="flex w-[60%] items-center px-2">
+          </section>
+          <section className="flex w-[60%] items-center px-2">
             {" "}
             <SearchBar />
-          </div>
+          </section>
         </header>
         <main className="scrollbar-tb-row1 h-[78%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}

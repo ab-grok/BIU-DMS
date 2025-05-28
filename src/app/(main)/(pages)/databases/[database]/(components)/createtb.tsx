@@ -471,6 +471,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
         errDialogHandler={errDialogHandler}
         checkOrDelCol={checkOrDelCol}
         submitting={submitting}
+        dbName={db}
       />
     </div>
   );
@@ -482,6 +483,7 @@ type liveTable = {
   errDialogHandler: (e: any, press?: string) => void;
   checkOrDelCol: (colName: string, del?: string) => void;
   submitting: boolean;
+  dbName: string;
 };
 
 function LiveTable({
@@ -490,6 +492,7 @@ function LiveTable({
   errDialogHandler,
   checkOrDelCol,
   submitting,
+  dbName,
 }: liveTable) {
   const { createTbCol, setCreateTbCol, createTbMeta, setCreateTbMeta } =
     useSelection();
@@ -568,9 +571,9 @@ function LiveTable({
   function handleAddUsers(n: number) {
     if (n == 1) {
       setAddUsers((p) => {
-        if (p.type && p.type != "New Table") {
+        if (p.type && p.type != dbName + "/New Table") {
           return {
-            type: "New Table",
+            type: dbName + "/New Table",
             category: "viewers",
             editors: "",
             viewers: "",
@@ -578,7 +581,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "New Table",
+            type: dbName + "/New Table",
             category: "viewers",
           };
         }
@@ -586,9 +589,9 @@ function LiveTable({
     }
     if (n == 2) {
       setAddUsers((p) => {
-        if (p.type && p.type != "New Table") {
+        if (p.type && p.type != dbName + "/New Table") {
           return {
-            type: "New Table",
+            type: dbName + "/New Table",
             category: "editors",
             editors: "",
             viewers: "",
@@ -596,7 +599,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: "New Table",
+            type: dbName + "/New Table",
             category: "editors",
           };
         }

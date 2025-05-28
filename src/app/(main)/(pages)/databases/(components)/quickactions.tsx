@@ -37,22 +37,20 @@ export function QuickActions({
   const actions = [action1, action2, action3, action4];
   // const g = [["group/a"]["group/a"], ["group/b"]["group/b"], ["group/c"]["group/c"], ["group/d"]["group/d"],];
 
-  const hc1 =
-    hoverColor1 &&
-    action1 &&
-    `hover:stroke-${hoverColor1}-600/70 hover:text-${hoverColor1}-600`;
-  const hc2 =
-    hoverColor2 &&
-    action2 &&
-    `hover:stroke-${hoverColor2}-600/70 hover:text-${hoverColor2}-600`;
-  const hc3 =
-    hoverColor3 &&
-    action3 &&
-    `hover:stroke-${hoverColor3}-600/70 hover:text-${hoverColor3}-600`;
-  const hc4 =
-    hoverColor4 &&
-    action4 &&
-    `hover:stroke-${hoverColor4}-600/70 hover:text-${hoverColor4}-600`;
+  const cs = [
+    `hover:stroke-red-600/70 hover:text-red-600`,
+    `hover:stroke-blue-600/70 hover:text-blue-600`,
+    `hover:stroke-green-600/70 hover:text-green-600`,
+    `hover:stroke-brown-600/70 hover:text-brown-600`,
+    `hover:stroke-stone-600/70 hover:text-stone-600`,
+  ];
+  const c = ["red", "blue", "green", "brown", "stone"];
+  const hc = [
+    action1 && hoverColor1 && cs[c.indexOf(hoverColor1)],
+    action2 && hoverColor2 && cs[c.indexOf(hoverColor2)],
+    action3 && hoverColor3 && cs[c.indexOf(hoverColor3)],
+    action4 && hoverColor4 && cs[c.indexOf(hoverColor4)],
+  ];
 
   // console.log("quickActions, actions: ", actions);
   // console.log("quickActions, hC: ", hC);
@@ -65,7 +63,7 @@ export function QuickActions({
         <div
           key={i}
           onClick={() => handleClicked(i + 1)}
-          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${i == 0 ? hc1 : i == 1 ? hc2 : i == 2 ? hc3 : i == 3 ? hc4 : "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex h-[1.5rem] w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
+          className={` ${!actions[i] && "hidden"} ${button == i + 1 ? "scale-95" : ""} ${hc[i] || "hover:text-black"} group hover:bg-bw/50 shadow-shadow-bw flex h-[1.5rem] w-full items-center space-x-1 rounded-full px-1 hover:font-semibold hover:shadow-sm`}
         >
           <QuickIcons name={actions[i] as string} />
           <span className={`transition-all group-hover:translate-x-0.5`}>
@@ -97,10 +95,10 @@ type quickActions = {
   action2?: action;
   action3?: action;
   action4?: action;
-  hoverColor1?: string;
-  hoverColor2?: string;
-  hoverColor3?: string;
-  hoverColor4?: string;
+  hoverColor1?: "red" | "blue" | "green" | "brown" | "stone";
+  hoverColor2?: "red" | "blue" | "green" | "brown" | "stone";
+  hoverColor3?: "red" | "blue" | "green" | "brown" | "stone";
+  hoverColor4?: "red" | "blue" | "green" | "brown" | "stone";
 };
 
 function QuickIcons({ name }: { name: string }) {

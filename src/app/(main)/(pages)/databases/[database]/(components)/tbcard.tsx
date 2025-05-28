@@ -204,8 +204,6 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   ];
 
   function dateAbrev(d?: Date) {
-    console.log("type of date in dateAbrev: ", typeof d);
-    console.log("date in dateAbrev: ", d);
     if (!d) return "";
     const date = d;
     const dateStr = date.toLocaleDateString("en-US", {
@@ -213,7 +211,6 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
       day: "numeric",
       year: "2-digit",
     });
-    console.log("formatted dateString: ", dateStr);
     return dateStr;
   }
 

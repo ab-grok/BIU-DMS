@@ -30,7 +30,7 @@ const auth = postgres(process.env.AUTHDB, {
 
 export async function getDb(getTbCount) {
   const rows =
-    await main`select schema_name from information_schema.schemata where schema_name not in ('pg_catalog', 'information_schema') order by schema_name`;
+    await main`select schema_name from information_schema.schemata where schema_name not in ('public', 'information_schema', 'pg_catalog', 'pg_toast') order by schema_name`;
 
   console.log("in getDb");
   const rowsMetaPromise = rows?.map(async (a, i) => {
@@ -438,6 +438,13 @@ export async function createDb({
       error: "You cannot currently perform this action; Contact an admin",
     };
 
+  if (
+    dbName == "public" ||
+    dbName == "information_schema" ||
+    dbName == "pg_catalog" ||
+    dbName == "pg_toast"
+  )
+    return { error: "Reserved name" };
   if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${main(dbName)}`; //will throw own error
   console.log("in createDb got past checkDb!");
