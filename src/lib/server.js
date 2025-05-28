@@ -376,10 +376,10 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //ADMIN
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
   console.log("in getUserAccess, dbName: ", dbName, " ...token32: ", token32);
-  const none1 = { level: null, edit: null, view: null };
-  if (!userId && !token32) return none1;
+  let none = { level: null, edit: null, view: null };
+  if (!userId && !token32) return none;
   console.log(
-    "in getUserAccess, after none1 dbName: ",
+    "in getUserAccess, after none dbName: ",
     dbName,
     " ...token32: ",
     token32,
@@ -392,15 +392,15 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   console.log("in getUserAccess, level: ", level, "...userId: ", userId);
   if (!level || !userId) {
     console.log("getUserAccess, Couldn't get session");
-    return none1;
+    return none;
   }
   if (!(await checkDb())) {
     console.log("getUserAccess, Db not found");
-    return none1;
+    return none;
   }
   if (tbName && !(await checkTb())) {
     console.log("getUserAccess, Tb not found!");
-    return none1;
+    return none;
   }
   const udata = userId + "&" + title + "&" + firstname;
   console.log(
@@ -412,7 +412,6 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
-  if (!createdBy) edit = true;
   let edit = false;
   let view = false;
   if (createdBy.includes(userId)) {
@@ -422,6 +421,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   } else if (viewers?.includes(userId)) {
     view = true;
   }
+  if (!createdBy) edit = true;
 
   return { edit, view, level, udata };
 }
