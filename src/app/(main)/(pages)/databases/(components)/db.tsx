@@ -41,16 +41,18 @@ export default function Db({
     const u = udata.split("&");
     // console.log("Db, uData: ", udata);
     if (!db.createdBy && !db.editors) setUAccess({ edit: true, view: true });
-    if (db?.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
-    if (db?.createdBy?.includes(u[0]) || db?.editors?.includes(u[0]))
-      setUAccess({ edit: true, view: true });
+    else {
+      if (db?.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
+      if (db?.createdBy?.includes(u[0]) || db?.editors?.includes(u[0]))
+        setUAccess({ edit: true, view: true });
+    }
   }, []);
 
   function handleSelectedUsers(id: string) {}
 
   function handleAddUsers(n: number) {
-    const vData = db.viewers.filter(Boolean).join(",");
-    const eData = db.editors.filter(Boolean).join(",");
+    const vData = db.viewers?.filter(Boolean).join(",");
+    const eData = db.editors?.filter(Boolean).join(",");
     if (n == 1) {
       setAddUsers({
         category: "viewers",
