@@ -447,9 +447,17 @@ export async function createDb({
     return { error: "Reserved name" };
   if (await checkDb(dbName)) return { error: "Database already exists" };
   const res = await main`Create schema ${main(dbName)}`; //will throw own error
-  console.log("in createDb got past checkDb!");
+  console.log(
+    "in createDb got past checkDb!, firstname : ",
+    firstname,
+    " ..level",
+    level,
+    "...title: ",
+    title,
+  );
 
   udata = userId + "&" + title + "&" + firstname;
+  console.log("in createDb, udata: ", udata);
   const metaAdded = await addMetadata({
     createdBy: udata,
     dbName,

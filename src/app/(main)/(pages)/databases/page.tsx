@@ -94,7 +94,7 @@ export default function DbLayout() {
         >
           {addUsers.type?.includes("db") && (
             <AddUsers
-              height={` ${addUsers.type.includes("New Database") ? "h-[76%]" : "h-[96%]"} `}
+              height={` ${addUsers.type.includes("New Database") ? "h-[86%]" : "h-[96%]"} `}
             />
           )}
           {confirmDialog.type == "database" && <ConfirmDialog />}

@@ -136,7 +136,7 @@ export default function AddUsers({ height }: { height?: string }) {
                 : setAddUsers((p) => ({ ...p, viewers: "" }));
             }}
             type="button"
-            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5 rounded-none" : "w-1/4 rounded-r-full"} cursor-pointer bg-red-200/70 hover:bg-red-500`}
+            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5 rounded-none" : "w-1/4 rounded-r-full"} cursor-pointer bg-stone-500/70 hover:bg-stone-700`}
           >
             reset
           </Button>
