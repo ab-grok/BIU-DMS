@@ -20,6 +20,8 @@ export default function AddUsers({ height }: { height?: string }) {
   useEffect(() => {
     const type = addUsers.type.split(",")[0];
     const dbRTb = type.split("/");
+    console.log("addusers type: ", type);
+    console.log("addusers dbRTb: ", dbRTb);
     if (!dbRTb[1]) {
       setDbTb({ db: dbRTb[0], tb: "" });
     } else {
