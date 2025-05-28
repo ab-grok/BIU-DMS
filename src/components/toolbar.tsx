@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useButtonAnim } from "./count";
+import { IoCaretBack, IoCaretForward } from "react-icons/io5";
 
 type toolbar = {
   showToolbar: boolean;
@@ -67,6 +68,12 @@ export function Toolbar() {
       if (page.tb) create == "record" ? setCreate("") : setCreate("record");
       else if (page.db) create == "table" ? setCreate("") : setCreate("table");
       console.log("Toolbar's reRoute create: ", create);
+    } else if (n == 4) {
+      setPressAnim("back");
+      router.back();
+    } else if (n == 6) {
+      setPressAnim("forward");
+      router.forward();
     }
   }
 
@@ -169,6 +176,22 @@ export function Toolbar() {
               database
             </span>
           )}
+          <div
+            className={`hover:bg-sub-fg flex h-full cursor-pointer items-center gap-1 rounded-2xl px-2 select-none`}
+          >
+            <span
+              onClick={() => reRoute(4)}
+              className={`${pressAnim == "back" && "scale-95"} hover:bg-bw/70 h-fit w-fit rounded-full p-1`}
+            >
+              <IoCaretBack className="group-hover/c:fill-sub-fg size-5" />
+            </span>
+            <span
+              onClick={() => reRoute(6)}
+              className={`${pressAnim == "forward" && "scale-95"} hover:bg-bw/70 h-fit w-fit rounded-full p-1`}
+            >
+              <IoCaretForward className="group-hover/c:fill-sub-fg size-5" />
+            </span>
+          </div>
         </section>
       </div>
     </header>
