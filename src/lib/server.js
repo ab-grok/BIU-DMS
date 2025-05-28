@@ -392,11 +392,11 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     console.log("getUserAccess, Tb not found!");
     return none;
   }
-  console.log(
-    "got past checkUser and getSession in getUserAccess, level: ",
-    level,
-  );
   const udata = userId + "&" + title + "&" + firstname;
+  console.log(
+    "got past checkUser and getSession in getUserAccess, udata: ",
+    udata,
+  );
   const { createdBy, viewers, editors } = await getMetadata({
     dbName,
     tbName,
