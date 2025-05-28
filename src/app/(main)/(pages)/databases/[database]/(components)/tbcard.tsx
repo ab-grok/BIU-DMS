@@ -243,11 +243,11 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
 
   return (
     <div
-      className={`${i % 2 == 0 ? "bg-tb-row1/80" : "bg-tb-row1/50"} group relative flex min-h-[10rem] w-full min-w-fit transition-all`}
+      className={`${i % 2 == 0 ? "bg-tb-row1/60" : "bg-tb-row1/10"} group relative flex min-h-[10rem] w-full min-w-fit transition-all`}
     >
       <Index
         i={i}
-        className="group-hover:bg-sub-grad-forced sticky h-[11.2rem] self-center"
+        className="group-hover:bg-sub-grad-forced/70 sticky h-[11.2rem] self-center"
         morph="selected"
         selected={selectedTb?.includes(Tb.tbName)}
       />
@@ -256,7 +256,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
         onClick={(e) => {
           handleCardClicked(e);
         }}
-        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} ${i % 2 == 0 ? "bg-row-bg1/80" : "bg-row-bg1/50"} border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
+        className={`${selectedTb?.includes(Tb.tbName) && "ring-2 ring-blue-700/40"} ${i % 2 == 0 ? "bg-row-bg1/80" : "bg-row-bg1/50"} group-hover:bg-sub-grad-forced/30 border-main-bg/50 items-center-2 m-2 flex min-h-[10rem] gap-x-1 rounded-xl px-2 py-1 shadow-xs ring-blue-700/20 hover:ring-2`}
       >
         <section
           id="table"
