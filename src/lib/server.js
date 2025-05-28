@@ -1030,6 +1030,7 @@ export async function createUser({
     userId,
     title1,
     gender1,
+    new Date(),
   ];
   console.log(
     `createUser just before insert executed: fname: ${firstname}... lname:  ${lastname}... email: ${email.toLowerCase()} ... pass: ${hashedPass} ... userId: ${userId} ... title: ${title1} ... gender: ${gender1}  `,
@@ -1041,7 +1042,7 @@ export async function createUser({
   );
 
   const rowIn =
-    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender ) values (${valString}) returning *`;
+    await auth`insert into "user" (firstname, lastname, email, password, id, title, gender, joined ) values (${valString}) returning *`;
   console.log("createUser insert executed: ", rowIn);
   const { expiresAt } = await createSession({ userId, dcrpass: pass, token32 });
   console.log("got past created session");

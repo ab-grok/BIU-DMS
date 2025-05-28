@@ -23,7 +23,7 @@ export default function DbLayout() {
   const { isLoading, setIsLoading } = useLoading();
   const { create, setCreate } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
-  const [udata, setUdata] = useState<string>();
+  const [udata, setUdata] = useState<string>("");
   const { confirmDialog } = useConfirmDialog();
   const createParam = useSearchParams().get("create") || "";
 
@@ -35,7 +35,7 @@ export default function DbLayout() {
       console.log("DbLayout in useEffect, after listDatabases, res: ", res);
       if (!res) {
         setNotify({
-          message: "Can't get to the server right now.",
+          message: "Trouble reaching the server.",
           danger: true,
           exitable: true,
         });
@@ -52,7 +52,7 @@ export default function DbLayout() {
           return;
         }
         console.log("in DbLayout, validateSessions user: ", user);
-        setUdata(user.userId + "&" + user.firstname + "&" + user.title);
+        setUdata(user.userId + "&" + user.title + "&" + user.firstname);
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));
@@ -102,9 +102,7 @@ export default function DbLayout() {
           {confirmDialog.type == "database" && <ConfirmDialog />}
           {isLoading.includes("databases") && <Loading />}
           {db &&
-            db.map((a, i) => (
-              <Db key={i + 2} db={a} i={i} udata={udata || ""} />
-            ))}
+            db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata} />)}
         </section>
       </main>
     </div>
