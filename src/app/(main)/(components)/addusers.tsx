@@ -94,7 +94,7 @@ export default function AddUsers({ height }: { height?: string }) {
               <span
                 className={` ${dbTb.tb ? "text-bw/60 text-[5px] md:text-[7px]" : "text-[10px] md:text-[15px]"} `}
               >
-                {dbTb.tb}
+                {dbTb.db}
               </span>
               {dbTb.tb && (
                 <span className="text-[10px] md:text-[15px]">/{dbTb.tb}</span>
