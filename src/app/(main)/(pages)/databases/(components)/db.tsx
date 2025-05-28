@@ -92,13 +92,13 @@ export default function Db({
         {db.Database && db.Database.length > 17
           ? db.Database.slice(0, 14) + `...`
           : db.Database}
-        <div className="relative flex w-full">
+        <div className="group/dr relative flex w-full">
           <div className="text-bw/70 flex items-center space-x-3 text-xs">
             <span>tables:</span>
             <Count n={db.tbCount} />
           </div>{" "}
           <LogIn
-            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 group-hover:flex`}
+            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 group-hover:flex group-hover/dr:-translate-x-5`}
           />
         </div>
       </RowItem>
