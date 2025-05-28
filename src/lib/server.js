@@ -76,6 +76,7 @@ function filterInput(cmt) {
 export async function delDb(dbName) {
   const { token32 } = await getCookie();
   if (!token32) return { error: "Unauthorized action" };
+  console.log("in delDb dbName: ", dbName);
   const { edit, level } = await getUserAccess({ dbName, token32 });
   console.log(
     "in delDb, dbName: ",
@@ -456,7 +457,7 @@ export async function createDb({
     title,
   );
 
-  udata = userId + "&" + title + "&" + firstname;
+  const udata = userId + "&" + title + "&" + firstname;
   console.log("in createDb, udata: ", udata);
   const metaAdded = await addMetadata({
     createdBy: udata,
