@@ -375,9 +375,15 @@ async function delMetadata({ dbName, tbName }) {
 export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //ADMIN
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
-  const none = { level: null, edit: null, view: null };
-  if (!userId && !token32) return none;
   console.log("in getUserAccess, dbName: ", dbName, " ...token32: ", token32);
+  const none1 = { level: null, edit: null, view: null };
+  if (!userId && !token32) return none1;
+  console.log(
+    "in getUserAccess, after none1 dbName: ",
+    dbName,
+    " ...token32: ",
+    token32,
+  );
 
   const { level, userId, title, firstname } = await getSession({
     token32,
@@ -386,15 +392,15 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   console.log("in getUserAccess, level: ", level, "...userId: ", userId);
   if (!level || !userId) {
     console.log("getUserAccess, Couldn't get session");
-    return none;
+    return none1;
   }
   if (!(await checkDb())) {
     console.log("getUserAccess, Db not found");
-    return none;
+    return none1;
   }
   if (tbName && !(await checkTb())) {
     console.log("getUserAccess, Tb not found!");
-    return none;
+    return none1;
   }
   const udata = userId + "&" + title + "&" + firstname;
   console.log(
