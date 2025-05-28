@@ -567,11 +567,16 @@ function LiveTable({
   }
 
   function handleAddUsers(n: number) {
+    const ntbPath = dbName + "/New Table";
     if (n == 1) {
       setAddUsers((p) => {
-        if (p.type && p.type != dbName + "/New Table") {
+        if (p.type && p.type != ntbPath) {
+          console.log(
+            "createTb, handleAddUsers, dbName + /New Table : ",
+            ntbPath,
+          );
           return {
-            type: dbName + "/New Table",
+            type: ntbPath,
             category: "viewers",
             editors: "",
             viewers: "",
@@ -579,7 +584,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: dbName + "/New Table",
+            type: ntbPath,
             category: "viewers",
           };
         }
@@ -587,9 +592,9 @@ function LiveTable({
     }
     if (n == 2) {
       setAddUsers((p) => {
-        if (p.type && p.type != dbName + "/New Table") {
+        if (p.type && p.type != ntbPath) {
           return {
-            type: dbName + "/New Table",
+            type: ntbPath,
             category: "editors",
             editors: "",
             viewers: "",
@@ -597,7 +602,7 @@ function LiveTable({
         } else {
           return {
             ...p,
-            type: dbName + "/New Table",
+            type: ntbPath,
             category: "editors",
           };
         }
