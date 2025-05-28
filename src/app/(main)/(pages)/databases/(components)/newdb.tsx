@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 
 export default function NewDb({ uData }: { uData: string }) {
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const { create, setCreate } = useSelection();
+  const { create, setCreate, setCreated } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
   const { setNotify, notify } = useNotifyContext();
   const { isLoading, setIsLoading } = useLoading();
@@ -68,6 +68,7 @@ export default function NewDb({ uData }: { uData: string }) {
     } else {
       setNotify({ message: "Database created successfully" });
       await revalidate("databases", "all");
+      setCreated((p) => ({ ...p, db: dbData.dbName }));
       setCreate("");
       setAddUsers({ type: "", category: "editors", editors: "", viewers: "" });
       router.refresh();

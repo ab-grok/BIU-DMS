@@ -87,12 +87,12 @@ export default function AddUsers({ height }: { height?: string }) {
       <div
         className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[25rem]`}
       >
-        <header className="bg-main-fg flex h-[4rem] w-full min-w-fit border-b-2">
+        <header className="bg-main-fg flex h-[4rem] w-full min-w-fit border-b-2 py-2">
           <section className="flex h-full w-[40%] flex-col items-center px-2 select-none">
             {" "}
             <div className={`text-bw/80 flex`}>
               <span
-                className={` ${dbTb.tb ? "text-bw/60 text-[5px] md:text-[7px]" : "text-[10px] md:text-[15px]"} `}
+                className={` ${dbTb.tb ? "text-bw/60 items-end text-[5px] md:text-[9px]" : "text-[10px] md:text-[15px]"} h-full`}
               >
                 {dbTb.db}
               </span>
