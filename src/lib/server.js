@@ -85,7 +85,7 @@ export async function delDb(dbName) {
     " ...level: ",
     level,
   );
-  if (!edit || !level || level < 3)
+  if (!edit && !level && level < 3)
     return { error: "You do not have permission to perform this action" };
   try {
     const res = await main`drop schema ${dbName} cascade`;
@@ -402,6 +402,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
+  if (!createdBy) edit = true;
   let edit = false;
   let view = false;
   if (createdBy.includes(userId)) {

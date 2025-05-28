@@ -61,7 +61,7 @@ export default function UserTag({
       onMouseLeave={() => setHover(0)}
       onClick={pushRoute}
       className={cn(
-        `group/ut relative ${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? (clickedColor ?? colorHover) : hovered && "ring-2"} ${!hovered && thisHover && `${color} shadow-md`} text-bw min flex h-[1.3rem] w-fit max-w-[8rem] min-w-fit items-center justify-center rounded-[4px] px-1 shadow-2xs select-none`,
+        `group/ut relative ${!name ? "text-bw/40 bg-sub-fg/50 italic" : clicked ? (clickedColor ?? colorHover) : hovered && `${colorHover} ring-2`} ${!hovered && thisHover && `${color} shadow-md`} text-bw min flex h-[1.3rem] w-fit max-w-[8rem] min-w-fit items-center justify-center rounded-[4px] px-1 shadow-2xs select-none`,
         className,
       )}
     >

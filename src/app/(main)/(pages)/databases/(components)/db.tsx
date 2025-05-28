@@ -40,8 +40,9 @@ export default function Db({
   useEffect(() => {
     const u = udata.split("&");
     // console.log("Db, uData: ", udata);
-    if (db.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
-    if (db.createdBy?.includes(u[0]) || db.editors?.includes(u[0]))
+    if (!db.createdBy && !db.editors) setUAccess({ edit: true, view: true });
+    if (db?.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
+    if (db?.createdBy?.includes(u[0]) || db?.editors?.includes(u[0]))
       setUAccess({ edit: true, view: true });
   }, []);
 

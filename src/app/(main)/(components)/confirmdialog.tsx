@@ -38,8 +38,11 @@ export default function ConfirmDialog() {
           {" the " + confirmDialog.type + " "}
         </h1>
         <span className="flex gap-0.5">
-          <UserTag name={confirmDialog.name} cap={25} />
-          {"?"}
+          <UserTag
+            name={confirmDialog.name}
+            cap={25}
+            className="bg-neutral-600"
+          />
         </span>
         {confirmDialog.message && (
           <p className="sm:text-md text-bw text-sm">{confirmDialog.message}</p>
