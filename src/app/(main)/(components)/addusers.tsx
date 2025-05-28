@@ -92,7 +92,7 @@ export default function AddUsers({ height }: { height?: string }) {
             {" "}
             <div className={`text-bw/80 flex`}>
               <span
-                className={` ${dbTb.tb ? "text-bw/60 items-end text-[5px] md:text-[9px]" : "text-[10px] md:text-[15px]"} h-full`}
+                className={` ${dbTb.tb ? "text-bw/60 justify-end text-[7px] md:text-[11px]" : "text-[10px] md:text-[15px]"} h-full`}
               >
                 {dbTb.db}
               </span>
