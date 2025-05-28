@@ -39,6 +39,8 @@ export default function Db({
 
   useEffect(() => {
     const u = udata.split("&");
+    console.log("u from db.tsx: ", u);
+    console.log("db from db.tsx: ", db);
     // console.log("Db, uData: ", udata);
     if (!db.createdBy && !db.editors) setUAccess({ edit: true, view: true });
     else {
