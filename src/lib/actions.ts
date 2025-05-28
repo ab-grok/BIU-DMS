@@ -77,13 +77,13 @@ export type ListTbsType = {
   error: string | null;
 };
 
-export async function ListTables(db_name: string): Promise<ListTbsType> {
+export async function listTables(db_name: string): Promise<ListTbsType> {
   const { token32 } = await getCookie();
   if (!token32) return { tbArr: null, error: "Unauthorized action" };
-  console.log("~~~~~~~~~~in ListTables before unstable_cache");
+  console.log("~~~~~~~~~~in listTables before unstable_cache");
   const Tables = unstable_cache(
     async () => {
-      console.log("~~~~~~~~~~in ListTables dbName: ", db_name);
+      console.log("~~~~~~~~~~in listTables dbName: ", db_name);
       try {
         //expiresAt, username, firstname, lastname, title, joined, level, userId, avatarUrl
         const { userId } = await getSession({
@@ -96,7 +96,7 @@ export async function ListTables(db_name: string): Promise<ListTbsType> {
         // console.log("tableData: ", tableData);
         return { tbArr: tableData as Tb[], error: null };
       } catch (e: any) {
-        console.log(`error in ListTables: ${JSON.stringify(e)}`);
+        console.log(`error in listTables: ${JSON.stringify(e)}`);
         return {
           tbArr: null,
           error: e.customMessage || "Couldn't get tables",
@@ -219,7 +219,7 @@ export async function timeAgo(iso: string): Promise<string> {
 //   if (tb) {
 //   } //can add rows
 //   else if (db) {
-//     const tbs = await ListTables(db);
+//     const tbs = await listTables(db);
 //     tbs &&
 //       tbs.forEach((a, i) => {
 //         const length = Math.max(a.editors.length, a.viewers.length);

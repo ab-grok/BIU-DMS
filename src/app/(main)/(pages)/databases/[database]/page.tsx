@@ -5,7 +5,7 @@ import TableCard from "./(components)/tbcard";
 import { validateSession } from "@/lib/sessions";
 import Loading from "@/components/loading";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
-import { ListTables, Tb, ListTbsType } from "@/lib/actions";
+import { listTables, Tb, ListTbsType } from "@/lib/actions";
 import CreateTb from "./(components)/createtb";
 import { useSelection } from "../../selectcontext";
 import AddUsers from "@/app/(main)/(components)/addusers";
@@ -30,7 +30,7 @@ export default function Database() {
         return;
       }
       console.log("User from [database]'s validateSession call", u);
-      const { tbArr, error } = await ListTables(currDb);
+      const { tbArr, error } = await listTables(currDb);
 
       if (error) {
         setNotify({

@@ -1,5 +1,5 @@
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
-import { ListTables } from "@/lib/actions";
+import { listTables } from "@/lib/actions";
 import {
   TextCursorInput,
   TableProperties,
@@ -71,7 +71,7 @@ export function Toolbar() {
   }
 
   async function selectAllTb() {
-    const { tbArr } = await ListTables(page.db);
+    const { tbArr } = await listTables(page.db);
     if (tbArr && tbArr.length) {
       if (selectedAllTb) {
         setSelectedTb("");

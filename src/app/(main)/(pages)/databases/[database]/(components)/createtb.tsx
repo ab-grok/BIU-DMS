@@ -57,6 +57,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   const {
     create,
     setCreate,
+    setCreated,
     selectedTb,
     setSelectedTb,
     createTbMeta,
@@ -230,10 +231,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   }
 
   function resetCreateTb() {
-    (async () => {
-      await revalidate("tables", "all");
-    })();
-
+    revalidate("tables", "all");
     setCreate("");
     // form.reset();
     setCreateTbMeta({ dbName: "", tbName: "", desc: "" });
@@ -243,7 +241,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
       ...p,
       type: "",
     }));
-    router.refresh();
+    setCreated((p) => ({ ...p, tb: createTbMeta.tbName }));
   }
   //error handller : primary found returns primary
   function findPrimary(del?: string) {

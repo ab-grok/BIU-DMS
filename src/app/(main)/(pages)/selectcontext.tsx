@@ -63,6 +63,8 @@ type selections = {
   // setMultiSelectedTb: Dispatch<React.SetStateAction<string>>;
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
+  created: { db: string; tb: string };
+  setCreated: Dispatch<React.SetStateAction<{ db: string; tb: string }>>; // for retriggering ListTables
   selectedRecords: string;
   setSelectedRecords: Dispatch<React.SetStateAction<string>>;
   quickA: string;
@@ -84,6 +86,7 @@ export default function SelectionContext({
   const [selectedRecords, setSelectedRecords] = useState<string>("");
   const [selectedTb, setSelectedTb] = useState<string>("");
   const [create, setCreate] = useState<string>("");
+  const [created, setCreated] = useState({ db: "", tb: "" });
   const [quickA, setQuickA] = useState<string>("");
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
   const [createDbMeta, setCreateDbMeta] = useState({} as createDbMeta);
@@ -114,6 +117,8 @@ export default function SelectionContext({
         setCreateTbCol,
         create,
         setCreate,
+        created,
+        setCreated,
         selectedRecords,
         setSelectedRecords,
         selectedTb,
