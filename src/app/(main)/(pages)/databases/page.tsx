@@ -57,9 +57,11 @@ export default function DbLayout() {
       }
       setIsLoading((p) => p.replace("databases,", ""));
     })();
-
-    createParam == "db" && setCreate("db");
   }, []);
+
+  useEffect(() => {
+    createParam == "db" && setCreate("db");
+  }, [createParam]);
 
   const headerList = [
     "Database",

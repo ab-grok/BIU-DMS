@@ -348,7 +348,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                 <FaEye className="size-6 stroke-pink-800 opacity-80" />
               )}
             </div>
-            <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
+            <div className="bg-bw/10 relative flex h-[7.5rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
               {Tb.viewers ? (
                 Tb.viewers.map((a, i) => {
                   const v = a.split("&");
@@ -419,7 +419,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                 />
               )}
             </div>
-            <div className="bg-bw/10 relative flex h-[7.6rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
+            <div className="bg-bw/10 relative flex h-[7.5rem] max-w-[10rem] flex-col justify-center gap-y-2 overflow-hidden rounded-2xl p-1 shadow-2xs">
               {Tb.editors ? (
                 Tb.editors.map((a, i) => {
                   const e = a.split("&");
