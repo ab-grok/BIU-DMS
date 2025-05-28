@@ -16,7 +16,7 @@ export default function Database() {
   const [udata, setUdata] = useState({} as string);
   const { isLoading, setIsLoading } = useLoading();
   const { setNotify, notify } = useNotifyContext();
-  const { create } = useSelection();
+  const { create, created } = useSelection();
   //onclick of addEditors/users set the state blank
   const { addUsers, setAddUsers } = useAddUsers();
 
@@ -46,7 +46,7 @@ export default function Database() {
     })();
 
     return () => {};
-  }, []);
+  }, [created.tb]);
 
   //get tables: author, created at, lastUpdate, lastUpdated by, viewers, editors, rows
   return (
