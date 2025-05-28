@@ -20,8 +20,6 @@ export default function AddUsers({ height }: { height?: string }) {
   useEffect(() => {
     const type = addUsers.type.split(",")[0];
     const dbRTb = type.split("/");
-    console.log("addusers type: ", type);
-    console.log("addusers dbRTb: ", dbRTb);
     if (!dbRTb[1]) {
       setDbTb({ db: dbRTb[0], tb: "" });
     } else {
@@ -136,7 +134,7 @@ export default function AddUsers({ height }: { height?: string }) {
                 : setAddUsers((p) => ({ ...p, viewers: "" }));
             }}
             type="button"
-            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5 rounded-none" : "w-1/4 rounded-r-full"} cursor-pointer bg-stone-500/70 hover:bg-stone-700`}
+            className={`${pressAnim == "resetU" && "scale-95"} hover h-[3rem] select-none ${addUsers.type?.includes(",") ? "w-1/5 rounded-none" : "w-1/4 rounded-r-full"} cursor-pointer bg-slate-500/70 hover:bg-slate-700`}
           >
             reset
           </Button>

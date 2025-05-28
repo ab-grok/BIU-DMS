@@ -43,11 +43,12 @@ export default function SideCard({
 
   useEffect(() => {
     console.log("sbState.route: ", sbState.route);
-    if (typeof sbState.route == undefined)
-      setSidebarState((prev) => ({
-        ...prev,
-        route: pathname?.replace("/", "") || "",
-      }));
+    console.log("pathname: ", pathname);
+    // if (typeof sbState.route == undefined)
+    //   setSidebarState((prev) => ({
+    //     ...prev,
+    //     route: pathname?.replace("/", "") || "",
+    //   }));
   }, [sbState.route]);
   return (
     <div

@@ -176,7 +176,6 @@ function UsersTable() {
     const viewers: user = [];
 
     if (addUsers.editors) {
-      console.log("addUsers.editors: ", addUsers.editors);
       const edArr = addUsers.editors.split(",").filter(Boolean);
       edArr.forEach((a) => {
         const u = a.split("&");
@@ -184,7 +183,6 @@ function UsersTable() {
       });
     }
     if (addUsers.viewers) {
-      console.log("addUsers.viewers: ", addUsers.viewers);
       const edArr = addUsers.viewers?.split(",").filter(Boolean);
       edArr.forEach((a) => {
         const u = a.split("&");

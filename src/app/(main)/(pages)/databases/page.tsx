@@ -31,7 +31,6 @@ export default function DbLayout() {
   useEffect(() => {
     setIsLoading((p) => p + "databases,");
     (async () => {
-      console.log("DbLayout in useEffect, before listDatabases");
       const res = await listDatabases();
       console.log("DbLayout in useEffect, after listDatabases, res: ", res);
       if (!res) {
@@ -97,7 +96,7 @@ export default function DbLayout() {
         >
           {addUsers.type?.includes("db") && (
             <AddUsers
-              height={` ${addUsers.type.includes("New Database") ? "h-[86%]" : "h-[96%]"} `}
+              height={` ${addUsers.type.includes("New Database") ? "h-[96%]" : "h-[96%]"} `}
             />
           )}
           {confirmDialog.type == "database" && <ConfirmDialog />}
