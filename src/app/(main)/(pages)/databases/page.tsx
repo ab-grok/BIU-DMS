@@ -52,6 +52,7 @@ export default function DbLayout() {
           });
           return;
         }
+        console.log("in DbLayout, validateSessions user: ", user);
         setUdata(user.userId + "&" + user.firstname + "&" + user.title);
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
