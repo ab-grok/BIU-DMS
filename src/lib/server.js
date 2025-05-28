@@ -76,7 +76,7 @@ function filterInput(cmt) {
 export async function delDb(dbName) {
   const { token32 } = await getCookie();
   if (!token32) return { error: "Unauthorized action" };
-  console.log("in delDb dbName: ", dbName);
+  console.log("in delDb dbName: ", dbName, "...token32: ", token32);
   const { edit, level } = await getUserAccess({ dbName, token32 });
   console.log(
     "in delDb, dbName: ",
