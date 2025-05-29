@@ -94,7 +94,6 @@ export async function delDb(dbName) {
     const { error } = await delMetadata({ dbName });
     if (error) {
       console.log("Error deleting metadata: ", error);
-      throw new Error(error);
     }
     return { error: null };
   } catch (e) {
