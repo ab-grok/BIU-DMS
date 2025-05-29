@@ -377,18 +377,11 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
   let none = { level: null, edit: null, view: null };
   if (!uid && !token32) return none;
-  console.log(
-    "in getUserAccess, after none dbName: ",
-    dbName,
-    " ...token32: ",
-    token32,
-  );
 
   const { level, userId, title, firstname } = await getSession({
     token32,
     getId: true,
   });
-  console.log("in getUserAccess, level: ", level, "...userId: ", userId);
   if (!userId) {
     console.log("getUserAccess, Couldn't get session");
     return none;
@@ -413,7 +406,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   });
   let edit = false;
   let view = false;
-  if (createdBy.includes(userId)) {
+  if (createdBy?.includes(userId)) {
     edit = true; //change to creator
   } else if (editors?.includes(userId)) {
     edit = true;
