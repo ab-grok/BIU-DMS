@@ -16,6 +16,7 @@ import {
   useNotifyContext,
 } from "@/app/dialogcontext";
 import { useRouter } from "next/navigation";
+import { revalidate } from "@/lib/sessions";
 
 export default function Db({
   db,
@@ -79,6 +80,7 @@ export default function Db({
     console.log("got past delDb, error: ", error);
     if (error) setNotify({ message: error, danger: true });
     else setNotify({ message: "Database deleted successfully" });
+    revalidate("databases", "all");
     router.refresh();
   }
 

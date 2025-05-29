@@ -89,7 +89,7 @@ export async function delDb(dbName) {
   if (!edit && !level && level < 3)
     return { error: "You do not have permission to perform this action" };
   try {
-    const res = await main`drop schema ${dbName} cascade`;
+    const res = await main`drop schema ${main(dbName)} cascade`;
     console.log("database deleted from deldb, res: ", res);
     const { error } = await delMetadata({ dbName });
     if (error) {
@@ -99,7 +99,7 @@ export async function delDb(dbName) {
     return { error: null };
   } catch (e) {
     console.log("Error in delDb: ", e);
-    return { error: e.message || "Some error occured." };
+    return { error: "Some error occured." };
   }
 }
 
