@@ -399,22 +399,23 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     "got past checkUser and getSession in getUserAccess, udata: ",
     udata,
   );
-  const { createdBy, viewers, editors } = await getMetadata({
+  const meta = await getMetadata({
     dbName,
     tbName,
     asString: true,
   });
   let edit = false;
   let view = false;
-  if (createdBy?.includes(userId)) {
-    edit = true; //change to creator
-  } else if (editors?.includes(userId)) {
-    edit = true;
-  } else if (viewers?.includes(userId)) {
-    view = true;
-  }
-  if (!createdBy) edit = true;
-
+  if (meta) {
+    const { createdBy, viewers, editors } = meta;
+    if (createdBy?.includes(userId)) {
+      edit = true; //change to creator
+    } else if (editors?.includes(userId)) {
+      edit = true;
+    } else if (viewers?.includes(userId)) {
+      view = true;
+    }
+  } else if (level > 1) edit = true;
   return { edit, view, level, udata };
 }
 
