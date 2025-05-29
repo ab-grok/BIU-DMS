@@ -377,7 +377,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
   console.log("in getUserAccess, dbName: ", dbName, " ...token32: ", token32);
   let none = { level: null, edit: null, view: null };
-  if (!userId && !token32) return none;
+  if (!uid && !token32) return none;
   console.log(
     "in getUserAccess, after none dbName: ",
     dbName,
