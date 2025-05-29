@@ -27,7 +27,7 @@ export default function Db({
   i: number;
   udata: string;
 }) {
-  const { selectedDbUsers, setSelectedDbUsers } = useSelection();
+  const { selectedDbUsers, setSelectedDbUsers, setCreated } = useSelection();
   const [viewerHovered, setViewerHovered] = useState(0);
   const [editorHovered, setEditorHovered] = useState(0);
   const [cardClicked, setCardClicked] = useState(0);
@@ -49,7 +49,7 @@ export default function Db({
       if (db?.createdBy?.includes(u[0]) || db?.editors?.includes(u[0]))
         setUAccess({ edit: true, view: true });
     }
-  }, []);
+  }, [udata]);
 
   function handleSelectedUsers(id: string) {}
 

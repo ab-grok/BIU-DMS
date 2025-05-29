@@ -82,7 +82,7 @@ export function Toolbar() {
     if (tbArr && tbArr.length) {
       if (selectedAllTb) {
         setSelectedTb("");
-        //doesnt use multiSelectedTb
+
         setSelectAllTb(false);
       } else {
         setSelectedTb("");

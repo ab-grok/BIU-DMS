@@ -64,7 +64,7 @@ type selections = {
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
   created: { db: string; tb: string };
-  setCreated: Dispatch<React.SetStateAction<{ db: string; tb: string }>>; // for retriggering ListTables
+  setCreated: Dispatch<React.SetStateAction<{ db: string; tb: string }>>; // for retriggering effects (can be used for )
   selectedRecords: string;
   setSelectedRecords: Dispatch<React.SetStateAction<string>>;
   quickA: string;

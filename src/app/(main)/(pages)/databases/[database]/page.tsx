@@ -18,7 +18,7 @@ export default function Database() {
   const { setNotify, notify } = useNotifyContext();
   const { create, created } = useSelection();
   //onclick of addEditors/users set the state blank
-  const { addUsers, setAddUsers } = useAddUsers();
+  const { addUsers } = useAddUsers();
 
   useEffect(() => {
     console.log("isLoading start: " + isLoading);

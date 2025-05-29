@@ -21,9 +21,9 @@ export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
   const { addUsers } = useAddUsers();
   const { isLoading, setIsLoading } = useLoading();
-  const { create, setCreate } = useSelection();
+  const { create, setCreate, created } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
-  const udata = useRef("");
+  const [udata, setUdata] = useState("");
   const { confirmDialog } = useConfirmDialog();
   const createParam = useSearchParams().get("create") || "";
 
@@ -52,15 +52,15 @@ export default function DbLayout() {
           return;
         }
         console.log("in DbLayout, validateSessions user: ", user);
-        udata.current = user.userId + "&" + user.title + "&" + user.firstname;
+        setUdata(user.userId + "&" + user.title + "&" + user.firstname);
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));
     })();
-  }, []);
+  }, [created.db]);
 
   useEffect(() => {
-    createParam == "db" && setCreate("db");
+    createParam == "db" ? setCreate("db") : setCreate("");
   }, [createParam]);
 
   const headerList = [
@@ -85,7 +85,7 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb uData={udata.current} />
+        <NewDb uData={udata} />
       </div>
 
       <main className="relative">
@@ -102,9 +102,7 @@ export default function DbLayout() {
           {confirmDialog.type == "database" && <ConfirmDialog />}
           {isLoading.includes("databases") && <Loading />}
           {db &&
-            db.map((a, i) => (
-              <Db key={i + 2} db={a} i={i} udata={udata.current} />
-            ))}
+            db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata} />)}
         </section>
       </main>
     </div>
