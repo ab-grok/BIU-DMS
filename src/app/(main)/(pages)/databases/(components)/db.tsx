@@ -84,7 +84,7 @@ export default function Db({
 
   return (
     <div
-      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-main-bg/40"} hover:bg-bw/30`}
+      className={`group flex min-h-[5rem] w-full min-w-fit flex-none items-center ${i % 2 == 0 ? "bg-main-fg" : "bg-row-bg1/40"} hover:bg-bw/30`}
     >
       {" "}
       <Index i={i + 1} className="sticky h-[5rem] max-w-[2rem]" />
