@@ -56,7 +56,6 @@ export default function RowHeader({
     } else {
       setCreate("db");
     }
-
     setPressAnim("newDb");
   }
 

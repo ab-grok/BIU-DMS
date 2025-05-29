@@ -7,7 +7,7 @@ import { useState } from "react";
 
 type rowItem = {
   route?: string;
-  i?: number;
+  i: number;
   itemsStart?: boolean;
   italics?: boolean;
   bold?: boolean;
@@ -73,7 +73,7 @@ export function RowItem({
       onClick={handleClicked}
       onMouseLeave={() => hover(1)}
       onMouseOver={() => hover(0)}
-      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i == 1 ? "bg-row-bg1/50" : "bg-row-bg1"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
+      className={`hover:bg-card-selection ${clicked ? "bg-card-selection/60" : i % 2 == 0 ? "bg-row-bg1/50" : "bg-row-bg1"} ${extend && clicked ? "h-fit" : "h-[4rem]"} group text-bw shadow-shadow-bw ml-3 flex min-h-[4rem] w-full max-w-[10rem] min-w-[10rem] cursor-pointer flex-col p-1 font-medium shadow-sm`}
     >
       <div
         className={`${extend && clicked ? "h-fit min-h-[4rem]" : "h-full min-h-[90%]"} flex w-full items-center`}

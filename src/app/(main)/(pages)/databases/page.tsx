@@ -23,7 +23,7 @@ export default function DbLayout() {
   const { isLoading, setIsLoading } = useLoading();
   const { create, setCreate } = useSelection();
   const [db, setDb] = useState([] as db[] | null);
-  const [udata, setUdata] = useState<string>("");
+  const udata = useRef("");
   const { confirmDialog } = useConfirmDialog();
   const createParam = useSearchParams().get("create") || "";
 
@@ -52,7 +52,7 @@ export default function DbLayout() {
           return;
         }
         console.log("in DbLayout, validateSessions user: ", user);
-        setUdata(user.userId + "&" + user.title + "&" + user.firstname);
+        udata.current = user.userId + "&" + user.title + "&" + user.firstname;
         // console.log("Database set: \n\n\n " + JSON.stringify(res));
       }
       setIsLoading((p) => p.replace("databases,", ""));
@@ -85,7 +85,7 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb uData={udata || ""} />
+        <NewDb uData={udata.current} />
       </div>
 
       <main className="relative">
@@ -102,7 +102,9 @@ export default function DbLayout() {
           {confirmDialog.type == "database" && <ConfirmDialog />}
           {isLoading.includes("databases") && <Loading />}
           {db &&
-            db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata} />)}
+            db.map((a, i) => (
+              <Db key={i + 2} db={a} i={i} udata={udata.current} />
+            ))}
         </section>
       </main>
     </div>
