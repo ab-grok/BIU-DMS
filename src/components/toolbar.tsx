@@ -82,9 +82,9 @@ export function Toolbar() {
   async function selectAllTb() {
     //tbPath = dbName/tbName,
     if (!pressedAllTb) {
-      for (const { dbName, tbMeta } of allTbs) {
+      for (const { dbName, tbList } of allTbs) {
         if (page.db == dbName) {
-          tbMeta.forEach((a) => {
+          tbList.forEach((a) => {
             const tbPath = dbName + "/" + a.tbName + ",";
             setSelectedTb((p) => {
               if (p.includes(tbPath)) return p;
