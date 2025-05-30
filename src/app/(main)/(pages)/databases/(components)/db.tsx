@@ -17,16 +17,9 @@ import {
 } from "@/app/dialogcontext";
 import { useRouter } from "next/navigation";
 import { revalidate } from "@/lib/sessions";
+import { useFetchContext } from "../../fetchcontext";
 
-export default function Db({
-  db,
-  i,
-  udata,
-}: {
-  db: db;
-  i: number;
-  udata: string;
-}) {
+export default function Db({ db, i }: { db: db; i: number }) {
   const { selectedDbUsers, setSelectedDbUsers, setCreated } = useSelection();
   const [viewerHovered, setViewerHovered] = useState(0);
   const [editorHovered, setEditorHovered] = useState(0);
@@ -34,22 +27,23 @@ export default function Db({
   const { setNotify } = useNotifyContext();
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
   const { setAddUsers } = useAddUsers();
+  const { uData } = useFetchContext();
   const { confirmDialog, setConfirmDialog } = useConfirmDialog();
-  const router = useRouter();
   const { pressAnim } = useButtonAnim();
+  const router = useRouter();
 
   useEffect(() => {
-    const u = udata.split("&");
+    const u = uData.split("&");
     console.log("u from db.tsx: ", u);
     console.log("db from db.tsx: ", db);
-    // console.log("Db, uData: ", udata);
+    // console.log("Db, uData: ", uData);
     if (!db.createdBy && !db.editors) setUAccess({ edit: true, view: true });
     else {
       if (db?.viewers?.includes(u[0])) setUAccess({ edit: false, view: true });
       if (db?.createdBy?.includes(u[0]) || db?.editors?.includes(u[0]))
         setUAccess({ edit: true, view: true });
     }
-  }, [udata]);
+  }, [uData]);
 
   function handleSelectedUsers(id: string) {}
 

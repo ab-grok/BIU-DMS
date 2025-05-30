@@ -24,12 +24,14 @@ import { revalidate, validateSession } from "@/lib/sessions";
 import { createDb } from "@/lib/server";
 import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
+import { useFetchContext } from "../../fetchcontext";
 
-export default function NewDb({ uData }: { uData: string }) {
+export default function NewDb() {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { create, setCreate, setCreated } = useSelection();
   const { addUsers, setAddUsers } = useAddUsers();
   const { setNotify, notify } = useNotifyContext();
+  const { uData } = useFetchContext();
   const { isLoading, setIsLoading } = useLoading();
   const router = useRouter();
 

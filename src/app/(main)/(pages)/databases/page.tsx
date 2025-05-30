@@ -16,14 +16,16 @@ import NewDb from "./(components)/newdb";
 import { validateSession, validateSessionType } from "@/lib/sessions";
 import ConfirmDialog from "../../(components)/confirmdialog";
 import { useSearchParams } from "next/navigation";
+import { useFetchContext } from "../fetchcontext";
 
 export default function DbLayout() {
   const { notify, setNotify } = useNotifyContext();
   const { addUsers } = useAddUsers();
   const { isLoading, setIsLoading } = useLoading();
   const { create, setCreate, created } = useSelection();
-  const [db, setDb] = useState([] as db[] | null);
-  const [udata, setUdata] = useState("");
+  // const [db, setDb] = useState([] as db[] | null);
+  // const [udata, setUdata] = useState("");
+  const { dbs, setDbs, setUdata } = useFetchContext();
   const { confirmDialog } = useConfirmDialog();
   const createParam = useSearchParams().get("create") || "";
 
@@ -31,6 +33,17 @@ export default function DbLayout() {
   useEffect(() => {
     setIsLoading((p) => p + "databases,");
     (async () => {
+      const user = await validateSession();
+      if (!user) {
+        setNotify({
+          danger: true,
+          message: "Session Expired. Please log in again.",
+        });
+        return;
+      }
+      console.log("in DbLayout, validateSessions user: ", user);
+      setUdata(user.userId + "&" + user.title + "&" + user.firstname);
+
       const res = await listDatabases();
       console.log("DbLayout in useEffect, after listDatabases, res: ", res);
       if (!res) {
@@ -40,21 +53,8 @@ export default function DbLayout() {
           exitable: true,
         });
         return;
-      } else {
-        setDb(res);
-        console.log("got data about to validateSession");
-        const user = await validateSession();
-        if (!user) {
-          setNotify({
-            danger: true,
-            message: "Couldn't authenticate you. Please log in again.",
-          });
-          return;
-        }
-        console.log("in DbLayout, validateSessions user: ", user);
-        setUdata(user.userId + "&" + user.title + "&" + user.firstname);
-        // console.log("Database set: \n\n\n " + JSON.stringify(res));
-      }
+      } else setDbs(res);
+      // console.log("Database set: \n\n\n " + JSON.stringify(res));
       setIsLoading((p) => p.replace("databases,", ""));
     })();
   }, [created.db]);
@@ -85,7 +85,7 @@ export default function DbLayout() {
         <RowHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
-        <NewDb uData={udata} />
+        <NewDb />
       </div>
 
       <main className="relative">
@@ -101,8 +101,7 @@ export default function DbLayout() {
           )}
           {confirmDialog.type == "database" && <ConfirmDialog />}
           {isLoading.includes("databases") && <Loading />}
-          {db &&
-            db.map((a, i) => <Db key={i + 2} db={a} i={i} udata={udata} />)}
+          {dbs && dbs.map((a, i) => <Db key={i + 2} db={a} i={i} />)}
         </section>
       </main>
     </div>

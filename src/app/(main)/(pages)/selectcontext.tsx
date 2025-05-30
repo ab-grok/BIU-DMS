@@ -2,8 +2,7 @@ import { createContext, Dispatch, useContext, useState } from "react";
 
 const selectionContext = createContext({} as selections);
 export function useSelection() {
-  const context = useContext(selectionContext);
-  return context;
+  return useContext(selectionContext);
 }
 
 type routes = {
@@ -25,9 +24,6 @@ export interface createTbMeta {
   dbName: string;
   tbName: string;
   desc: string | undefined;
-  // createdBy: string; //uid&ttl&fname
-  // editors: string; //not needed
-  // viewers: string;
 }
 export type createDbMeta = {
   createdBy: string;
@@ -46,9 +42,6 @@ type selectUsers = {
 };
 
 type selections = {
-  // colorState: string;
-  // setColorState: Dispatch<React.SetStateAction<string>>;
-
   selectedTbUsers: selectUsers;
   setSelectedTbUsers: Dispatch<React.SetStateAction<selectUsers>>;
   selectedDbUsers: selectUsers;
@@ -59,8 +52,6 @@ type selections = {
   setEdits: Dispatch<React.SetStateAction<views>>;
   selectedTb: string;
   setSelectedTb: Dispatch<React.SetStateAction<string>>;
-  // multiSelectedTb: string;
-  // setMultiSelectedTb: Dispatch<React.SetStateAction<string>>;
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
   created: { db: string; tb: string };

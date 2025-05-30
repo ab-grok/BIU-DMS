@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useButtonAnim } from "./count";
 import { IoCaretBack, IoCaretForward } from "react-icons/io5";
+import { useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 
 type toolbar = {
   showToolbar: boolean;
@@ -24,8 +25,9 @@ type page = {
 export function Toolbar() {
   const [page, setPage] = useState({} as page);
   const [toolClicked, setToolClicked] = useState("");
-  const [selectedAllTb, setSelectAllTb] = useState(false);
+  const [pressedAllTb, setPressedAllTb] = useState(false);
   const [count, setCount] = useState(0);
+  const { allTbs } = useFetchContext();
   const {
     create,
     setCreate,
@@ -78,28 +80,29 @@ export function Toolbar() {
   }
 
   async function selectAllTb() {
-    const { tbArr } = await listTables(page.db);
-    if (tbArr && tbArr.length) {
-      if (selectedAllTb) {
-        setSelectedTb("");
-
-        setSelectAllTb(false);
-      } else {
-        setSelectedTb("");
-        tbArr.forEach((a, i) => {
-          setSelectedTb(selectedTb + page.db + "/" + a.tbName + ",");
-        });
-        setSelectAllTb(true);
+    //tbPath = dbName/tbName,
+    if (!pressedAllTb) {
+      for (const { dbName, tbMeta } of allTbs) {
+        if (page.db == dbName) {
+          tbMeta.forEach((a) => {
+            const tbPath = dbName + "/" + a.tbName + ",";
+            setSelectedTb((p) => {
+              if (p.includes(tbPath)) return p;
+              else return p + tbPath;
+            });
+          });
+        }
       }
-    }
+      setPressedAllTb(!pressedAllTb);
+    } else setSelectedTb("");
   }
 
   function countTb() {}
   // add sortby: lastupdated (up,down), alphabetical(up,down), date created(up,down)
   useEffect(() => {
     const currPath = path?.slice(path?.indexOf("databases")) ?? "";
-    console.log("this path: ", path);
-    console.log("curr path: ", currPath);
+    console.log("in toolbar , path : ", path);
+    console.log("in toolbar curr path from databases: ", currPath);
     //db lists all tables, tb lists all records, record lists a single record
     const pages = currPath.split("/");
     if (pages.length > 3)
@@ -111,9 +114,9 @@ export function Toolbar() {
   }, [path]);
 
   useEffect(() => {
-    if (page.record && selectedRecords)
+    if (page.tb && selectedRecords)
       setCount(selectedRecords.split(",").filter(Boolean).length);
-    else if (page.tb && selectedTb)
+    else if (page.db && selectedTb)
       setCount(selectedTb.split(",").filter(Boolean).length);
   }, [selectedTb, selectedRecords]);
 
@@ -136,10 +139,10 @@ export function Toolbar() {
             onClick={() => selAll()}
             className={` ${toolClicked?.includes("selAll") && "font-bold ring-2"} ${pressAnim == "sA" && "scale-95"} ring-bg-sub-fg hover:bg-sub-fg flex h-full w-fit cursor-pointer items-center rounded-2xl px-3 text-center`}
           >
-            {selectedAllTb ? "unselect all" : "Select all"}
+            {pressedAllTb ? "unselect all" : "Select all"}
           </span>
           <span
-            className={`${count > 1 ? "flex" : "hidden"} items-center justify-center pr-6`}
+            className={`${count > 1 ? "flex" : "hidden"} text-bw/70 items-center justify-center pr-6`}
           >
             {" "}
             Selected:
