@@ -14,7 +14,7 @@ type rc = {
 
 type rcArr = {
   rcPath: string; //dbName/tbName
-  rcArr: {};
+  rcArr: string;
 };
 
 type fetchContext = {
