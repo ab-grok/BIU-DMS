@@ -25,37 +25,40 @@ export default function DbLayout() {
   const { create, setCreate, created } = useSelection();
   // const [db, setDb] = useState([] as db[] | null);
   // const [udata, setUdata] = useState("");
-  const { dbs, setDbs, setUdata } = useFetchContext();
+  const { dbs, setDbs, setUdata, uData } = useFetchContext();
   const { confirmDialog } = useConfirmDialog();
   const createParam = useSearchParams().get("create") || "";
 
   console.log("current isLoading: ", isLoading);
   useEffect(() => {
-    setIsLoading((p) => p + "databases,");
     (async () => {
-      const user = await validateSession();
-      if (!user) {
-        setNotify({
-          danger: true,
-          message: "Session Expired. Please log in again.",
-        });
-        return;
+      if (!uData) {
+        setIsLoading((p) => p + "databases,");
+        const user = await validateSession();
+        if (!user) {
+          setNotify({
+            danger: true,
+            message: "Session Expired. Please log in again.",
+          });
+          return;
+        }
+        console.log("in DbLayout, validateSessions user: ", user);
+        setUdata(user.userId + "&" + user.title + "&" + user.firstname);
       }
-      console.log("in DbLayout, validateSessions user: ", user);
-      setUdata(user.userId + "&" + user.title + "&" + user.firstname);
-
-      const res = await listDatabases();
-      console.log("DbLayout in useEffect, after listDatabases, res: ", res);
-      if (!res) {
-        setNotify({
-          message: "Trouble reaching the server.",
-          danger: true,
-          exitable: true,
-        });
-        return;
-      } else setDbs(res);
-      // console.log("Database set: \n\n\n " + JSON.stringify(res));
-      setIsLoading((p) => p.replace("databases,", ""));
+      if (!dbs.length || created.db) {
+        if (!dbs.length) setIsLoading((p) => p + "databases,");
+        const res = await listDatabases();
+        console.log("DbLayout in useEffect, after listDatabases, res: ", res);
+        if (!res) {
+          setNotify({
+            message: "Trouble reaching the server.",
+            danger: true,
+            exitable: true,
+          });
+          return;
+        } else setDbs(res);
+      }
+      setIsLoading((p) => p.replaceAll("databases,", ""));
     })();
   }, [created.db]);
 

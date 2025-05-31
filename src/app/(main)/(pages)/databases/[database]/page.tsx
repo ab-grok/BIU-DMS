@@ -23,10 +23,12 @@ export default function Database() {
 
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
-
-    for (const [j, { dbName }] of allTbs.entries()) {
-      if (dbName == currDb) break;
-      else if (j == allTbs.length - 1) setIsLoading((p) => p + currDb + ",");
+    if (!allTbs.length) setIsLoading((p) => p + currDb + ",");
+    else {
+      for (const [j, { dbName }] of allTbs?.entries()) {
+        if (dbName == currDb) break;
+      }
+      setIsLoading((p) => p + currDb + ",");
     }
 
     if (allTbs.entries())

@@ -111,7 +111,7 @@ export default function AddUsers({ height }: { height?: string }) {
             <SearchBar />
           </section>
         </header>
-        <main className="scrollbar-tb-row1 h-[78%] w-full overflow-auto">
+        <main className="scrollbar-tb-row1 h-[78%] min-h-[30%] w-full overflow-auto">
           {users && users.map((a, i) => <Users key={i + 2} u={a} i={i + 1} />)}
         </main>
         <section className="sm:text-md mb-1 flex h-[3rem] w-full justify-center text-sm">
