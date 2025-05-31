@@ -23,16 +23,20 @@ export default function Database() {
 
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
-    if (!allTbs.length) setIsLoading((p) => p + currDb + ",");
-    else {
-      for (const [j, { dbName }] of allTbs?.entries()) {
-        if (dbName == currDb) break;
-      }
-      setIsLoading((p) => p + currDb + ",");
-    }
+    // else {
+    //   for (const [j, { dbName }] of allTbs?.entries()) {
+    //     if (dbName == currDb) {
+    //       break;
+    //     }
+    //   }
+    //   setIsLoading((p) => p + currDb + ",");
+    // }
 
-    if (allTbs.entries())
+    if (!allTbs.length) {
+      setIsLoading((p) => p + currDb + ",");
       console.log("in [database], useLoading: after reset " + isLoading);
+    }
+    let tbFound = false;
     (async () => {
       const { tbArr, error } = await listTables(currDb);
       if (error) {
@@ -43,8 +47,8 @@ export default function Database() {
         });
       } else
         setAllTbs((p) => {
-          if (!p) {
-            console.log("in [database] in setAllTbs !p ");
+          if (!p?.length) {
+            console.log("in [database] in setAllTbs !p.length ");
             return [{ dbName: currDb, tbList: tbArr as Tb[] }];
           } else {
             for (const [i, { dbName, tbList }] of p.entries()) {
@@ -55,21 +59,25 @@ export default function Database() {
                 tbList,
               );
 
-              if (currDb == dbName && tbList?.length != tbArr?.length) {
-                const currP = [
-                  ...p.slice(0, i),
-                  { dbName: currDb, tbList: tbArr as Tb[] },
-                  ...p.slice(i + 1),
-                ];
-                return currP;
+              if (currDb == dbName) {
+                tbFound = true;
+                if (tbList?.length != tbArr?.length) {
+                  const currP = [
+                    ...p.slice(0, i),
+                    { dbName: currDb, tbList: tbArr as Tb[] },
+                    ...p.slice(i + 1),
+                  ];
+                  return currP;
+                } else return p;
               }
             }
-            return [...p, { dbName: currDb, tbList: tbArr as Tb[] }];
+            if (!tbFound)
+              return [...p, { dbName: currDb, tbList: tbArr as Tb[] }];
+            else return p;
           }
         });
-
-      setIsLoading((p) => p.replace(currDb + ",", ""));
     })();
+    setIsLoading((p) => p.replace(currDb + ",", ""));
 
     return () => {};
   }, [created.tb]);
