@@ -279,7 +279,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             </div>
             <div
               onClick={() => handleEnter("door")}
-              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter h-full w-1/3 cursor-pointer items-center justify-end bg-amber-600/70 pr-3`}
+              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter bg-sub-bg/80 h-full w-1/3 cursor-pointer items-center justify-end pr-3 hover:shadow-sm`}
             >
               {!(uAccess.view || uAccess.edit) ? (
                 <LockIcon
@@ -295,7 +295,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           <div
             id="Table meta"
             title={Tb.description || Tb.tbName}
-            className="bg-bw/10 flex h-fit min-h-[6rem] w-full items-center gap-x-[1%] rounded-2xl p-0.5 px-1 shadow-sm"
+            className="bg-bw/10 px-1' flex h-fit min-h-[6rem] w-full items-center gap-x-[1%] rounded-2xl p-0.5 shadow-sm"
           >
             <div className="flex h-full min-w-[50%] flex-col justify-center gap-y-1.5 text-[12px]">
               {items.map((a, i) => (
