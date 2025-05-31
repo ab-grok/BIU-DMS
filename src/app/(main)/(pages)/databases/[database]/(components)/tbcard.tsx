@@ -264,7 +264,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
         >
           <header
             title={Tb.tbName}
-            className="flex min-h-[3rem] w-[15rem] cursor-default justify-between pr-1"
+            className="flex min-h-[3rem] w-[15rem] cursor-default items-center justify-between pr-1"
           >
             <div className="w-1/2">
               <span>
@@ -279,7 +279,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             </div>
             <div
               onClick={() => handleEnter("door")}
-              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter bg-sub-bg/80 h-full w-1/3 cursor-pointer items-center justify-end pr-3 hover:shadow-sm`}
+              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter bg-sub-bg/80 h-[80%] w-1/3 cursor-pointer items-center justify-end rounded-2xl pr-3 transition-all hover:shadow-sm`}
             >
               {!(uAccess.view || uAccess.edit) ? (
                 <LockIcon
@@ -287,7 +287,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                 />
               ) : (
                 <KeyRound
-                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 group-hover/enter:stroke-green-600`}
+                  className={`${btnClicked == "door" ? "scale-[0.97]" : ""} stroke-bw/60 group-hover:stroke-green-600 group-hover/enter:rotate-45`}
                 />
               )}
             </div>
