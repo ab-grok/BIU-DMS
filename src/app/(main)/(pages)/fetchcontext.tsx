@@ -41,7 +41,7 @@ export default function FetchContext({
   const [dbs, setDbs] = React.useState([] as db[]);
   const [allTbs, setAllTbs] = React.useState([] as tbArr);
   const [uData, setUdata] = React.useState("");
-  const [rc, setRc] = React.useState({} as rcType);
+  const [rc, setRc] = React.useState([] as rcType);
 
   return (
     <fetchContext.Provider

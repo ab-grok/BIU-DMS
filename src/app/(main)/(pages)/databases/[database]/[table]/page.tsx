@@ -21,7 +21,7 @@ export default function TableRows() {
   const { rc, setRc } = useFetchContext();
   const { setIsLoading } = useLoading();
   const tbPath = dbName + "/" + tbName;
-  const currRh = rc?.find((a) => a.tbPath == tbPath)?.rcHeader;
+  const currRh = rc.find((a) => a.tbPath == tbPath)?.rcHeader;
 
   console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
 
@@ -36,7 +36,7 @@ export default function TableRows() {
         setNotify({ message: error1 || error, danger: true });
         return;
       }
-      let currTb: rcData | undefined = rc?.find((a) => (a.tbPath = tbPath));
+      let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
       const placeTb = {
         tbPath: tbPath,
         rcRows: [] as rowData[],
