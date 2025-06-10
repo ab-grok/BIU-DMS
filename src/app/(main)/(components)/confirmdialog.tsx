@@ -41,7 +41,7 @@ export default function ConfirmDialog() {
           <UserTag
             name={confirmDialog.name}
             cap={25}
-            className="bg-neutral-600"
+            className={`${confirmDialog.type == "database" ? "bg-purple-600/70" : confirmDialog.type == "table" ? "bg-blue-600/70" : "bg-cyan-600/70"}`}
           />
         </span>
         {confirmDialog.message && (

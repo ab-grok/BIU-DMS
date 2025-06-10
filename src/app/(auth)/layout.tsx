@@ -11,7 +11,7 @@ export default async function Layout({
   if (user) redirect("/");
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <div className="relative flex h-full max-h-[34.5rem] w-[90%] max-w-[30rem] items-center justify-center overflow-hidden rounded-[30px] bg-neutral-50/5 shadow-lg lg:max-w-[59.5rem]">
+      <div className="bg-main-bg/10 relative flex h-full max-h-[34.5rem] w-[90%] max-w-[30rem] items-center justify-center overflow-hidden rounded-[30px] shadow-lg lg:max-w-[59.5rem]">
         <div className="animate-logospin absolute h-[70rem] w-full rotate-[40deg] bg-black/20 md:w-[10rem]"></div>
         <LayoutCall>{children}</LayoutCall>
       </div>

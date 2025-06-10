@@ -2,7 +2,6 @@
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import TableCard from "./(components)/tbcard";
-import { validateSession } from "@/lib/sessions";
 import Loading from "@/components/loading";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
 import { listTables, Tb, ListTbsType } from "@/lib/actions";
@@ -15,27 +14,18 @@ export default function Database() {
   const currDb = useParams()?.database as string;
   const { isLoading, setIsLoading } = useLoading();
   const { setNotify, notify } = useNotifyContext();
-  const { create, created } = useSelection();
+  const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
   const { allTbs, setAllTbs, uData } = useFetchContext();
-
+  const currTbs = allTbs.find((t) => t.dbName == currDb);
   // onclick of addEditors/users set the state blank?
 
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
-    // else {
-    //   for (const [j, { dbName }] of allTbs?.entries()) {
-    //     if (dbName == currDb) {
-    //       break;
-    //     }
-    //   }
-    //   setIsLoading((p) => p + currDb + ",");
-    // }
+    console.log("allTbs.length: ", allTbs.length);
+    !currTbs &&
+      setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
 
-    if (!allTbs.length) {
-      setIsLoading((p) => p + currDb + ",");
-      console.log("in [database], useLoading: after reset " + isLoading);
-    }
     let tbFound = false;
     (async () => {
       const { tbArr, error } = await listTables(currDb);
@@ -45,41 +35,36 @@ export default function Database() {
           danger: true,
           exitable: true,
         });
-      } else
+      } else {
         setAllTbs((p) => {
-          if (!p?.length) {
-            console.log("in [database] in setAllTbs !p.length ");
-            return [{ dbName: currDb, tbList: tbArr as Tb[] }];
-          } else {
-            for (const [i, { dbName, tbList }] of p.entries()) {
+          for (const [i, { dbName, tbList }] of p.entries()) {
+            if (dbName == currDb) {
+              tbFound = true;
               console.log(
                 "in [database] in setAllTbs loop, dbName: ",
                 dbName,
-                " ...  tbList:",
+                "\n ... tbList: ",
                 tbList,
               );
-
-              if (currDb == dbName) {
-                tbFound = true;
-                if (tbList?.length != tbArr?.length) {
-                  const currP = [
-                    ...p.slice(0, i),
-                    { dbName: currDb, tbList: tbArr as Tb[] },
-                    ...p.slice(i + 1),
-                  ];
-                  return currP;
-                } else return p;
-              }
+              if (tbList.length != tbArr?.length) {
+                const currP = [
+                  ...p.slice(0, i),
+                  { dbName: currDb, tbList: tbArr as Tb[] },
+                  ...p.slice(i + 1),
+                ];
+                return currP;
+              } else return p;
             }
-            if (!tbFound)
-              return [...p, { dbName: currDb, tbList: tbArr as Tb[] }];
-            else return p;
           }
+          return [...p, { dbName: currDb, tbList: tbArr as Tb[] }];
         });
+      }
+      setIsLoading((p) => p.replace(currDb + ",", ""));
     })();
-    setIsLoading((p) => p.replace(currDb + ",", ""));
 
-    return () => {};
+    return () => {
+      created.tb && setCreated((p) => ({ ...p, tb: "" }));
+    };
   }, [created.tb]);
 
   //get tables: author, created at, lastUpdate, lastUpdated by, viewers, editors, rows
@@ -92,18 +77,10 @@ export default function Database() {
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
-        {allTbs?.find(({ dbName }) => dbName == currDb)?.dbName ? (
-          allTbs
-            ?.find(({ dbName }) => dbName == currDb)
-            ?.tbList.map((a, i) => (
-              <TableCard
-                key={i}
-                uData={uData}
-                Tb={a}
-                i={i + 1}
-                dbName={currDb}
-              />
-            ))
+        {currTbs?.tbList.length ? (
+          currTbs.tbList.map((a, i) => (
+            <TableCard key={i} uData={uData} Tb={a} i={i + 1} dbName={currDb} />
+          ))
         ) : !(create == "table") ? (
           <div className="p-6 text-4xl italic">
             {" "}

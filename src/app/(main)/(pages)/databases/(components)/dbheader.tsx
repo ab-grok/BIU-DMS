@@ -6,7 +6,7 @@ import { useSelection } from "../../selectcontext";
 import { useButtonAnim } from "@/components/count";
 import { useAddUsers } from "@/app/dialogcontext";
 
-export default function RowHeader({
+export default function DbHeader({
   headerList,
   ref,
 }: {

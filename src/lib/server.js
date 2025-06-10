@@ -395,7 +395,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   }
   const udata = userId + "&" + title + "&" + firstname;
   console.log(
-    "got past checkUser and getSession in getUserAccess, udata: ",
+    "getUserAccess, got past checkUser and getSession, udata: ",
     udata,
   );
   const meta = await getMetadata({
@@ -478,37 +478,40 @@ export async function createDb({
 }
 
 export async function getTables(dbName, includeMeta) {
-  //must call with includeMeta to get table metadata
+  //getUserAccess first
   // tableData = {tbName} | {tbName, ...metadata}
   if (!(await checkDb(dbName))) {
     throw { customMessage: "Database does not exist" };
   }
   const res =
     await main`select table_name as tb from information_schema.tables where table_schema = ${dbName} order by table_name`;
-  console.log("in getTables, res: ", res);
+  // console.log("in getTables, res: ", res);
   if (!res[0]) return { error: "Database has no tables" };
   let tableDataPromise = res?.map(async (a, i) => {
     if (includeMeta && a.tb) {
       let rc =
         await main`select count(*) as "rC" from ${main(dbName)}.${main(a.tb)}`;
       let tableMeta = await getMetadata({ dbName, tbName: a.tb });
-      console.log("in getTables, got past getMetadata : ", tableMeta);
+      // console.log("in getTables, got past getMetadata : ", tableMeta);
       return { tbName: a.tb, rowCount: rc[0].rC, ...tableMeta };
     } else return { tbName: a.tb };
   });
   const tableData = await Promise.all(tableDataPromise); //
-  console.log(JSON.stringify("tableData fr getTables: ", tableData));
+  // console.log(JSON.stringify("tableData fr getTables: ", tableData));
   return { tableData };
 }
 
 export async function getTbSchema({ dbName, tbName }) {
-  //res: {colName, type, nullable, key}[]
-  const tbFound = await checkTb({ dbName, tbName });
-  if (!tbFound) throw { customMessage: "Couldn't find the table or database" };
+  //res: {colName, type, nullable, key}[]   //getUserAccess checks table
+  const { token32 } = await getCookie();
+  const { edit, view } = await getUserAccess({ dbName, tbName, token32 });
+  if (!edit || !view) throw { customMessage: "Cannot access this table." };
+
   //combine with information_schema.key_column_usage to get foreign keys?
   const res =
     await main`select c.column_name as "colName", c.data_type as type, c.is_nullable as nullable, arr.agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable ORDER BY c.ordinal_position`;
-  return { tableMeta: res };
+  console.log("in getTbSchema, res: ", res);
+  return { schema: res[0] };
 }
 
 export async function checkTb({ dbName, tbName }) {
@@ -693,13 +696,13 @@ export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Database or table not found!" };
 
-  const orderCol = filterInput(orderBy?.col);
+  // const orderCol = filterInput(orderBy?.col);
   const order = orderBy?.order.toLowerCase() == "desc" ? "desc" : "asc";
   const whereCol = filterInput(where?.col);
   const whereVal = filterInput(where?.val);
   const res =
-    await main`Select * from ${main(dbName)}.${main(tbName)} ${orderCol ? main`order by ${main(orderCol)} ${main.raw(order)}` : main.raw("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.raw("")}`;
-  console.log("TB data from getTBData: ", JSON.stringify(res));
+    await main`Select * from ${main(dbName)}.${main(tbName)} ${orderBy?.col ? main`order by ${main(orderBy.col)} ${main.unsafe(order)}` : main.unsafe("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.unsafe("")}`;
+  console.log("TB data from getTbData: ", JSON.stringify(res));
   if (!res[0]) console.log({ customMessage: "No table data exists" });
   return { rows: res };
 }
@@ -735,7 +738,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
   if (!updatedAtFound || !updatedByFound) {
     try {
       let updRes =
-        await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main.raw("add column updated_at timestamp") : main.raw("")} ${!updatedByFound ? main.raw(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.raw("")}`;
+        await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main.unsafe("add column updated_at timestamp") : main.unsafe("")} ${!updatedByFound ? main.unsafe(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.unsafe("")}`;
     } catch (e) {
       throw {
         customMessage: "metacolumns not found and failed to create them!",
@@ -779,7 +782,7 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
 }
 
 export async function alterTable({ key, dbName, tbName }) {
-  //add column, delete column.
+  //add column, delete column. -- delete the file_name, file_type columns of a dropped file column
   // rename column
   //change type
 }

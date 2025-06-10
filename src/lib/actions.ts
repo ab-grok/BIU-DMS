@@ -3,7 +3,14 @@
 import { createTbCol, createTbMeta } from "@/app/(main)/(pages)/selectcontext";
 import { getCookie, validateSession } from "@/lib/sessions";
 import { unstable_cache } from "next/cache";
-import { getAllUsers, getDb, getSession, getTables } from "./server";
+import {
+  getAllUsers,
+  getDb,
+  getSession,
+  getTables,
+  getTbData,
+  getTbSchema,
+} from "./server";
 //types
 export type db = {
   Database: string;
@@ -39,7 +46,7 @@ export async function listDatabases(): Promise<Array<db> | null> {
 
       return null;
     },
-    [`databases-${token32}`],
+    [`databases`],
     { tags: [`databases-${token32}`, "databases"], revalidate: 3600 },
   );
   const data = await dbList();
@@ -103,7 +110,7 @@ export async function listTables(db_name: string): Promise<ListTbsType> {
         };
       }
     },
-    [`tables-${token32}`],
+    [`tables-${db_name}`],
     { tags: [`tables-${token32}`, token32, "tables"] },
   );
   const tbs = await Tables();
@@ -118,15 +125,77 @@ export async function postTable(
   return { error: "couldn't create table" };
 }
 
-export async function getTableSchema() {
+export type colSchema = {
+  colName: string;
+  type: string;
+  nullable: string;
+  keys: string[];
+};
+
+export type schemaType = {
+  tbSchema: colSchema[] | null;
+  error1: string | null;
+};
+
+export async function getTableSchema(
+  dbName: string,
+  tbName: string,
+): Promise<schemaType> {
   //get cookies and verify if user is a viewer, or editor which includes the creator in order to grant access -- see getUserAccess function in server.js
   //works with getTableSchema from server.js
   // format with return types
+  const getSchemas = unstable_cache(
+    async () => {
+      try {
+        const { schema } = await getTbSchema({ dbName, tbName });
+        const tbSchema = schema as colSchema[];
+        console.log("in getTableSchema got schema from getTbSchema: ", schema);
+        return { tbSchema, error1: null };
+      } catch (e: any) {
+        console.log("error1 in getTableSchema: ", e);
+        return {
+          tbSchema: null,
+          error1: e.customMessage || "Something's not right",
+        };
+      }
+    },
+    [`${dbName}-${tbName}-schema`],
+    { tags: ["schema", `${dbName}-${tbName}-schema`], revalidate: 86400 },
+  );
+  const sch = await getSchemas();
+  return sch;
 }
 
-export async function getTableContent() {
-  //getTbData from server.js
-  // format with return types
+export type rowData = {
+  [column: string]: string | number | null | undefined | Date;
+};
+
+type getTableData = {
+  tbData?: rowData[];
+  error?: any;
+};
+
+export async function getTableData(
+  dbName: string,
+  tbName: string,
+  orderBy?: string,
+  where?: string,
+): Promise<getTableData> {
+  const tbData = unstable_cache(
+    async () => {
+      try {
+        const { rows } = await getTbData();
+        console.log("in getTableData's unstable_c, got past getTbData() ");
+        return { tbData: rows as rowData[] };
+      } catch (e: any) {
+        console.log(" got error in getTableData's unstable_c: ", e);
+        return { error: e.customMessage || "Something went wrong!" };
+      }
+    },
+    [`${dbName}-${tbName}-tbData`],
+    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 86400 },
+  );
+  return await tbData();
 }
 
 export async function setTableContent() {
@@ -178,7 +247,7 @@ export async function getUsers(): Promise<Array<allUsers> | null> {
         return null;
       }
     },
-    [`users-${token32}`],
+    [`users`],
     {
       tags: [`users-${token32}`, `users`],
       revalidate: 3600,

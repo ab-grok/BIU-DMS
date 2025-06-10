@@ -1,6 +1,6 @@
 "use client";
 import UserTag from "@/components/usertag";
-import { RowItem } from "./rowitems";
+import { DbItem } from "./dbitems";
 import { QuickActions } from "./quickactions";
 import { LogIn } from "lucide-react";
 import Index from "@/components";
@@ -84,7 +84,7 @@ export default function Db({ db, i }: { db: db; i: number }) {
     >
       {" "}
       <Index i={i + 1} className="sticky h-[5rem] max-w-[2rem]" />
-      <RowItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
+      <DbItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
         {db.Database && db.Database.length > 17
           ? db.Database.slice(0, 14) + `...`
           : db.Database}
@@ -97,24 +97,24 @@ export default function Db({ db, i }: { db: db; i: number }) {
             className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
           />
         </div>
-      </RowItem>
-      <RowItem
+      </DbItem>
+      <DbItem
         itemsStart={db.description ? true : false}
         italics={!db.description ? true : false}
         extend
         i={2}
       >
         {db.description || "No description yet"}
-      </RowItem>
-      <RowItem i={3}>
+      </DbItem>
+      <DbItem i={3}>
         <UserTag
           name={db?.createdBy?.split("&")[2] ?? "Admin"}
           title={db?.createdBy?.split("&")[1]}
           className="mb-1"
         />
         <Count date={db.createdAt} className="fill-blue-600/70" />
-      </RowItem>
-      <RowItem fn={() => handleAddUsers(1)} extend i={4}>
+      </DbItem>
+      <DbItem fn={() => handleAddUsers(1)} extend i={4}>
         {db.viewers?.length ? (
           db.viewers.map((a, i) => {
             const v = a?.split("&");
@@ -137,8 +137,8 @@ export default function Db({ db, i }: { db: db; i: number }) {
         ) : (
           <UserTag name={""} />
         )}
-      </RowItem>
-      <RowItem
+      </DbItem>
+      <DbItem
         //can filter id for separate card and usertag clicks
         fn={() => handleAddUsers(2)}
         extend
@@ -167,7 +167,7 @@ export default function Db({ db, i }: { db: db; i: number }) {
         ) : (
           <UserTag name={""} />
         )}
-      </RowItem>
+      </DbItem>
       <QuickActions
         action1="Delete"
         action2={`${uAccess.edit ? "Add viewer" : !uAccess.view ? "Request view" : ""}`}

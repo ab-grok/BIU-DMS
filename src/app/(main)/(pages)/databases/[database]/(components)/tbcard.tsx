@@ -14,8 +14,13 @@ import Marker from "@/components/marker";
 import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
 import { Tb } from "@/lib/actions";
-import { useAddUsers, useNotifyContext } from "@/app/dialogcontext";
+import {
+  useAddUsers,
+  useConfirmDialog,
+  useNotifyContext,
+} from "@/app/dialogcontext";
 import { deleteTb, getUserAccess } from "@/lib/server";
+import { revalidate } from "@/lib/sessions";
 
 type tbType = {
   i: number;
@@ -42,6 +47,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   const hoverTime = useRef<NodeJS.Timeout | undefined>(undefined);
   const { setNotify } = useNotifyContext();
   const { setAddUsers } = useAddUsers();
+  const { setConfirmDialog } = useConfirmDialog();
   const {
     setSelectedTbUsers,
     // multiSelectedTb,
@@ -49,6 +55,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     selectedTbUsers,
     selectedTb,
     setSelectedTb,
+    setCreated,
   } = useSelection();
 
   useEffect(() => {
@@ -168,7 +175,9 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
       setNotify({
         message: "Table deleted successfully",
       });
-      router.refresh();
+      revalidate("tables", "all");
+      setCreated((p) => ({ ...p, tb: Tb.tbName }));
+      // router.refresh();
     }
   }
 
@@ -480,7 +489,14 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           fn1={() => handleMultiTables()}
           fn2={uAccess.edit ? () => handleAddUsers(1) : () => requestRole(1)}
           fn3={uAccess.edit ? () => handleAddUsers(2) : () => requestRole(1)}
-          fn4={() => deleteTable()}
+          fn4={() =>
+            setConfirmDialog({
+              type: "table",
+              action: "delete",
+              name: Tb.tbName,
+              confirmFn: deleteTable,
+            })
+          }
         />
       </section>
     </div>

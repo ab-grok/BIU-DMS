@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import RowHeader from "./(components)/rowheader";
+import DbHeader from "./(components)/dbheader";
 import Db from "./(components)/db";
 import {
   useAddUsers,
@@ -48,7 +48,10 @@ export default function DbLayout() {
       if (!dbs.length || created.db) {
         if (!dbs.length) setIsLoading((p) => p + "databases,");
         const res = await listDatabases();
-        console.log("DbLayout in useEffect, after listDatabases, res: ", res);
+        console.log(
+          "DbLayout in useEffect, after listDatabases, created.db: ",
+          created.db,
+        );
         if (!res) {
           setNotify({
             message: "Trouble reaching the server.",
@@ -85,7 +88,7 @@ export default function DbLayout() {
   return (
     <div className="">
       <div className="scrollbar-custom relative border-b-2">
-        <RowHeader ref={headerRef} headerList={headerList} />
+        <DbHeader ref={headerRef} headerList={headerList} />
       </div>
       <div className="scrollbar-custom relative overflow-x-scroll">
         <NewDb />

@@ -5,9 +5,8 @@ export function useSelection() {
   return useContext(selectionContext);
 }
 
-type routes = {
-  tbUsers: string[];
-};
+type routes = { tbUsers: string[] };
+
 export type createTbCol = {
   //title - tbName/desc/column, name - SchoolTable,
   name: string;
@@ -31,15 +30,14 @@ export type createDbMeta = {
   viewers: string[];
 };
 
-export type views = {
-  db: number;
-  tb: number;
-};
+export type views = { db: number; tb: number };
 
 type selectUsers = {
   viewers: string; // userId?dbName/tbName,,
   editors: string;
 };
+
+type created = { db: string; tb: string; rc: string; rh: string };
 
 type selections = {
   selectedTbUsers: selectUsers;
@@ -54,8 +52,8 @@ type selections = {
   setSelectedTb: Dispatch<React.SetStateAction<string>>;
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
-  created: { db: string; tb: string };
-  setCreated: Dispatch<React.SetStateAction<{ db: string; tb: string }>>; // for retriggering effects (can be used for )
+  created: created;
+  setCreated: Dispatch<React.SetStateAction<created>>; // for retriggering effects (can be used for )
   selectedRecords: string;
   setSelectedRecords: Dispatch<React.SetStateAction<string>>;
   quickA: string;
@@ -77,7 +75,7 @@ export default function SelectionContext({
   const [selectedRecords, setSelectedRecords] = useState<string>("");
   const [selectedTb, setSelectedTb] = useState<string>("");
   const [create, setCreate] = useState<string>("");
-  const [created, setCreated] = useState({ db: "", tb: "" });
+  const [created, setCreated] = useState({ db: "", tb: "", rc: "", rh: "" });
   const [quickA, setQuickA] = useState<string>("");
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
   const [createDbMeta, setCreateDbMeta] = useState({} as createDbMeta);

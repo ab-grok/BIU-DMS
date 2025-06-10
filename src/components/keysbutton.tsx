@@ -1,35 +1,32 @@
 "use client";
 
-import { errSetter } from "@/app/(main)/(pages)/databases/[database]/(components)/createtb";
+import { errSetter } from "@/app/(main)/(pages)/databases/[database]/(components)/livetable";
 import { useRef, useEffect } from "react";
 
 type keysButton = {
   name: string;
-  n: number;
+  n: number; //1- primary, 2- unique, 3-, 4-
   onChange?: (e: any) => void; //for zod
-  type: number;
-  setAiErr: (e: errSetter) => void;
-  findPrimary: (del?: string) => boolean;
-  errDialogHandler: (e: any, p?: string) => void;
-  pressAnim: string;
+  type: number; //1-text, 2-number,3,4,5
+  setAiErr?: (e: errSetter) => void;
+  findPrimary?: (del?: string) => boolean;
   value: number;
   abbrev?: boolean;
   disabled?: boolean;
   handleChange?: (colName: string, keyName: string, keyVal: number) => void; //custom change handler
   colName?: string; //for handleChange
   boxSize?: number;
+  // errDialogHandler: (e: any, p?: string) => void;
 };
 
 export function KeysButton({
-  type,
+  type, //
   name,
   n,
   onChange,
   value,
   setAiErr,
   findPrimary,
-  errDialogHandler,
-  pressAnim,
   abbrev,
   disabled,
   handleChange,
@@ -43,6 +40,7 @@ export function KeysButton({
     "text-pink-400",
     "text-bw",
     "text-red-700",
+    "text-blue-700",
   ];
   const iconColor = [
     "bg-green-700/20",
@@ -59,14 +57,13 @@ export function KeysButton({
       // val.current = 0;
       onChange && onChange({ target: { value: 0 } });
       handleChange && colName && handleChange(colName, name, 0);
-      setAiErr({
-        blurHandler: errDialogHandler,
-        body: "Auto Increment can only be used with 'Number' type",
-        button1Press: "Ok",
-        pressAnim: pressAnim,
-      });
+      setAiErr &&
+        setAiErr({
+          body: "Auto Increment can only be used with 'Number' type",
+          button1Press: "Ok",
+        });
     } else {
-      if (n == 0 && findPrimary()) return;
+      if (n == 0 && findPrimary && findPrimary()) return;
       handleChange &&
         colName &&
         handleChange(colName, name, value == 0 ? 1 : 0);

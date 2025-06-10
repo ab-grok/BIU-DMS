@@ -17,7 +17,7 @@ type rowItem = {
   fn?: () => void;
 };
 
-export function RowItem({
+export function DbItem({
   route,
   i,
   children,
