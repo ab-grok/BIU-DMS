@@ -155,9 +155,9 @@ export default function CreateTb({ i, uData, db }: tbType) {
         (active && (active as HTMLElement).isContentEditable) ||
         active?.tagName == "INPUT" ||
         active?.tagName == "TEXTAREA"
-      )
+      ) {
         return;
-      else currColInput.current?.focus || currDesc.current?.focus;
+      } else currColInput.current?.focus || currDesc.current?.focus;
     }
 
     return () => document.removeEventListener("keypress", handleKeyPress);

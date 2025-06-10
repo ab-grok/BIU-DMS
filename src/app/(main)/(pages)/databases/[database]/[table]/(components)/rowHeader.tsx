@@ -68,6 +68,7 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
         currRh.map((a, i) => (
           <div>
             <RowItem
+              key={i + "rh"}
               name={a.colName}
               type={a.type}
               keys={[...a.keys, a.nullable]}

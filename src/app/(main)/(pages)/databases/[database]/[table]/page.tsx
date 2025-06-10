@@ -37,7 +37,7 @@ export default function TableRows() {
         return;
       }
       let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
-      let placeTb = {
+      const placeTb = {
         tbPath: tbPath,
         rcRows: [] as rowData[],
         rcHeader: [] as colSchema[],

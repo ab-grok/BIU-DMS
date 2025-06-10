@@ -356,6 +356,7 @@ type errDialog = {
 };
 
 export function ErrorDialog({ errDialog, setErrDialog }: errDialog) {
+  const { pressAnim, setPressAnim } = useButtonAnim();
   if (errDialog == null) return;
   const {
     header,
@@ -370,7 +371,6 @@ export function ErrorDialog({ errDialog, setErrDialog }: errDialog) {
     alterTb,
   } = errDialog;
 
-  const { pressAnim, setPressAnim } = useButtonAnim();
   function executeFn(e: any, i: number) {
     if (i == 1) {
       setPressAnim(button1Press);
