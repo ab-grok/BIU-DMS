@@ -66,9 +66,8 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
     <div className="w-full bg-amber-300">
       {currRh &&
         currRh.map((a, i) => (
-          <div>
+          <div key={a + "rh"}>
             <RowItem
-              key={i + "rh"}
               name={a.colName}
               type={a.type}
               keys={[...a.keys, a.nullable]}
