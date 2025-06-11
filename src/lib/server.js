@@ -53,10 +53,8 @@ export async function getDb(getTbCount) {
 
 async function checkDb(dbName) {
   const { rowsMeta } = await getDb();
-  console.log("in checkDb, dbName", dbName, " ...rowsMeta: ", rowsMeta);
   let dbFound = false;
   for (const { Database } of rowsMeta) {
-    console.log("in checkDb dbName: ", dbName, "rows.a", Database);
     if (Database == dbName) {
       dbFound = true;
       break;
@@ -403,6 +401,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
+  console.log("got past getMetadata in getUserAccess");
   let edit = false;
   let view = false;
   if (meta) {
