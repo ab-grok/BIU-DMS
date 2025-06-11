@@ -401,7 +401,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
-  console.log("got past getMetadata in getUserAccess");
+  console.log("got past getMetadata in getUserAccess, meta: ", meta);
   let edit = false;
   let view = false;
   if (meta) {
@@ -414,6 +414,15 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
       view = true;
     }
   } else if (level > 1) edit = true;
+
+  console.log(
+    "data from get access: edit: ",
+    edit,
+    "view: ",
+    view,
+    "level: ",
+    level,
+  );
   return { edit, view, level, udata };
 }
 
