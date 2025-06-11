@@ -145,7 +145,6 @@ export async function getTableSchema(
   //works with getTableSchema from server.js
   // format with return types
   const { token32 } = await getCookie();
-  console.log("in getTableSchema");
   const getSchemas = unstable_cache(
     async () => {
       try {
