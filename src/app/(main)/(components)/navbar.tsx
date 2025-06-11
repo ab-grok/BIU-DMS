@@ -22,6 +22,7 @@ export default function Navbar() {
     }));
   }
   function handleReload() {
+    //getpath and revalidate
     router.refresh();
     setRefreshing(true);
     setTimeout(() => {

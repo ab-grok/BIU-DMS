@@ -187,6 +187,7 @@ export async function getTableData(
   const tbData = unstable_cache(
     async () => {
       try {
+        console.log("inside tbData unstable_c");
         const { rows } = await getTbData({
           dbName,
           tbName,
