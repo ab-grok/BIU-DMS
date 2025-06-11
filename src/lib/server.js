@@ -501,9 +501,8 @@ export async function getTables(dbName, includeMeta) {
   return { tableData };
 }
 
-export async function getTbSchema({ dbName, tbName }) {
+export async function getTbSchema({ dbName, tbName, token32 }) {
   //res: {colName, type, nullable, key}[]   //getUserAccess checks table
-  const { token32 } = await getCookie();
   const { edit, view } = await getUserAccess({ dbName, tbName, token32 });
   if (!edit || !view) throw { customMessage: "Cannot access this table." };
 
@@ -688,14 +687,22 @@ export async function deleteTb({ dbName, tbName, userId }) {
   } else return { error: "You do not have permission to delete this table." };
 }
 
-export async function getTbData({ dbName, tbName, orderBy, userId, where }) {
+export async function getTbData({ dbName, tbName, orderBy, token32, where }) {
   //do getUserAccess
   // const {tbFound} = await checkTb({dbName: dbName, tbName: tbName})
   // if (!tbFound) throw "Table does not exist"
   //orderby:{col:, order: "asc"}, where:{col: }
+  const { userId } = await getSession({ token32, getId: true });
   if (!(await checkTb({ dbName, tbName })))
     throw { customMessage: "Database or table not found!" };
-
+  console.log(
+    "in getTbData: dbName: ",
+    dbName,
+    "tbName: ",
+    tbName,
+    "orderBy: ",
+    orderBy,
+  );
   // const orderCol = filterInput(orderBy?.col);
   const order = orderBy?.order.toLowerCase() == "desc" ? "desc" : "asc";
   const whereCol = filterInput(where?.col);

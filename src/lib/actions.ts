@@ -146,8 +146,9 @@ export async function getTableSchema(
   // format with return types
   const getSchemas = unstable_cache(
     async () => {
+      const { token32 } = await getCookie();
       try {
-        const { schema } = await getTbSchema({ dbName, tbName });
+        const { schema } = await getTbSchema({ dbName, tbName, token32 });
         const tbSchema = schema as colSchema[];
         console.log("in getTableSchema got schema from getTbSchema: ", schema);
         return { tbSchema, error1: null };
@@ -183,8 +184,15 @@ export async function getTableData(
 ): Promise<getTableData> {
   const tbData = unstable_cache(
     async () => {
+      const { token32 } = await getCookie();
       try {
-        const { rows } = await getTbData();
+        const { rows } = await getTbData({
+          dbName,
+          tbName,
+          orderBy,
+          token32,
+          where,
+        });
         console.log("in getTableData's unstable_c, got past getTbData() ");
         return { tbData: rows as rowData[] };
       } catch (e: any) {
