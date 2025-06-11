@@ -182,9 +182,9 @@ export async function getTableData(
   orderBy?: string,
   where?: string,
 ): Promise<getTableData> {
+  const { token32 } = await getCookie();
   const tbData = unstable_cache(
     async () => {
-      const { token32 } = await getCookie();
       try {
         const { rows } = await getTbData({
           dbName,
