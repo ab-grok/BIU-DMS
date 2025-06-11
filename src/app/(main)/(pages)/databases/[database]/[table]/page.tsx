@@ -36,51 +36,50 @@ export default function TableRows() {
       //   setNotify({ message: error1 || error, danger: true });
       //   return;
       // }
-      return;
-      let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
-      const placeTb = {
-        tbPath: tbPath,
-        rcRows: [] as rowData[],
-        rcHeader: [] as colSchema[],
-      };
-      setRc((p) => {
-        let updRc = [] as rcData[];
-        let rcFound = false;
-        for (const [i, a] of p.entries()) {
-          if (a.tbPath == tbPath) {
-            rcFound = true;
-            if (a.rcHeader.length != tbSchema?.length) {
-              currTb = {
-                ...(currTb || placeTb),
-                rcHeader: tbSchema as colSchema[],
-              };
-              updRc = [...p.slice(0, i), currTb, ...p.slice(i + 1)].filter(
-                Boolean,
-              );
-            }
-            if (a.rcRows.length != tbData?.length) {
-              currTb = {
-                ...(currTb || placeTb),
-                rcRows: tbData as rowData[],
-              };
-              updRc = [...p.slice(0, i), currTb, ...p.slice(i + 1)].filter(
-                Boolean,
-              );
-            }
-          }
-        }
-        if (!rcFound) {
-          currTb = {
-            ...(currTb || placeTb),
-            rcRows: tbData as rowData[],
-            rcHeader: tbSchema as colSchema[],
-          };
-          updRc = [...p, { ...(currTb as rcData) }].filter(Boolean);
-        }
-        if (updRc.length) return updRc;
-        else return p;
-      });
-      console.log("in [table] got past setRc, currTb: ", currTb);
+      // let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
+      // const placeTb = {
+      //   tbPath: tbPath,
+      //   rcRows: [] as rowData[],
+      //   rcHeader: [] as colSchema[],
+      // };
+      // setRc((p) => {
+      //   let updRc = [] as rcData[];
+      //   let rcFound = false;
+      //   for (const [i, a] of p.entries()) {
+      //     if (a.tbPath == tbPath) {
+      //       rcFound = true;
+      //       if (a.rcHeader.length != tbSchema?.length) {
+      //         currTb = {
+      //           ...(currTb || placeTb),
+      //           rcHeader: tbSchema as colSchema[],
+      //         };
+      //         updRc = [...p.slice(0, i), currTb, ...p.slice(i + 1)].filter(
+      //           Boolean,
+      //         );
+      //       }
+      //       if (a.rcRows.length != tbData?.length) {
+      //         currTb = {
+      //           ...(currTb || placeTb),
+      //           rcRows: tbData as rowData[],
+      //         };
+      //         updRc = [...p.slice(0, i), currTb, ...p.slice(i + 1)].filter(
+      //           Boolean,
+      //         );
+      //       }
+      //     }
+      //   }
+      //   if (!rcFound) {
+      //     currTb = {
+      //       ...(currTb || placeTb),
+      //       rcRows: tbData as rowData[],
+      //       rcHeader: tbSchema as colSchema[],
+      //     };
+      //     updRc = [...p, { ...(currTb as rcData) }].filter(Boolean);
+      //   }
+      //   if (updRc.length) return updRc;
+      //   else return p;
+      // });
+      // console.log("in [table] got past setRc, currTb: ", currTb);
     })();
   }, [created.rc, created.rh]);
 
