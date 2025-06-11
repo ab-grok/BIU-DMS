@@ -401,7 +401,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
-  console.log("got past getMetadata in getUserAccess, meta: ", meta);
+  // console.log("got past getMetadata in getUserAccess, meta: ", meta);
   let edit = false;
   let view = false;
   if (meta) {
@@ -415,14 +415,14 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     }
   } else if (level > 1) edit = true;
 
-  console.log(
-    "data from get access: edit: ",
-    edit,
-    "view: ",
-    view,
-    "level: ",
-    level,
-  );
+  // console.log(
+  //   "data from get access: edit: ",
+  //   edit,
+  //   "view: ",
+  //   view,
+  //   "level: ",
+  //   level,
+  // );
   return { edit, view, level, udata };
 }
 
@@ -512,6 +512,7 @@ export async function getTables(dbName, includeMeta) {
 export async function getTbSchema({ dbName, tbName, token32 }) {
   //res: {colName, type, nullable, key}[]   //getUserAccess checks table
   const { edit, view } = await getUserAccess({ dbName, tbName, token32 });
+  console.log("got past getUserAccess, edit: ", edit, " view: ", view);
   if (!edit || !view) throw { customMessage: "Cannot access this table." };
 
   //combine with information_schema.key_column_usage to get foreign keys?

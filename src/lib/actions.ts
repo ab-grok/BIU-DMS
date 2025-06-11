@@ -145,10 +145,13 @@ export async function getTableSchema(
   //works with getTableSchema from server.js
   // format with return types
   const { token32 } = await getCookie();
+  console.log("in getTableSchema");
   const getSchemas = unstable_cache(
     async () => {
       try {
+        console.log("in getTableSchema, inside unstable_c");
         const { schema } = await getTbSchema({ dbName, tbName, token32 });
+        console.log("in getTableSchema, got past getTbSchema");
         const tbSchema = schema as colSchema[];
         console.log("in getTableSchema got schema from getTbSchema: ", schema);
         return { tbSchema, error1: null };
