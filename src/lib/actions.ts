@@ -161,7 +161,7 @@ export async function getTableSchema(
       }
     },
     [`${dbName}-${tbName}-schema`],
-    { tags: ["schema", `${dbName}-${tbName}-schema`], revalidate: 86400 },
+    { tags: ["tbSchema", `${dbName}-${tbName}-schema`], revalidate: 86400 },
   );
   const sch = await getSchemas();
   return sch;

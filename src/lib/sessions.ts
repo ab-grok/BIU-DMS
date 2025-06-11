@@ -120,7 +120,14 @@ export async function deleteSession(): Promise<{
   return { error: "" };
 }
 
-type revalidate = "databases" | "tables" | "session" | "tableData" | "users";
+type revalidate =
+  | "databases"
+  | "tables"
+  | "session"
+  | "tableData"
+  | "users"
+  | "tbSchema"
+  | "tbData";
 
 export async function revalidate(name: revalidate, all?: string) {
   const { token32 } = await getCookie();
@@ -129,6 +136,7 @@ export async function revalidate(name: revalidate, all?: string) {
   } else {
     revalidateTag(`${name}-${token32}`);
   }
+  console.log("revalidated '", name, "'");
   return true;
 }
 
