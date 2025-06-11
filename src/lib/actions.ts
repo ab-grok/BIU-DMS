@@ -201,7 +201,7 @@ export async function getTableData(
       }
     },
     [`${dbName}-${tbName}-tbData`],
-    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 86400 },
+    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 1 },
   );
   return await tbData();
 }
