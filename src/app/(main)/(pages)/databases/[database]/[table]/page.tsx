@@ -28,14 +28,15 @@ export default function TableRows() {
   React.useEffect(() => {
     (async () => {
       console.log("in getTb rowHeader currTb,: ", tbPath);
-      const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
-      console.log("in [table] got tbSchema: ", tbSchema);
-      const { tbData, error } = await getTableData(dbName, tbName);
-      console.log("in [table] got tbData: ", tbData);
-      if (error || error1) {
-        setNotify({ message: error1 || error, danger: true });
-        return;
-      }
+      // const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
+      // console.log("in [table] got tbSchema: ", tbSchema);
+      // const { tbData, error } = await getTableData(dbName, tbName);
+      // console.log("in [table] got tbData: ", tbData);
+      // if (error || error1) {
+      //   setNotify({ message: error1 || error, danger: true });
+      //   return;
+      // }
+      return;
       let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
       const placeTb = {
         tbPath: tbPath,

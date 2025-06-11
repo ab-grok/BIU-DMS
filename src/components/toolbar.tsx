@@ -101,8 +101,6 @@ export function Toolbar() {
   // add sortby: lastupdated (up,down), alphabetical(up,down), date created(up,down)
   useEffect(() => {
     const currPath = path?.slice(path?.indexOf("databases")) ?? "";
-    console.log("in toolbar , path : ", path);
-    console.log("in toolbar curr path from databases: ", currPath);
     //db lists all tables, tb lists all records, record lists a single record
     const pages = currPath.split("/");
     if (pages.length > 3)
