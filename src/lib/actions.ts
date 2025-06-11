@@ -144,9 +144,9 @@ export async function getTableSchema(
   //get cookies and verify if user is a viewer, or editor which includes the creator in order to grant access -- see getUserAccess function in server.js
   //works with getTableSchema from server.js
   // format with return types
+  const { token32 } = await getCookie();
   const getSchemas = unstable_cache(
     async () => {
-      const { token32 } = await getCookie();
       try {
         const { schema } = await getTbSchema({ dbName, tbName, token32 });
         const tbSchema = schema as colSchema[];
@@ -183,6 +183,7 @@ export async function getTableData(
   where?: string,
 ): Promise<getTableData> {
   const { token32 } = await getCookie();
+  console.log("in getTableData, token32: ", token32);
   const tbData = unstable_cache(
     async () => {
       try {
@@ -201,7 +202,7 @@ export async function getTableData(
       }
     },
     [`${dbName}-${tbName}-tbData`],
-    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 1 },
+    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 86400 },
   );
   return await tbData();
 }
