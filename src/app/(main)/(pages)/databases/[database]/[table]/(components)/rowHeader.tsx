@@ -60,22 +60,23 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
     //     ];
     //   });
     // })();
-  }, [created.rh]);
+  }, [created.rh, tbPath]);
 
   return (
-    <div className="w-full bg-amber-300">
-      {currRh &&
-        currRh?.map((a, i) => (
-          <div key={a + "rh"}>
+    <div className="h-[3rem] w-full overflow-hidden bg-amber-300/70">
+      <div className="scrollbar-custom h-full min-w-full overflow-scroll bg-cyan-300">
+        {currRh &&
+          currRh?.map((a, i) => (
             <RowItem
               name={a.colName}
               type={a.type}
               keys={[...(a.keys || []), !a.nullable ? "Not Null" : ""].filter(
                 Boolean,
               )}
+              i={i}
             />
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 }
@@ -84,12 +85,16 @@ type rowItem = {
   name: string;
   type: string;
   keys: string[]; //["PRIMARY KEY", "UNIQUE"]
+  i: number;
 };
 
-function RowItem({ name, keys }: rowItem) {
+function RowItem({ name, type, keys, i }: rowItem) {
   return (
-    <div>
-      <tr></tr>
+    <div
+      className={`w-full min-w-[10.75rem] ${i == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between px-0.5`}
+    >
+      <p className="h-full w-[8rem] truncate bg-violet-500"> {name}</p>
+      <div className="h-full w-[2rem] bg-slate-700"> </div>
     </div>
   );
 }

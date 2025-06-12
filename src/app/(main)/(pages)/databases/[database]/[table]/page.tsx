@@ -19,9 +19,8 @@ export default function TableRows() {
   const tbName = useParams().table as string;
   const { notify, setNotify } = useNotifyContext();
   const { rc, setRc } = useFetchContext();
-  const { setIsLoading } = useLoading();
+  const { isLoading } = useLoading();
   const tbPath = dbName + "/" + tbName;
-  const currRh = rc.find((a) => a.tbPath == tbPath)?.rcHeader;
 
   console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
 
@@ -89,7 +88,7 @@ export default function TableRows() {
         <RowHeader dbName={dbName} tbName={tbName} />
       </header>
       <main>
-        <Loading />{" "}
+        {isLoading.includes("tbData")} <Loading />{" "}
       </main>
     </div>
   );
