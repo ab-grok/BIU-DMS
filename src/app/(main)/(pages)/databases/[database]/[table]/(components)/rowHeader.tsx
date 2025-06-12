@@ -28,6 +28,7 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
   }[];
 
   React.useEffect(() => {
+    if (!currRc) setIsLoading((p) => p + "tbData");
     console.log("in rowHeader, currTb: ", currTb);
     console.log("in rowHeader, tbPath: ", tbPath);
     // (async () => {

@@ -19,7 +19,7 @@ export default function TableRows() {
   const tbName = useParams().table as string;
   const { notify, setNotify } = useNotifyContext();
   const { rc, setRc } = useFetchContext();
-  const { isLoading } = useLoading();
+  const { setIsLoading, isLoading } = useLoading();
   const tbPath = dbName + "/" + tbName;
 
   console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
@@ -79,6 +79,7 @@ export default function TableRows() {
         else return p;
       });
       console.log("in [table] got past setRc, currTb: ", currTb);
+      setIsLoading((p) => p.replaceAll("tbData", ""));
     })();
   }, [created.rc, created.rh]);
 
@@ -87,9 +88,7 @@ export default function TableRows() {
       <header className="h-[3rem]">
         <RowHeader dbName={dbName} tbName={tbName} />
       </header>
-      <main>
-        {isLoading.includes("tbData")} <Loading />{" "}
-      </main>
+      <main>{isLoading.includes("tbData") && <Loading />}</main>
     </div>
   );
 }
