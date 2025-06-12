@@ -32,7 +32,6 @@ export async function getDb(getTbCount) {
   const rows =
     await main`select schema_name from information_schema.schemata where schema_name not in ('public', 'information_schema', 'pg_catalog', 'pg_toast') order by schema_name`;
 
-  console.log("in getDb");
   const rowsMetaPromise = rows?.map(async (a, i) => {
     if (getTbCount) {
       const count =
@@ -717,20 +716,20 @@ export async function getTbData({ dbName, tbName, orderBy, token32, where }) {
   const res =
     await main`Select * from ${main(dbName)}.${main(tbName)} ${orderBy?.col ? main`order by ${main(orderBy.col)} ${main.unsafe(order)}` : main.unsafe("")} ${whereCol ? main`where ${main(whereCol)} = ${whereVal}` : main.unsafe("")}`;
   console.log("TB data from getTbData: ", JSON.stringify(res));
-  if (!res[0]) console.log({ customMessage: "No table data exists" });
   return { rows: res };
 }
 
-export async function insertData({ dbName, tbName, colVals, userId }) {
-  // colVals: {col1:val1}[]
+export async function insertTbData({ dbName, tbName, colVals, token32 }) {
+  // colVals: {col1:val1, col2:val2}[]
   //getUserAccess
 
   if (!(await checkTb({ tbName, dbName })))
     throw { customMessage: "Database or table not found" };
-  if (!(await checkUser({ userId })).userId)
-    throw { customMessage: "Unauthorized" };
+  const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
+  if (!edit) throw { customMessage: "Unauthorized" };
 
-  console.log("in insertData, db, tb and userId found");
+  console.log("in insertData, edit: ", edit);
+
   if (!(typeof colVals[0] == "object") || !colVals.length) {
     throw {
       customMessage: "Problem parsing the columns; Try reloading the page",
@@ -752,7 +751,8 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
   if (!updatedAtFound || !updatedByFound) {
     try {
       let updRes =
-        await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main.unsafe("add column updated_at timestamp") : main.unsafe("")} ${!updatedByFound ? main.unsafe(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main.unsafe("")}`;
+        await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main`add column updated_at timestamp` : main``} ${!updatedByFound ? main.unsafe(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main``}`;
+      console.log("table altered");
     } catch (e) {
       throw {
         customMessage: "metacolumns not found and failed to create them!",
@@ -762,34 +762,33 @@ export async function insertData({ dbName, tbName, colVals, userId }) {
 
   let colArr = []; //col1,col2
   let valuesArr = []; // (...), (...)
+  console.log("in insertTbData, colvals: ", colVals);
 
   for (const [i, cols] of colVals.entries()) {
     if (i == 0) {
       //can optimize
       for (const a of Object.keys(cols)) {
         //to get column names
-        if (!a) break;
         colArr.push(main`${main(a)}`);
       }
     }
 
     const values = []; //val1, val2, val3
     for (const val of Object.values(cols)) {
-      if (!val) break;
       values.push(main`${val}`);
     }
-    valuesArr.push(main`(${main.array(values)}, ${now}, ${userId} )`);
+    valuesArr.push(main`(${main(values)}, ${now}, ${udata} )`);
   }
 
-  const colnames = colArr.reduce(
-    (agg, col, i) => (i == 0 ? col : main`${agg},${col}`),
+  const valsArrs = valuesArr.reduce(
+    (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
     main``,
   );
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colnames}, updated_at, updated_by) values ${main.array(valuesArr)} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${main(valsArrs)} returning *`;
 
   if (!res[0]) throw { customMessage: "insert failed" };
-  const metaAdded = await addMetadata({ dbName, tbName, updatedBy: userId });
+  const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
   if (!metaAdded) console.log("insertData meta not added");
 
   return true;
