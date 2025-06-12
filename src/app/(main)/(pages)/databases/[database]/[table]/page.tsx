@@ -29,7 +29,7 @@ export default function TableRows() {
     (async () => {
       console.log("in getTb rowHeader currTb,: ", tbPath);
       const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
-      console.log("in [table] got tbSchema: ", tbSchema);
+      console.log("in [table] got tbSchema: ", tbSchema, " . Error: ", error1);
       const { tbData, error } = await getTableData(dbName, tbName);
       console.log("in [table] got tbData: ", tbData);
       if (error || error1) {
