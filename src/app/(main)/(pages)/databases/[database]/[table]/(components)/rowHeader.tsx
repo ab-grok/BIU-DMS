@@ -70,7 +70,9 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
             <RowItem
               name={a.colName}
               type={a.type}
-              keys={[...a.keys, !a.nullable ? "Not Null" : ""]}
+              keys={[...(a.keys || []), !a.nullable ? "Not Null" : ""].filter(
+                Boolean,
+              )}
             />
           </div>
         ))}
