@@ -515,7 +515,7 @@ export async function getTbSchema({ dbName, tbName, token32 }) {
   if (!edit && !view) throw { customMessage: "Cannot access this table." };
   //combine with information_schema.key_column_usage to get foreign keys?
   const res =
-    await main`select c.column_name as "colName", c.data_type as type, c.is_nullable = 'YES' as nullable, array_agg(tc.constraint_type) as keys from information_schema.columns c left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable, c.ordinal_position ORDER BY c.ordinal_position`;
+    await main`select c.column_name as "colName", c.data_type as type, c.is_nullable = 'YES' as nullable, array_agg(tc.constraint_type) filter (where tb.constraint_type is not null) as keys from information_schema.columns c left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable, c.ordinal_position ORDER BY c.ordinal_position`;
   console.log("in getTbSchema, res: ", res);
   return { schema: res[0] };
 }
