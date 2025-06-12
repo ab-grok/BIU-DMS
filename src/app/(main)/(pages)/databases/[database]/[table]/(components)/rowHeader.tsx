@@ -68,6 +68,7 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
         {currRh &&
           currRh?.map((a, i) => (
             <RowItem
+              key={i + a.colName}
               name={a.colName}
               type={a.type}
               keys={[...(a.keys || []), !a.nullable ? "Not Null" : ""].filter(
