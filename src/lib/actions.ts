@@ -128,7 +128,7 @@ export async function postTable(
 export type colSchema = {
   colName: string;
   type: string;
-  nullable: string;
+  nullable: boolean;
   keys: string[];
 };
 
@@ -151,7 +151,7 @@ export async function getTableSchema(
         console.log("in getTableSchema, inside unstable_c");
         const { schema } = await getTbSchema({ dbName, tbName, token32 });
         console.log("in getTableSchema, got past getTbSchema");
-        const tbSchema = schema as colSchema[];
+        const tbSchema = schema as unknown as colSchema[];
         console.log("in getTableSchema got schema from getTbSchema: ", schema);
         return { tbSchema, error1: null };
       } catch (e: any) {

@@ -70,7 +70,7 @@ export function RowHeader({ dbName, tbName }: rowHeader) {
             <RowItem
               name={a.colName}
               type={a.type}
-              keys={[...a.keys, a.nullable]}
+              keys={[...a.keys, !a.nullable ? "Not Null" : ""]}
             />
           </div>
         ))}
