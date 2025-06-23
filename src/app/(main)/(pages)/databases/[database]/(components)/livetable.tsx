@@ -36,6 +36,8 @@ export function LiveTable({
   const keys = ["Primary", "Unique", "AI", "Not null"];
   const [viewersHovered, setViewersHovered] = React.useState(0);
   const [editorsHovered, setEditorsHovered] = React.useState(0);
+  const [nameVal, setNameVal] = React.useState<string | null>("");
+  const [descVal, setDescVal] = React.useState<string | undefined>(undefined);
   // const [allUsers, setAllusers] = useState([] as allUsers[]);
   const [users, setUsers] = React.useState({
     editors: [] as user,
@@ -145,36 +147,45 @@ export function LiveTable({
     }
   }
 
-  function handleChangeTbName(e: React.FormEvent<HTMLDivElement>) {
-    const value = e.currentTarget.textContent?.trim();
-    value && setCreateTbMeta((p) => ({ ...p, tbName: value }));
+  function handleTbNameChanged() {
+    nameVal && setCreateTbMeta((p) => ({ ...p, tbName: nameVal }));
   }
 
-  function handleChangeDesc(e: React.FormEvent<HTMLDivElement>) {
-    const value = e.currentTarget.textContent?.trim();
-    value && setCreateTbMeta((p) => ({ ...p, desc: value }));
+  function handleDescChanged() {
+    descVal && setCreateTbMeta((p) => ({ ...p, desc: descVal }));
   }
+
+  React.useEffect(() => {
+    if (createTbMeta.tbName != nameVal) setNameVal(createTbMeta.tbName);
+    else if (createTbMeta.desc != descVal) setDescVal(createTbMeta.desc);
+  }, [createTbMeta.tbName, createTbMeta.desc]);
+
+  //: React.FormEvent<HTMLDivElement>
 
   return (
     <div className="bg-sub-bg absolute right-0 z-4 hidden h-[14rem] max-h-fit w-[30rem] flex-col gap-1 rounded-[5px] border-3 border-green-700/40 p-1 py-2 shadow-md xl:flex">
       {submitting && <Loading />}
       <header className="bg-tb-row2/50 flex h-[3.5rem] w-full gap-1 rounded-2xl">
         <div
-          onInput={handleChangeTbName}
+          onInput={(e) => setNameVal(e.currentTarget.textContent)}
           contentEditable
+          tabIndex={0}
+          onBlur={handleTbNameChanged}
           className="scrollbar-custom flex h-full w-fit min-w-1/3 overflow-y-scroll p-1 text-[1rem] font-medium break-words whitespace-break-spaces"
         >
           {" "}
-          {createTbMeta.tbName}{" "}
+          {nameVal}{" "}
         </div>
         <Separator orientation="vertical" />
         <div
-          onInput={handleChangeDesc}
+          onInput={(e) => setDescVal(e.currentTarget.textContent || undefined)}
+          tabIndex={0}
+          onBlur={handleDescChanged}
           contentEditable
           className="min-w-1/3 overflow-y-auto scroll-smooth py-1 text-[0.7rem] font-medium break-words whitespace-normal"
         >
           {" "}
-          {createTbMeta.desc}
+          {descVal}
         </div>
       </header>
       <main className="relative flex h-[9.2rem] w-full">
