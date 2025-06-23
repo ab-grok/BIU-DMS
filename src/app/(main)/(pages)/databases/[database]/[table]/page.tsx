@@ -110,7 +110,7 @@ export default function TableRows() {
         const UA = { tbPath, edit };
 
         setUAccess((p) => {
-          return { ...p, tb: [...p.tb, UA].filter(Boolean) };
+          return { ...p, tb: [...(p.tb || []), UA].filter(Boolean) };
         });
         setCanEdit(edit);
       })();

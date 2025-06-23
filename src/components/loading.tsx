@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="absolute -top-[0%] -left-[0%] z-10 flex h-full w-full items-center justify-center rounded-md bg-neutral-800/80 backdrop-blur-md">
+    <div className="absolute -top-[0%] -left-[0%] z-10 flex h-full w-full items-center justify-center rounded-lg bg-neutral-800/80 backdrop-blur-md">
       <div className="group flex h-[20%] w-[40%] cursor-pointer items-center justify-center rounded-3xl">
         <div>
           <div className="animate-loading1 shadow-bw absolute hidden h-5 w-5 rounded-full bg-black/20 inset-shadow-xs inset-shadow-amber-50 transition-all group-hover:shadow-lg hover:scale-110"></div>
