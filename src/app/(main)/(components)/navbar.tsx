@@ -71,7 +71,7 @@ export default function Navbar() {
         >
           <VscTools
             size={25}
-            className={`group-hover/t:fill-theme fill-theme/80 transition-all`}
+            className={`fill-black/80 transition-all group-hover/t:fill-black`}
           />
         </div>
         <div
@@ -81,7 +81,7 @@ export default function Navbar() {
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme fill-theme/0 animate-spin" : "fill-theme"} group-hover/r:stroke-theme stroke-theme/80 stroke-[30px] transition-all`}
+            className={`${refreshing ? "animate-spin fill-green-600/80 stroke-black" : "fill-black group-hover/r:fill-black/80"} stroke-theme/80 transition-all`}
           />
         </div>
         <div
