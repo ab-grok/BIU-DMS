@@ -162,7 +162,7 @@ export function LiveTable({
         <div
           onInput={handleChangeTbName}
           contentEditable
-          className="flex h-full w-fit min-w-1/3 p-1 text-[1rem] font-medium"
+          className="scrollbar-custom flex h-full w-fit min-w-1/3 overflow-y-scroll p-1 text-[1rem] font-medium break-words whitespace-break-spaces"
         >
           {" "}
           {createTbMeta.tbName}{" "}
