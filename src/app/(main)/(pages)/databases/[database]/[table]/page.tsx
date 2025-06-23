@@ -107,7 +107,7 @@ export default function TableRows() {
     if (!currUA) {
       (async () => {
         const { edit, view, level } = await getUA(dbName, tbName);
-        let UA = { tbPath, edit };
+        const UA = { tbPath, edit };
 
         setUAccess((p) => {
           return { ...p, tb: [...p.tb, UA].filter(Boolean) };

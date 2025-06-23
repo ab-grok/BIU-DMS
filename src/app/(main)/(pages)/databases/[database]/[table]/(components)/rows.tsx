@@ -82,7 +82,7 @@ export function Rows({
   function rcClicked(thisRow: string) {
     setSelectedRc((p) => {
       let rcI = 0;
-      let thisRc = p?.find((a, i) => {
+      const thisRc = p?.find((a, i) => {
         rcI = i;
         return a.path == tbPath;
       });
@@ -107,7 +107,7 @@ export function Rows({
   function rcSelected(thisRow: string) {
     setSelectedRc((p) => {
       let rcI = 0;
-      let thisRc = p?.find((a, i) => {
+      const thisRc = p?.find((a, i) => {
         a.path == tbPath && (rcI = i);
         return a.path == tbPath;
       });
@@ -158,6 +158,7 @@ export function Rows({
                 if ((b[0] as string) !== "ID")
                   return (
                     <RowItem
+                      key={j}
                       colType={(rcSchema && rcSchema[b[0]]) || typeof b[1]}
                       tbPath={tbPath}
                       where={thisRow}

@@ -27,6 +27,7 @@ export { Textarea };
 
 interface fieldSetter extends React.ComponentProps<"textarea"> {
   tbSetter?: UseFormSetValue<{
+    //only relevant type is name & desc
     name: string;
     type: number;
     unique: number;
@@ -37,5 +38,5 @@ interface fieldSetter extends React.ComponentProps<"textarea"> {
     defaultStr?: string | undefined;
     defaultNum?: number | undefined;
   }>;
-  rcSetter?: UseFormSetValue<{}>;
+  // rcSetter?: UseFormSetValue<{}>;
 }
