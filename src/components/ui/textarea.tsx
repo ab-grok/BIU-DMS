@@ -4,9 +4,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { UseFormSetValue } from "react-hook-form";
 
-function Textarea({ className, setter, onChange, ...props }: fieldSetter) {
+function Textarea({ className, tbSetter, onChange, ...props }: fieldSetter) {
   function fieldSetter(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    setter && setter("name", "Desc_setter");
+    tbSetter && tbSetter("name", "Desc_setter");
     onChange && onChange(e);
   }
 
@@ -26,7 +26,7 @@ function Textarea({ className, setter, onChange, ...props }: fieldSetter) {
 export { Textarea };
 
 interface fieldSetter extends React.ComponentProps<"textarea"> {
-  setter?: UseFormSetValue<{
+  tbSetter?: UseFormSetValue<{
     name: string;
     type: number;
     unique: number;
@@ -37,4 +37,5 @@ interface fieldSetter extends React.ComponentProps<"textarea"> {
     defaultStr?: string | undefined;
     defaultNum?: number | undefined;
   }>;
+  rcSetter?: UseFormSetValue<{}>;
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import { errSetter } from "@/app/(main)/(pages)/databases/[database]/(components)/livetable";
+import { cn } from "@/lib/utils";
 import { useRef, useEffect } from "react";
 
 type keysButton = {
   name: string;
-  n: number; //1- primary, 2- unique, 3-, 4-
+  n: number; //0- primary, 1- unique, 2-ai, 3-nnull
   onChange?: (e: any) => void; //for zod
-  type: number; //1-text, 2-number,3,4,5
+  type: number; //1-text, 2-number,3-boolean, 4-date, 5-file
   setAiErr?: (e: errSetter) => void;
   findPrimary?: (del?: string) => boolean;
   value: number;
@@ -16,6 +17,7 @@ type keysButton = {
   handleChange?: (colName: string, keyName: string, keyVal: number) => void; //custom change handler
   colName?: string; //for handleChange
   boxSize?: number;
+  className?: string;
   // errDialogHandler: (e: any, p?: string) => void;
 };
 
@@ -32,6 +34,7 @@ export function KeysButton({
   handleChange,
   colName,
   boxSize,
+  className,
 }: keysButton) {
   const val = useRef(0);
   // const [value, setValue] = useState(0);
@@ -78,7 +81,10 @@ export function KeysButton({
   return (
     <div
       onClick={handleClick}
-      className={`group/a ${value == 1 ? "text-bw/80" : "text-bw/40 hover:text-bw/70"} ${disabled && "pointer-events-none cursor-not-allowed"} flex h-[1.5rem] w-full cursor-pointer items-center justify-between text-sm select-none`}
+      className={cn(
+        `group/a ${value == 1 ? "text-bw/80" : "text-bw/40 hover:text-bw/70"} ${disabled && "pointer-events-none cursor-not-allowed"} flex h-[1.5rem] w-full cursor-pointer items-center justify-between text-sm select-none`,
+        className,
+      )}
     >
       <div className={`${abbrev && "hidden"}`}> {name} </div>
       <div

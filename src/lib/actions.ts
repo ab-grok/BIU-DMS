@@ -4,12 +4,16 @@ import { createTbCol, createTbMeta } from "@/app/(main)/(pages)/selectcontext";
 import { getCookie, validateSession } from "@/lib/sessions";
 import { unstable_cache } from "next/cache";
 import {
+  deleteTbData,
   getAllUsers,
   getDb,
   getSession,
   getTables,
   getTbData,
   getTbSchema,
+  getUserAccess,
+  insertTbData,
+  updateTbData,
 } from "./server";
 //types
 export type db = {
@@ -169,8 +173,10 @@ export async function getTableSchema(
   return sch;
 }
 
+export type rcVal = string | boolean | number | null | Date | file | File;
+type file = { fileData: Uint8Array; fileName: string; fileType: string };
 export type rowData = {
-  [column: string]: string | number | null | undefined | Date;
+  [column: string]: rcVal; //file is custom type. File is js type used for zod check
 };
 
 type getTableData = {
@@ -210,8 +216,67 @@ export async function getTableData(
   return await tbData();
 }
 
-export async function setTableContent() {
-  //works with insertData
+export async function getUA(dbName: string, tbName?: string) {
+  const { token32 } = await getCookie();
+  const { edit, view, level } = await getUserAccess({
+    dbName,
+    tbName,
+    token32,
+    uid: null,
+  });
+  return { edit, view, level };
+}
+
+export async function updateTableData(
+  tbPath: string,
+  where: string,
+  col: string,
+  val: any,
+) {
+  const pathArr = tbPath.split("/");
+  const dbName = tbPath[0];
+  const tbName = tbPath[1];
+  const whereArr = JSON.parse(where);
+  try {
+    const changed = await updateTbData(dbName, tbName, whereArr, col, val);
+    return { error: null };
+  } catch (e: any) {
+    console.log(e);
+    return { error: (e.customMessage as string) || "Trouble updating data" };
+  }
+}
+
+export async function deleteTableData(tbPath: string, where: string) {
+  const dbName = tbPath.split("/")[0];
+  const tbName = tbPath.split("/")[1];
+  const whereArr = JSON.parse(where);
+  try {
+    const deleted = await deleteTbData(dbName, tbName, whereArr);
+    return { error: null };
+  } catch (e: any) {
+    console.log(e);
+    return {
+      error: (e.customMessage as string) || "Trouble deleting data, try again",
+    };
+  }
+}
+
+export async function insertTableData(
+  tbPath: string,
+  colVals: Record<string, any>[],
+) {
+  const dbName = tbPath.split("/")[0];
+  const tbName = tbPath.split("/")[1];
+  try {
+    const { token32 } = await getCookie();
+    const inserted = await insertTbData({ dbName, tbName, token32, colVals });
+    return { error: null };
+  } catch (e: any) {
+    console.log(e);
+    return {
+      error: (e.customMessage as string) || "Trouble deleting data, try again",
+    };
+  }
 }
 
 export async function alterTable() {

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { VscTools } from "react-icons/vsc";
 import { IoBulb, IoBulbSharp, IoReloadCircleOutline } from "react-icons/io5";
 import { useTheme } from "next-themes";
 import { GalleryHorizontal, Menu, RectangleEllipsis } from "lucide-react";
@@ -11,11 +12,13 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
-  const { setSidebarState, sbState } = useSideContext().context;
+  const { setSbState, sbState, showToolbar, setShowToolbar } =
+    useSideContext().context;
   const [refreshing, setRefreshing] = React.useState(false);
   const router = useRouter();
+
   function menuClicked() {
-    setSidebarState((prev) => ({
+    setSbState((prev) => ({
       ...prev,
       sbExpanded:
         typeof sbState.sbExpanded == "boolean" ? !sbState.sbExpanded : false,
@@ -59,34 +62,44 @@ export default function Navbar() {
         {" "}
         <SearchBar placeholder="database, table or field " />
       </div>
-      <section className="bg-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end gap-0.5 px-2">
+      <section className="bg3-bw/10 flex h-full w-[10rem] min-w-fit items-center justify-end gap-0.5 px-2">
         {" "}
+        <div
+          onClick={() => setShowToolbar((p) => !p)}
+          title={`${showToolbar ? "Hide Toolbar" : "Show Toolbar"}`}
+          className={` ${showToolbar ? "from-bw/40 to-stone-300" : "from-bw/20 to-stone-300/50"} group/t shadow-bw hover:to-bw/60 flex size-10 cursor-pointer items-center justify-center rounded-full bg-gradient-to-b hover:shadow-xs`}
+        >
+          <VscTools
+            size={25}
+            className={`group-hover/t:fill-theme fill-theme/80 transition-all`}
+          />
+        </div>
         <div
           onClick={() => handleReload()}
           title="Reload"
-          className="group/r shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
+          className="group/r shadow-bw from-bw/40 hover:to-bw/60 flex size-10 cursor-pointer items-center justify-center rounded-full bg-gradient-to-b to-stone-300 hover:shadow-xs"
         >
           <IoReloadCircleOutline
             size={25}
-            className={`${refreshing ? "stroke-theme fill-theme/0 animate-spin" : "group-hover/r:stroke-theme fill-theme"} stroke-[10px] transition-all`}
+            className={`${refreshing ? "stroke-theme fill-theme/0 animate-spin" : "fill-theme"} group-hover/r:stroke-theme stroke-theme/80 stroke-[30px] transition-all`}
           />
         </div>
         <div
           onClick={() => switchMode()}
           title="Theme"
-          className="group shadow-bw bg-bw/40 hover:bg-bw flex size-10 items-center justify-center rounded-full hover:shadow-xs"
+          className="group/tm shadow-bw from-bw/40 hover:to-bw/60 flex size-10 cursor-pointer items-center justify-center rounded-full bg-gradient-to-b to-stone-300 hover:shadow-xs"
         >
           {theme == "light" ? (
             <IoBulb
               title="Light mode"
               size={25}
-              className="fill-amber-500 stroke-amber-300 group-hover:fill-amber-300"
+              className="fill-amber-500 stroke-amber-300 group-hover/tm:fill-amber-300"
             />
           ) : (
             <IoBulbSharp
               title="Dark Mode"
               size={25}
-              className="fill-neutral-800 stroke-neutral-500 group-hover:fill-black"
+              className="fill-neutral-800 stroke-neutral-500 group-hover/tm:fill-black"
             />
           )}
         </div>

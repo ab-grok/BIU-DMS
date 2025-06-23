@@ -1,21 +1,18 @@
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
-import { listTables } from "@/lib/actions";
 import {
   TextCursorInput,
   TableProperties,
   DatabaseZap,
   PlusIcon,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useButtonAnim } from "./count";
 import { IoCaretBack, IoCaretForward } from "react-icons/io5";
 import { useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
+import { useSideContext } from "@/app/(main)/layoutcontext";
 
-type toolbar = {
-  showToolbar: boolean;
-};
 type page = {
   tb: string;
   db: string;
@@ -27,25 +24,25 @@ export function Toolbar() {
   const [toolClicked, setToolClicked] = useState("");
   const [pressedAllTb, setPressedAllTb] = useState(false);
   const [count, setCount] = useState(0);
-  const { allTbs } = useFetchContext();
-  const {
-    create,
-    setCreate,
-    selectedTb,
-    setSelectedTb,
-    selectedRecords,
-    setSelectedRecords,
-  } = useSelection();
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const path = usePathname();
+  const { allTbs } = useFetchContext();
+  const { showToolbar } = useSideContext().context;
+  const {
+    database: dbName,
+    table: tbName,
+    record: rcName,
+  } = useParams() as Record<string, string>;
+  const { create, setCreate, selectedTb, setSelectedTb, selectedRc } =
+    useSelection();
   const router = useRouter();
+  const currRc = selectedRc?.find((a) => a.path == dbName + "/" + tbName);
 
   function selAll() {
     setPressAnim("sA");
     if (page.record) {
-      //
+      //??
     } else if (page.tb) {
-    } //list rows
+    } //select all rc
     else if (page.db) {
       selectAllTb();
     }
@@ -100,27 +97,28 @@ export function Toolbar() {
   function countTb() {}
   // add sortby: lastupdated (up,down), alphabetical(up,down), date created(up,down)
   useEffect(() => {
-    const currPath = path?.slice(path?.indexOf("databases")) ?? "";
-    //db lists all tables, tb lists all records, record lists a single record
-    const pages = currPath.split("/");
-    if (pages.length > 3)
-      setPage({ db: pages[1], tb: pages[2], record: pages[3] });
-    else if (pages.length > 2)
-      setPage({ db: pages[1], tb: pages[2], record: "" });
-    else if (pages.length > 1) setPage({ db: pages[1], tb: "", record: "" });
-    else setPage({ db: "", tb: "", record: "" });
-  }, [path]);
+    setPage({ tb: tbName, db: dbName, record: rcName });
+  }, [dbName, tbName, rcName]);
+
+  //   export type selectedRc = {
+  //   path: string; //dbName/tbName
+  //   rows: string[]; //[[col1, val1], [col2, val2]]
+  // };
 
   useEffect(() => {
-    if (page.tb && selectedRecords)
-      setCount(selectedRecords.split(",").filter(Boolean).length);
-    else if (page.db && selectedTb)
-      setCount(selectedTb.split(",").filter(Boolean).length);
-  }, [selectedTb, selectedRecords]);
+    if (page.tb) {
+      if (currRc && currRc.rows?.length > 1) setCount(currRc.rows.length);
+    } else {
+      if (page.db) {
+        const tbCount = selectedTb.split(",").filter(Boolean).length;
+        if (tbCount > 1) setCount(tbCount);
+      }
+    }
+  }, [currRc?.rows?.length, selectedTb]);
 
   return (
     <header
-      className={` ${!page.db && "hidden"} bg-main-fg border-main-bg relative flex h-full max-h-[3rem] min-h-[3rem] items-center border-b-2 px-1`}
+      className={` ${(!page.db || !showToolbar) && "hidden"} bg-main-fg border-main-bg relative flex h-full max-h-[3rem] min-h-[3rem] items-center border-b-2 px-1`}
     >
       <div className="flex h-[2.5rem] w-full items-center justify-between overflow-hidden rounded-xl p-1 text-sm">
         <section className="relative flex h-full max-w-fit items-center rounded-2xl select-none">
@@ -137,7 +135,7 @@ export function Toolbar() {
             onClick={() => selAll()}
             className={` ${toolClicked?.includes("selAll") && "font-bold ring-2"} ${pressAnim == "sA" && "scale-95"} ring-bg-sub-fg hover:bg-sub-fg flex h-full w-fit cursor-pointer items-center rounded-2xl px-3 text-center`}
           >
-            {pressedAllTb ? "unselect all" : "Select all"}
+            {pressedAllTb ? "Unselect all" : "Select all"}
           </span>
           <span
             className={`${count > 1 ? "flex" : "hidden"} text-bw/70 items-center justify-center pr-6`}

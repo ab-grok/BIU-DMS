@@ -1,6 +1,7 @@
 "use client";
-import { colSchema, db, Tb, rowData } from "@/lib/actions";
-import React, { createContext, useContext } from "react";
+// import { colSchema, db, Tb, rowData } from "@/lib/actions";
+import { colSchema, db, rowData, Tb } from "@/lib/actions";
+import React, { createContext, SetStateAction, useContext } from "react";
 
 type tbArr = {
   dbName: string;
@@ -15,7 +16,10 @@ export type rcData = {
 
 type rcType = rcData[];
 
-type test = Array<string | number>;
+export type uAccess = {
+  tb: { tbPath: string; edit: boolean }[];
+  // db: {dbPath: string, edit: boolean, view: boolean}[] // -- not needed
+};
 
 type fetchContext = {
   dbs: db[];
@@ -26,6 +30,8 @@ type fetchContext = {
   setUdata: React.Dispatch<React.SetStateAction<string>>;
   rc: rcType;
   setRc: React.Dispatch<React.SetStateAction<rcType>>;
+  uAccess: uAccess;
+  setUAccess: React.Dispatch<SetStateAction<uAccess>>;
 };
 
 export function useFetchContext() {
@@ -42,6 +48,7 @@ export default function FetchContext({
   const [allTbs, setAllTbs] = React.useState([] as tbArr);
   const [uData, setUdata] = React.useState("");
   const [rc, setRc] = React.useState([] as rcType);
+  const [uAccess, setUAccess] = React.useState({} as uAccess);
 
   return (
     <fetchContext.Provider
@@ -54,6 +61,8 @@ export default function FetchContext({
         setAllTbs,
         uData,
         setUdata,
+        uAccess,
+        setUAccess,
       }}
     >
       {children}

@@ -179,6 +179,7 @@ export default function Db({ db, i }: { db: db; i: number }) {
           setConfirmDialog({
             type: "database",
             action: "delete",
+            head: "Are you sure you want to",
             name: db.Database,
             confirmFn: deleteDb,
           });

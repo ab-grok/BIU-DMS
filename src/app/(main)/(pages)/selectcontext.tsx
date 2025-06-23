@@ -39,6 +39,11 @@ type selectUsers = {
 
 type created = { db: string; tb: string; rc: string; rh: string };
 
+export type selectedRc = {
+  path: string; //dbName/tbName
+  rows: string[]; //[[col1, val1], [col2, val2]]
+};
+
 type selections = {
   selectedTbUsers: selectUsers;
   setSelectedTbUsers: Dispatch<React.SetStateAction<selectUsers>>;
@@ -50,14 +55,14 @@ type selections = {
   setEdits: Dispatch<React.SetStateAction<views>>;
   selectedTb: string;
   setSelectedTb: Dispatch<React.SetStateAction<string>>;
+  selectedRc: selectedRc[];
+  setSelectedRc: Dispatch<React.SetStateAction<selectedRc[]>>;
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
   created: created;
   setCreated: Dispatch<React.SetStateAction<created>>; // for retriggering effects (can be used for )
-  selectedRecords: string;
-  setSelectedRecords: Dispatch<React.SetStateAction<string>>;
-  quickA: string;
-  setQuickA: Dispatch<React.SetStateAction<string>>;
+  hideQA: boolean;
+  setHideQA: Dispatch<React.SetStateAction<boolean>>;
   createTbMeta: createTbMeta;
   setCreateTbMeta: Dispatch<React.SetStateAction<createTbMeta>>;
   createTbCol: createTbCol;
@@ -72,11 +77,11 @@ export default function SelectionContext({
   children: React.ReactNode;
 }) {
   // const [multiSelectedTb, setMultiSelectedTb] = useState<string>("");
-  const [selectedRecords, setSelectedRecords] = useState<string>("");
   const [selectedTb, setSelectedTb] = useState<string>("");
+  const [selectedRc, setSelectedRc] = useState([] as selectedRc[]);
   const [create, setCreate] = useState<string>("");
   const [created, setCreated] = useState({ db: "", tb: "", rc: "", rh: "" });
-  const [quickA, setQuickA] = useState<string>("");
+  const [hideQA, setHideQA] = useState(false);
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
   const [createDbMeta, setCreateDbMeta] = useState({} as createDbMeta);
   const [createTbCol, setCreateTbCol] = useState({} as createTbCol);
@@ -108,12 +113,12 @@ export default function SelectionContext({
         setCreate,
         created,
         setCreated,
-        selectedRecords,
-        setSelectedRecords,
         selectedTb,
         setSelectedTb,
-        quickA,
-        setQuickA,
+        selectedRc,
+        setSelectedRc,
+        hideQA,
+        setHideQA,
       }}
     >
       {children}

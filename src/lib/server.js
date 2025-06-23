@@ -15,6 +15,8 @@ import postgres from "postgres";
 import { getCookie } from "./sessions";
 
 const main = postgres(process.env.MAINDB, {
+  ssl: true,
+  ws: true,
   debug: (connection, query, parameters) => {
     console.log("SQL:", query);
     console.log("Params:", parameters);
@@ -22,6 +24,8 @@ const main = postgres(process.env.MAINDB, {
 });
 
 const auth = postgres(process.env.AUTHDB, {
+  ssl: true,
+  ws: true,
   debug: (connection, query, parameters) => {
     console.log("SQL:", query);
     console.log("Params:", parameters);
@@ -371,7 +375,7 @@ async function delMetadata({ dbName, tbName }) {
 export async function getUserAccess({ dbName, tbName, token32, uid }) {
   //ADMIN
   //call for every getTb, getDb, -- must be viewer to view or editor to edit,, extra priviledges for level 3: none
-  let none = { level: null, edit: null, view: null };
+  let none = { level: null, edit: false, view: false, udata: null };
   if (!uid && !token32) return none;
 
   const { level, userId, title, firstname } = await getSession({
@@ -384,11 +388,11 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
   }
   if (!tbName && !(await checkDb(dbName))) {
     console.log("getUserAccess, Db not found");
-    return none;
+    throw { customMessage: "Db not found" };
   }
   if (tbName && !(await checkTb({ dbName, tbName }))) {
     console.log("getUserAccess, Tb not found!");
-    return none;
+    throw { customMessage: "Table not found" };
   }
   const udata = userId + "&" + title + "&" + firstname;
   console.log(
@@ -511,12 +515,13 @@ export async function getTables(dbName, includeMeta) {
 export async function getTbSchema({ dbName, tbName, token32 }) {
   //res: {colName, type, nullable, key}[]   //getUserAccess checks table
   const { edit, view } = await getUserAccess({ dbName, tbName, token32 });
-  if (!edit && !view) throw { customMessage: "Cannot access this table." };
+  if (!edit && !view)
+    throw { customMessage: "You do not have permission to access this table." };
   //combine with information_schema.key_column_usage to get foreign keys?
   const res =
     await main`select c.column_name as "colName", c.data_type as type, c.is_nullable = 'YES' as nullable, array_agg(tc.constraint_type) filter (where tc.constraint_type is not null) as keys from information_schema.columns c left join information_schema.constraint_column_usage ccu on c.table_name = ccu.table_name and c.table_schema = ccu.table_schema and c.column_name = ccu.column_name left join information_schema.table_constraints tc on ccu.table_name = tc.table_name and ccu.table_schema = tc.table_schema and ccu.constraint_name = tc.constraint_name where c.table_schema = ${dbName} and c.table_name = ${tbName} group by c.column_name, c.data_type, c.is_nullable, c.ordinal_position ORDER BY c.ordinal_position`;
   console.log("in getTbSchema, res: ", res);
-  return { schema: res };
+  return { schema: res[0] };
 }
 
 export async function checkTb({ dbName, tbName }) {
@@ -581,12 +586,12 @@ export async function createTb({
       let type =
         col.type == "number"
           ? col.ai
-            ? `integer`
+            ? `serial`
             : `real`
           : col.type == "boolean"
             ? `boolean`
             : col.type == "file"
-              ? `bytea`
+              ? `file` // [base64, fileType, fileName, isFile]
               : col.type == "date"
                 ? `timestamp`
                 : `text`;
@@ -604,7 +609,7 @@ export async function createTb({
         unique && (colData = main`${colData} unique`);
         primary && (colData = main`${colData} primary key`);
         notnull && (colData = main`${colData} not null`);
-        def && (colData = main`${colData} default ${main.unsafe(def)}`);
+        def && (colData = main`${colData} default ${main`${def}`}`);
 
         colArr.push(colData);
       }
@@ -612,8 +617,8 @@ export async function createTb({
     //reduce aggretes each entry to the previous adding auth`` each time,
     //columns is an auth`string` which evaluates as a literal
     const cols = colArr.reduce(
-      (agg, col, j) => (j == 0 ? col : auth`${agg}, ${col}`),
-      auth``,
+      (agg, col, j) => (j == 0 ? col : main`${agg}, ${col}`),
+      main``,
     );
     const res =
       await main`create table ${main(dbName)}.${main(tbName)} (${cols}, updated_at timestamp, updated_by text)`;
@@ -721,10 +726,7 @@ export async function getTbData({ dbName, tbName, orderBy, token32, where }) {
 
 export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   // colVals: {col1:val1, col2:val2}[]
-  //getUserAccess
 
-  if (!(await checkTb({ tbName, dbName })))
-    throw { customMessage: "Database or table not found" };
   const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
   if (!edit) throw { customMessage: "Unauthorized" };
 
@@ -738,13 +740,13 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   }
 
   //get Table meta to optionally create updated_at/by columns
-  const { tableMeta } = await getTbSchema({ dbName, tbName });
+  const { schema } = await getTbSchema({ dbName, tbName });
   const now = new Date();
   let updatedAtFound = false;
   let updatedByFound = false;
-  for (const a of tableMeta) {
-    if (a.colName.toLowerCase() == "updated_at") updatedAtFound = true;
-    if (a.colName.toLowerCase() == "updated_by") updatedByFound = true;
+  for (const { colName } of schema) {
+    if (colName.toLowerCase() == "updated_at") updatedAtFound = true;
+    if (colName.toLowerCase() == "updated_by") updatedByFound = true;
     if (updatedAtFound && updatedByFound) break;
   }
 
@@ -752,7 +754,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     try {
       let updRes =
         await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main`add column updated_at timestamp` : main``} ${!updatedByFound ? main.unsafe(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main``}`;
-      console.log("table altered");
+      console.log("table altered in insertTbData");
     } catch (e) {
       throw {
         customMessage: "metacolumns not found and failed to create them!",
@@ -760,7 +762,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     }
   }
 
-  let colArr = []; //col1,col2
+  let colArr = []; //col1, col2
   let valuesArr = []; // (...), (...)
   console.log("in insertTbData, colvals: ", colVals);
 
@@ -777,7 +779,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     for (const val of Object.values(cols)) {
       values.push(main`${val}`);
     }
-    valuesArr.push(main`(${main(values)}, ${now}, ${udata} )`);
+    valuesArr.push(main`(${main`${values}`}, ${now}, ${udata} )`);
   }
 
   const valsArrs = valuesArr.reduce(
@@ -787,9 +789,43 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   const res =
     await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${main(valsArrs)} returning *`;
 
-  if (!res[0]) throw { customMessage: "insert failed" };
+  if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
-  if (!metaAdded) console.log("insertData meta not added");
+  if (!metaAdded) console.log("Insert table data 'meta' not added");
+
+  return true;
+}
+
+export async function updateTbData(dbName, tbName, whereArr, col, val) {
+  const { token32 } = await getCookie();
+  const { edit, udata } = getUserAccess({ dbName, tbName, token32 });
+  if (!edit) throw { customMessage: "Unauthorized" };
+
+  const col1 = whereArr[0][0];
+  const val1 = whereArr[0][1];
+  const col2 = whereArr[1][0];
+  const val2 = whereArr[1][1];
+
+  const res = main`update table ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+  const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
+  if (!metaAdded) throw { customMessage: "Meta not added" };
+
+  return true;
+}
+
+export async function deleteTbData(dbName, tbName, whereArr) {
+  const { token32 } = await getCookie();
+  const { edit, udata } = getUserAccess({ dbName, tbName, token32 });
+  if (!edit) throw { customMessage: "Unauthorized" };
+
+  const col1 = whereArr[0][0];
+  const val1 = whereArr[0][1];
+  const col2 = whereArr[1][0];
+  const val2 = whereArr[1][1];
+
+  const res = main`delete from ${main(dbName)}.${main(tbName)} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+  const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
+  if (!metaAdded) throw { customMessage: "Meta not added" };
 
   return true;
 }
@@ -832,7 +868,7 @@ export async function getAllUsers(addMeta) {
   }
   console.log("getAllUsers, all users count, :", allUsers.length);
 
-  const users = []; //{created, views, edits} : each: {db:[], tb:[]} : tb: db/tb, db
+  let users = []; //{created, views, edits} : each: {db:[], tb:[]} : tb: db/tb, db
 
   if (!addMeta) {
     const meta =

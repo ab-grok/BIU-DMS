@@ -33,10 +33,21 @@ type addUsers = {
 };
 
 type confirmDialogType = {
-  type: "database" | "" | "table" | "row" | "user";
-  action: "delete" | "edit" | "add" | "remove" | "share" | "unshare" | "";
-  name: string;
-  message?: string;
+  type: "database" | "" | "table" | "row" | "user" | "column";
+  action:
+    | "delete"
+    | "edit"
+    | "add"
+    | "remove"
+    | "share"
+    | "unshare"
+    | ""
+    | "unique"
+    | "primary";
+  head: string; //are you sure you want to...
+  name: string; //db1
+  message1?: string;
+  message2?: string;
   confirmFn?: () => void;
 };
 

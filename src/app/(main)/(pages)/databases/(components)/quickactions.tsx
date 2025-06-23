@@ -1,6 +1,14 @@
 "use client";
 
-import { CircleCheckBigIcon, Settings2, Trash2, UserPlus2 } from "lucide-react";
+import {
+  CircleCheckBigIcon,
+  FileKey2,
+  FilePen,
+  PencilLine,
+  Settings2,
+  Trash2,
+  UserPlus2,
+} from "lucide-react";
 import { useState } from "react";
 
 export function QuickActions({
@@ -83,7 +91,8 @@ type action =
   | "Add editor"
   | "Select"
   | "Request view"
-  | "Request edit";
+  | "Request edit"
+  | "Edit mode";
 
 type quickActions = {
   fn1?: () => void;
@@ -111,9 +120,13 @@ function QuickIcons({ name }: { name: string }) {
       ) : name == "More Actions" ? (
         <Settings2 size={17} />
       ) : name == "Add editor" ? (
-        <Settings2 size={17} />
+        <FileKey2 size={17} />
       ) : name == "Select" ? (
         <CircleCheckBigIcon size={17} />
+      ) : name == "Edit mode" ? (
+        <FilePen size={17} />
+      ) : name == "Request edit" ? (
+        <PencilLine size={17} />
       ) : null}
     </>
   );

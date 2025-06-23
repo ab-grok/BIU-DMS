@@ -24,12 +24,12 @@ export default function SideCard({
   const router = useRouter();
   const [clicked, setClicked] = useState("");
   const [isHovered, setHovered] = useState(false);
-  const { setSidebarState, sbState } = useSideContext().context;
+  const { setSbState, sbState } = useSideContext().context;
 
   function handleClicked() {
     if (route) {
       router.push(`/${route}`);
-      setSidebarState((prev) => ({ ...prev, sbExpanded: false, route: route }));
+      setSbState((prev) => ({ ...prev, sbExpanded: false, route: route }));
     }
     fn && fn();
   }
@@ -45,7 +45,7 @@ export default function SideCard({
     console.log("sbState.route: ", sbState.route);
     console.log("pathname: ", pathname);
     // if (typeof sbState.route == undefined)
-    //   setSidebarState((prev) => ({
+    //   setSbState((prev) => ({
     //     ...prev,
     //     route: pathname?.replace("/", "") || "",
     //   }));

@@ -35,7 +35,7 @@ export default function AllUsers() {
         <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[2.5rem] font-bold">
           Users
         </section>
-        <section className="bg-row-bg1 flex h-full w-[30%] min-w-[12rem] flex-none flex-col">
+        <section className="bg-row-bg1 relative flex h-full w-[30%] min-w-[12rem] flex-none flex-col">
           {" "}
           <span className="text-bw/70 flex px-1">
             <span className="font-bold">views</span>

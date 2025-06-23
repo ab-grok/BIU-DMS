@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { number, z, ZodTypeAny } from "zod";
+import { colSchema } from "./actions";
 
 const reqString = z.string().trim().min(2, "Too short.");
 export const createTbSchema = z.object({
@@ -37,6 +38,51 @@ export const createDbSchema = z.object({
       "Certain characters are not allowed. ",
     )
     .max(255, "Too long"),
+});
+
+export function checkType(t: string) {
+  const c = (t.includes(" ") ? t.slice(0, t.indexOf(" ")) : t).toLowerCase();
+
+  if (c == "integer" || c == "real" || c == "serial") return "number";
+  else if (c == "boolean") return "boolean";
+  else if (c.includes("timestamp")) return "date";
+  else if (c == "file") return "file";
+  else return "string";
+}
+
+export const createRcSchema = (rcHeader: colSchema[]) => {
+  const shape: Record<string, z.ZodTypeAny> = {};
+  // console.log("in createRcSchema, rcHeader: ", rcHeader);
+  rcHeader?.forEach((col) => {
+    if (col.colName == "ID") return;
+    let validator: z.ZodTypeAny;
+    const cT = col.type;
+    if (checkType(cT) == "number")
+      validator = z.number().min(1, "Field is not nullable");
+    else if (checkType(cT) == "boolean") validator = z.boolean();
+    else if (checkType(cT) == "date") validator = z.date();
+    else if (checkType(cT) == "file")
+      validator = z
+        .custom<File>((val) => val instanceof File, "File Required")
+        .refine(
+          (val) => val.size <= 5 * 1024 * 1024,
+          "Size should be less than 5mb",
+        );
+    else validator = z.string().min(1, "Field is not nullable"); //if (c == "text")
+
+    if (col.nullable) validator = validator.optional();
+
+    shape[col.colName] = validator;
+  });
+
+  return z.object(shape);
+};
+
+export const createRcSchema1 = z.object({
+  number_nnull: z.number().min(1, "Number must be at least 1").optional(),
+  number: z.number().min(1, "Number must be at least 1").optional(),
+  string: z.string().optional(),
+  string_nnul: reqString.optional(), //.min(2, "Too short."),
 });
 
 export type createTbType = z.infer<typeof createTbSchema>;

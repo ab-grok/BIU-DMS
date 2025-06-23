@@ -493,6 +493,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             setConfirmDialog({
               type: "table",
               action: "delete",
+              head: "Are you sure you want to",
               name: Tb.tbName,
               confirmFn: deleteTable,
             })

@@ -109,7 +109,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
       setCreateTbMeta((p) => ({ ...p, desc: columns.desc }));
       // else set ID
       const id = {
-        name: "id",
+        name: "ID",
         primary: 1,
         unique: 1,
         notnull: 1,
@@ -119,25 +119,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
       setCreateTbCol([id]);
     } else if (columns.name) {
       if (checkOrDelCol(columns.name)) return;
-      else if (columns.type == 5) {
-        const fileType = {
-          name: `${columns.name}_type`,
-          primary: 0,
-          unique: 0,
-          notnull: 1,
-          ai: 0,
-          type: 6, //file_meta
-        };
-        const fileName = {
-          name: `${columns.name}_name`,
-          primary: 0,
-          unique: 0,
-          notnull: 1,
-          ai: 0,
-          type: 6,
-        };
-        setCreateTbCol((p) => [...p, columns, fileName, fileType]);
-      } else setCreateTbCol((p) => [...p, columns]);
+      else setCreateTbCol((p) => [...p, columns]);
     }
     const { reset } = form;
     reset();
@@ -170,15 +152,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
       for (const [i, a] of createTbCol.entries()) {
         if (a.name.toLowerCase() == colName.toLowerCase()) {
           if (del) {
-            setCreateTbCol((p) =>
-              p.filter(
-                (b, j) =>
-                  j != i ||
-                  (a.type == 6 &&
-                    b.name != colName + "_type" &&
-                    b.name != colName + "_name"),
-              ),
-            );
+            setCreateTbCol((p) => p.filter((b, j) => j != i));
             sameColFound = true;
           } else {
             setErrDialog({
@@ -354,7 +328,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
                         <UserTag
                           key={a.name}
                           name={a.name}
-                          delFn={a.type != 6 ? checkOrDelCol : undefined}
+                          delFn={checkOrDelCol}
                         />
                       ))}
                   </div>
@@ -381,7 +355,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
                         <Textarea
                           {...field}
                           ref={currDesc}
-                          setter={setValue}
+                          tbSetter={setValue}
                           onChange={field.onChange}
                           className="scrollbar-custom h-[4rem] max-w-[20rem] rounded-full px-4"
                           placeholder="Describe what the table holds."

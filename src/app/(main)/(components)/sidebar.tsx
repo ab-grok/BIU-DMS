@@ -13,7 +13,7 @@ import { validateSessionType, validateSession } from "@/lib/sessions";
 import { useSelection } from "../(pages)/selectcontext";
 
 export default function SideBar() {
-  const { sbState, setSidebarState } = useSideContext().context;
+  const { sbState, setSbState } = useSideContext().context;
   const [expand, setExpand] = useState(false);
   const [quickActions, setQuickAtions] = useState(false);
   const [u, setUser] = useState({} as validateSessionType);
@@ -39,7 +39,7 @@ export default function SideBar() {
 
   // useEffect(() => {
   //   console.log("isLoading in sidebar" + isLoading);
-  //   if (path == "/") setSidebarState((p) => ({ ...p, route: "" }));
+  //   if (path == "/") setSbState((p) => ({ ...p, route: "" }));
   // }, [path]);
 
   return (
@@ -49,7 +49,7 @@ export default function SideBar() {
     >
       <main className="bg-main-fg relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1">
         <section
-          className={`group bg-bw/5 relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px]`}
+          className={`group relative top-0 flex h-full max-h-[15%] min-h-[15%] w-full items-center justify-center rounded-[10px] bg-white/5`}
         >
           <div
             onBlur={() => showAvatar(1)}
@@ -75,7 +75,7 @@ export default function SideBar() {
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
 
-        <section className="bg-bw/5 relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px]">
+        <section className="relative top-0 h-full max-h-[60%] w-full flex-none rounded-[10px] bg-white/5">
           {(isLoading.includes("sidebar") || !sidebarEditable) && <Loading />}{" "}
           <SideCard name="Databases" route="databases" />
           <SideCard name="Create a database" route="databases?create=db" />
@@ -84,7 +84,7 @@ export default function SideBar() {
           <SideCard name="Users" route="users" />
         </section>
         <Separator className="bg-card-background max-w-[95%] self-center" />
-        <section className="bg-bw/5 relative top-0 flex h-full max-h-[25%] w-full flex-col items-center rounded-[10px] p-4 text-xs italic">
+        <section className="relative top-0 flex h-full max-h-[25%] w-full flex-col items-center rounded-[10px] bg-white/5 p-4 text-xs italic">
           <span className="text-lg">Feed</span>
           <span>No activiy yet</span>
         </section>
@@ -94,12 +94,12 @@ export default function SideBar() {
 }
 
 function Avatar({ expanded }: { expanded: boolean }) {
-  const { setSidebarState } = useSideContext().context;
+  const { setSbState } = useSideContext().context;
   return (
     <div
       title="Click to show actions"
       id="avatar"
-      onClick={() => setSidebarState((p) => ({ ...p, sbExpanded: true }))}
+      onClick={() => setSbState((p) => ({ ...p, sbExpanded: true }))}
       className={`${!expanded ? "size-[2rem] lg:size-[5rem]" : "size-[5rem]"} bg-main-bg/50 text-bw absolute flex items-center justify-center rounded-full p-1 text-xs transition-all`}
     >
       <FaUserAlt className="fill-bg-sub-grad size-8 stroke-1" />

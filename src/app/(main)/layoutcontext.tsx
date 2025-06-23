@@ -17,10 +17,26 @@ type sideContextType = {
   sbExpanded: boolean;
 };
 
-export type sideContextState = {
-  sbState: sideContextType;
-  setSidebarState: Dispatch<SetStateAction<sideContextType>>;
+export type rcDim = {
+  w: "sm" | "md" | "lg";
+  h: "sm" | "md" | "lg";
 };
+
+export type sideContextState = {
+  rcSize: rcDim;
+  setRcSize: Dispatch<SetStateAction<rcDim>>;
+  sbState: sideContextType;
+  setSbState: Dispatch<SetStateAction<sideContextType>>;
+  editMode: boolean;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+  showToolbar: boolean;
+  setShowToolbar: Dispatch<SetStateAction<boolean>>;
+};
+
+export function useRcConfig() {
+  const { rcSize, setRcSize, editMode, setEditMode } = useContext(sideContext);
+  return { rcSize, setRcSize, editMode, setEditMode };
+}
 
 export const sideContext = createContext({} as sideContextState);
 export function useSideContext() {
@@ -34,11 +50,25 @@ export default function LayoutContext({
 }: {
   children: React.ReactNode;
 }) {
-  const [sbState, setSidebarState] = useState({
+  const [sbState, setSbState] = useState({
     sbExpanded: true,
   } as sideContextType);
+  const [rcSize, setRcSize] = useState({ w: "md", h: "sm" } as rcDim);
+  const [editMode, setEditMode] = useState(false);
+  const [showToolbar, setShowToolbar] = useState(true);
   return (
-    <sideContext.Provider value={{ sbState, setSidebarState }}>
+    <sideContext.Provider
+      value={{
+        showToolbar,
+        setShowToolbar,
+        editMode,
+        setEditMode,
+        rcSize,
+        setRcSize,
+        sbState,
+        setSbState,
+      }}
+    >
       <Navbar />
       <div className="relative top-[4rem] flex h-screen max-h-[90%] w-screen max-w-[100%] space-x-2">
         {" "}
