@@ -61,7 +61,7 @@ export function RowHeader({
         </div>
         <div className="flex h-full min-w-fit pl-[2.35rem]">
           {thisRc?.rcHeader &&
-            thisRc.rcHeader.map((a, i) => (
+            thisRc?.rcHeader?.map((a, i) => (
               <RowItem
                 key={i + a.colName}
                 name={a.colName}
