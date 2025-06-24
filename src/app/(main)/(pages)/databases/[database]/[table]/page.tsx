@@ -149,14 +149,15 @@ export default function TableRows() {
         />
       </header>
       <main
-        className={` ${showToolbar ? "h-[28.9rem]" : "h-[31.9rem]"} w-full`}
+        className={` ${showToolbar ? "h-[33.9rem]" : "h-[36.9rem]"} relative flex w-full flex-col`}
       >
-        {(create == "record" || true) && (
+        {create == "record" && (
           <NewRow
             nRcScroll={scrolling}
             tbPath={tbPath}
             ref={nrcRef}
             thisRc={thisRc as rcData}
+            nRc={create == "record"}
           />
         )}
         <Rows

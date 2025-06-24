@@ -27,6 +27,7 @@ type createRcType = {
   tbPath: string;
   ref: React.RefObject<HTMLDivElement | null>;
   thisRc: rcData;
+  nRc: boolean;
 };
 
 // const hSizes = { lg: "[10rem]", md: "[6rem]", sm: "[3rem]" };
@@ -45,7 +46,7 @@ type createRcType = {
 //   return `min-w-${wSizes[rcSize.w || "md"]} max-w-${wSizes[rcSize.w || "md"]}`;
 // }
 
-export function NewRow({ nRcScroll, tbPath, ref, thisRc }: createRcType) {
+export function NewRow({ nRcScroll, tbPath, ref, thisRc, nRc }: createRcType) {
   const [resetCount, setResetCount] = useState(0);
   const [nrcSubmitHover, setNrcSubmitHover] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
@@ -53,7 +54,6 @@ export function NewRow({ nRcScroll, tbPath, ref, thisRc }: createRcType) {
   const { setConfirmDialog } = useConfirmDialog();
   const { rcSize } = useRcConfig();
   const { setNotify } = useNotifyContext();
-  const { rc } = useFetchContext();
   const uniqueCols: { col: string; key: "PRIMARY" | "UNIQUE" }[] = [];
   const formSchema = createRcSchema(thisRc?.rcHeader);
   type formType = z.infer<typeof formSchema>;
