@@ -196,8 +196,9 @@ export function NewRow({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        {checkType(col.type) == "number" ||
-                        checkType(col.type) == "string" ? (
+                        {(checkType(col.type) == "number" ||
+                          checkType(col.type) == "string") &&
+                        !isDef(col.colName) ? (
                           <div
                             className={`${i % 2 == 0 ? "bg-tb-row2/50 hover:bg-tb-row2/80" : "bg-tb-row2/5 hover:bg-tb-row2/30"} rounded-xl shadow-sm hover:shadow-black ${hVal(rcSize)} ${wVal(rcSize)} flex items-center justify-center p-0.5`}
                           >
