@@ -140,7 +140,9 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
       className={`group/ri w-full ${wVal(rcSize)} ${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between p-1 px-0.5`}
     >
       <section className="flex h-full w-[78%] flex-col truncate rounded-xl px-1">
-        <p className={`${type == "DEFAULT" && "text-yellow-600/80"} text-sm`}>
+        <p
+          className={`${type == "DEFAULT" && "text-yellow-600/80"} text-sm font-semibold`}
+        >
           {name}
         </p>
         <div className="flex justify-between">
