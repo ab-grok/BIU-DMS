@@ -137,7 +137,7 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
 
   return (
     <div
-      className={`group/ri w-full ${wVal(rcSize)} ${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between p-1 px-0.5`}
+      className={`group/ri w-full ${wVal(rcSize)} ${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between p-1 px-0.5 select-none`}
     >
       <section className="flex h-full w-[78%] flex-col truncate rounded-xl px-1">
         <p
