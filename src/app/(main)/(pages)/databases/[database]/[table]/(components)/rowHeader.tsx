@@ -74,7 +74,7 @@ export function RowHeader({
                   <HeaderItem
                     key={i + a.colName}
                     name={a.colName}
-                    type={isDefault(a.colName) ? "system" : a.type}
+                    type={isDefault(a.colName) ? "DEFAULT" : a.type}
                     keys={[
                       ...(a.keys || []),
                       !a.nullable ? "NOT NULL" : "",
@@ -114,16 +114,18 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
   ).toLowerCase();
   const [isId, setIsId] = React.useState(t.includes("serial"));
   const tNum =
-    t == "file"
-      ? 5
-      : t == "timestamp"
-        ? 4
-        : t == "boolean"
-          ? 3
-          : t == "number" || t == "real" || t == "serial" || t == "integer"
-            ? 2
-            : 1;
-  const rType = ["", "text", "number", "boolean", "date", "file"];
+    t == "DEFAULT"
+      ? 6
+      : t == "file"
+        ? 5
+        : t == "timestamp"
+          ? 4
+          : t == "boolean"
+            ? 3
+            : t == "number" || t == "real" || t == "serial" || t == "integer"
+              ? 2
+              : 1;
+  const rType = ["", "text", "number", "boolean", "date", "file", "DEFAULT"];
 
   function keysNum(a: string): number {
     if (a.includes("UNIQUE")) return 1;
@@ -138,13 +140,11 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
       className={`group/ri w-full ${wVal(rcSize)} ${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between p-1 px-0.5`}
     >
       <section className="flex h-full w-[78%] flex-col truncate rounded-xl px-1">
-        <p
-          className={`${name == "updated_by" ? "text-yellow-700/70" : name == "updated_at" && "text-pink-700/70"} text-sm`}
-        >
+        <p className={`${type == "DEFAULT" && "text-yellow-600/80"} text-sm`}>
           {name}
         </p>
         <div className="flex justify-between">
-          <p className="text-xs text-stone-700/70">{rType[tNum]}</p>
+          <p className="text-xs text-stone-600">{rType[tNum]}</p>
           <div className="flex h-[1rem] rounded-xl px-0.5">
             {keys?.map((a, i) => {
               return (
