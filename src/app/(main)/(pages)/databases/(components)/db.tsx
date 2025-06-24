@@ -20,16 +20,15 @@ import { revalidate } from "@/lib/sessions";
 import { useFetchContext } from "../../fetchcontext";
 
 export default function Db({ db, i }: { db: db; i: number }) {
-  const { selectedDbUsers, setSelectedDbUsers, setCreated } = useSelection();
+  const { selectedDbUsers } = useSelection();
   const [viewerHovered, setViewerHovered] = useState(0);
   const [editorHovered, setEditorHovered] = useState(0);
-  const [cardClicked, setCardClicked] = useState(0);
   const { setNotify } = useNotifyContext();
   const [uAccess, setUAccess] = useState({ edit: false, view: false });
   const { setAddUsers } = useAddUsers();
   const { uData } = useFetchContext();
   const { confirmDialog, setConfirmDialog } = useConfirmDialog();
-  const { pressAnim } = useButtonAnim();
+  const { pressAnim, setPressAnim } = useButtonAnim();
   const router = useRouter();
 
   useEffect(() => {
@@ -84,20 +83,25 @@ export default function Db({ db, i }: { db: db; i: number }) {
     >
       {" "}
       <Index i={i + 1} className="sticky h-[5rem] max-w-[2rem]" />
-      <DbItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
-        {db.Database && db.Database.length > 17
-          ? db.Database.slice(0, 14) + `...`
-          : db.Database}
-        <div className="group/dr relative flex w-full">
-          <div className="text-bw/70 flex items-center space-x-3 text-xs">
-            <span>tables:</span>
-            <Count n={db.tbCount} />
-          </div>{" "}
-          <LogIn
-            className={`${pressAnim == "ri1" && "-translate-x-5"} absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
-          />
-        </div>
-      </DbItem>
+      <div
+        onClick={() => setPressAnim("dbp")}
+        className={`${pressAnim == "dbp" && "scale-95"}`}
+      >
+        <DbItem itemsStart text="sm" route={`/databases/${db.Database}`} i={1}>
+          {db.Database && db.Database.length > 17
+            ? db.Database.slice(0, 14) + `...`
+            : db.Database}
+          <div className="group/dr relative flex w-full">
+            <div className="text-bw/70 flex items-center space-x-3 text-xs">
+              <span>tables:</span>
+              <Count n={db.tbCount} />
+            </div>{" "}
+            <LogIn
+              className={`${pressAnim == "dbp" && "translate-x-0 scale-105"} absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
+            />
+          </div>
+        </DbItem>
+      </div>
       <DbItem
         itemsStart={db.description ? true : false}
         italics={!db.description ? true : false}
