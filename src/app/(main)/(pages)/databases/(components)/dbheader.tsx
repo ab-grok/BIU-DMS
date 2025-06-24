@@ -80,7 +80,7 @@ export default function DbHeader({
           <div
             key={i}
             onClick={() => handleClick(i + 1)}
-            className={`${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg2"} ${i == 0 && "cursor-pointer"}text-md flex h-[3rem] min-w-[10.75rem] items-center justify-center space-x-3 font-medium`}
+            className={`${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg2"} ${i == 0 && "cursor-pointer"}text-md text-bw/80 flex h-[3rem] min-w-[10.75rem] items-center justify-center space-x-3 font-medium`}
           >
             <Icon name={a} />
             <span>{a}</span>
