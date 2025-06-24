@@ -42,6 +42,11 @@ export function RowHeader({
     setPressAnim("re");
   }
 
+  function isDefault(col: string) {
+    if (col == "updated_at" || col == "updated_by") return true;
+    return false;
+  }
+
   return (
     <div className="relative h-[3rem] w-full border-b-2">
       <div
@@ -63,17 +68,22 @@ export function RowHeader({
         </div>
         <div className="flex h-full min-w-fit pl-[2.35rem]">
           {thisRc?.rcHeader &&
-            thisRc?.rcHeader?.map((a, i) => (
-              <RowItem
-                key={i + a.colName}
-                name={a.colName}
-                type={a.type}
-                keys={[...(a.keys || []), !a.nullable ? "Not Null" : ""].filter(
-                  Boolean,
-                )}
-                i={i}
-              />
-            ))}
+            thisRc?.rcHeader?.map((a, i) => {
+              if (a.colName != "ID")
+                return (
+                  <HeaderItem
+                    key={i + a.colName}
+                    name={a.colName}
+                    type={isDefault(a.colName) ? "system" : a.type}
+                    keys={[
+                      ...(a.keys || []),
+                      !a.nullable ? "NOT NULL" : "",
+                      isDefault(a.colName) ? "DEFAULT" : "",
+                    ].filter(Boolean)}
+                    i={i}
+                  />
+                );
+            })}
         </div>
         {!hideQA && (
           <div
@@ -88,37 +98,38 @@ export function RowHeader({
   );
 }
 
-type rowItem = {
+type headerItem = {
   name: string;
   type: string;
   keys: string[]; //["PRIMARY KEY", "UNIQUE"]
   i: number;
 };
 
-function RowItem({ name, type, keys, i }: rowItem) {
+function HeaderItem({ name, type, keys, i }: headerItem) {
   const [colClicked, setColClicked] = React.useState(false);
-  const { rcSize, setRcSize } = useRcConfig();
+  const { rcSize } = useRcConfig();
 
   const t = (
     type.includes(" ") ? type.slice(0, type.indexOf(" ")) : type
   ).toLowerCase();
   const [isId, setIsId] = React.useState(t.includes("serial"));
   const tNum =
-    t == "text"
-      ? 1
-      : t == "number" || t == "real" || t == "serial" || t == "integer"
-        ? 2
+    t == "file"
+      ? 5
+      : t == "timestamp"
+        ? 4
         : t == "boolean"
           ? 3
-          : t == "timestamp"
-            ? 4
-            : 5;
+          : t == "number" || t == "real" || t == "serial" || t == "integer"
+            ? 2
+            : 1;
   const rType = ["", "text", "number", "boolean", "date", "file"];
 
   function keysNum(a: string): number {
     if (a.includes("UNIQUE")) return 1;
-    if (a.includes("Not Null")) return 3;
+    if (a.includes("NOT NULL")) return 3;
     if (a.includes("PRIMARY")) return 0;
+    if (a.includes("DEFAULT")) return 4;
     else return 2;
   }
 
@@ -127,9 +138,13 @@ function RowItem({ name, type, keys, i }: rowItem) {
       className={`group/ri w-full ${wVal(rcSize)} ${i % 2 == 0 ? "bg-tb-row1" : "bg-tb-row2"} flex justify-between p-1 px-0.5`}
     >
       <section className="flex h-full w-[78%] flex-col truncate rounded-xl px-1">
-        <p className="text-sm">{name}</p>
+        <p
+          className={`${name == "updated_by" ? "text-yellow-700/70" : name == "updated_at" && "text-pink-700/70"} text-sm`}
+        >
+          {name}
+        </p>
         <div className="flex justify-between">
-          <p className="text-bw/70 text-xs">{rType[tNum]}</p>
+          <p className="text-xs text-stone-700/70">{rType[tNum]}</p>
           <div className="flex h-[1rem] rounded-xl px-0.5">
             {keys?.map((a, i) => {
               return (

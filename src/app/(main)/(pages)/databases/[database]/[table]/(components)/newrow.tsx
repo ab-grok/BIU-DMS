@@ -28,6 +28,7 @@ type createRcType = {
   ref: React.RefObject<HTMLDivElement | null>;
   thisRc: rcData;
   nRc: boolean;
+  uData: string;
 };
 
 // const hSizes = { lg: "[10rem]", md: "[6rem]", sm: "[3rem]" };
@@ -46,7 +47,14 @@ type createRcType = {
 //   return `min-w-${wSizes[rcSize.w || "md"]} max-w-${wSizes[rcSize.w || "md"]}`;
 // }
 
-export function NewRow({ nRcScroll, tbPath, ref, thisRc, nRc }: createRcType) {
+export function NewRow({
+  nRcScroll,
+  tbPath,
+  ref,
+  thisRc,
+  nRc,
+  uData,
+}: createRcType) {
   const [resetCount, setResetCount] = useState(0);
   const [nrcSubmitHover, setNrcSubmitHover] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
@@ -63,8 +71,10 @@ export function NewRow({ nRcScroll, tbPath, ref, thisRc, nRc }: createRcType) {
       (acc, col) => {
         if (col.colName != "ID") {
           let defVal: any;
-          if (checkType(col.type) == "number") defVal = 0;
-          if (checkType(col.type) == "string") defVal = "";
+          if (col.colName == "updated_at") defVal = new Date();
+          else if (col.colName == "updated_by") defVal = uData;
+          else if (checkType(col.type) == "number") defVal = 0;
+          else if (checkType(col.type) == "string") defVal = "";
           else if (checkType(col.type) == "boolean") defVal = false;
           else if (checkType(col.type) == "file") defVal = null;
           else if (checkType(col.type) == "date") defVal = null;
@@ -152,6 +162,11 @@ export function NewRow({ nRcScroll, tbPath, ref, thisRc, nRc }: createRcType) {
     console.log("schema defaultValues:", defaultValues);
   }
 
+  function isDef(col: string) {
+    if (col == "updated_at" || col == "updated_by") return true;
+    return false;
+  }
+
   return (
     <div
       onScroll={nRcScroll}
@@ -213,7 +228,9 @@ export function NewRow({ nRcScroll, tbPath, ref, thisRc, nRc }: createRcType) {
                             tbPath={tbPath}
                             nCol={i}
                             field={field}
+                            isDefault={isDef(col.colName)} //to disable it
                             reset={resetCount}
+                            uData={uData}
                           />
                         )}
                       </FormControl>

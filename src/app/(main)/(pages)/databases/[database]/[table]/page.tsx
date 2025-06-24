@@ -24,8 +24,8 @@ export default function TableRows() {
     string
   >;
   const tbPath = dbName + "/" + tbName;
-  const { notify, setNotify } = useNotifyContext();
-  const { rc, setRc, setUAccess, uAccess } = useFetchContext();
+  const { setNotify } = useNotifyContext();
+  const { rc, setRc, setUAccess, uAccess, uData } = useFetchContext();
   const { setIsLoading, isLoading } = useLoading();
   const rowRef = React.useRef<HTMLDivElement | null>(null);
   const headerRef = React.useRef<HTMLDivElement | null>(null);
@@ -44,11 +44,6 @@ export default function TableRows() {
       console.log("in getTb rowHeader currTb,: ", tbPath);
       console.log("in [table] got tbSchema: ", tbSchema, " . Error1: ", error1);
       console.log("in [table] got tbData: ", tbData, " . Error: ", error);
-
-      // const modTbSchema = tbSchema?.find((a, i) => {
-      //   a.colName == "ID" && (idPos = i);
-      //   return a.colName !== "ID";
-      // });-------------------------------------  // can exclude ID while mapping in RcRows
 
       if (error || error1) {
         setNotify({ message: error1 || error, danger: true });
@@ -106,6 +101,7 @@ export default function TableRows() {
   function getRc() {
     console.log("got rc from [tables]: ", rc);
   }
+
   React.useEffect(() => {
     const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
     if (!currUA) {
@@ -162,6 +158,7 @@ export default function TableRows() {
             ref={nrcRef}
             thisRc={thisRc as rcData}
             nRc={create == "record"}
+            uData={uData}
           />
         )}
         <Rows

@@ -88,6 +88,7 @@ export function KeysButton({
     >
       <div className={`${abbrev && "hidden"}`}> {name} </div>
       <div
+        title={name}
         className={`${sz} rounded-[5px] ${value == 1 ? `font-bold ${textColor[n]} bg-bw/10 shadow-xs group-hover/a:shadow-sm` : "shadow-bw/10 group-hover/a:shadow-xs"} flex items-center justify-center group-hover/a:bg-green-300/40`}
       >
         {" "}

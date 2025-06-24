@@ -23,6 +23,7 @@ import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 import { rcData, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
 import { updateTableData } from "@/lib/actions";
+import UserTag from "@/components/usertag";
 
 type rowType = {
   scrolling: (e: any) => void;
@@ -199,7 +200,9 @@ type rowItem = {
   tbPath: string;
   canEdit?: boolean;
   colType: string;
+  uData?: string;
   reset?: number;
+  isDefault?: boolean;
   field?: ControllerRenderProps<
     {
       [x: string]: any;
@@ -216,7 +219,9 @@ export function RowItem({
   canEdit,
   colType,
   reset,
+  isDefault,
   field,
+  uData,
 }: rowItem) {
   //import schema to get col types to handle layout for instances where val is null
   const [expandCard, setExpandCard] = useState(false);
@@ -250,7 +255,7 @@ export function RowItem({
   }, []);
 
   useEffect(() => {
-    if (initRender.current) {
+    if (initRender.current && !isDefault) {
       initRender.current = false;
       return;
     }
@@ -364,7 +369,7 @@ export function RowItem({
               hourCycle={12}
               clicked={pressAnim == "nrcdt"}
               granularity="minute"
-              disabled={!editMode && !field}
+              disabled={(!editMode && !field) || isDefault}
               className={`${!editMode && !field && "!opacity-80"} my-1 h-fit`}
             />
           </div>
@@ -390,14 +395,19 @@ export function RowItem({
               {typeof val == "boolean" ? val.toString() : "-"}
             </div>
           </Button>
+        ) : isDefault ? (
+          <UserTag
+            name={uData?.split("&")[1] || ""}
+            title={uData?.split("&")[2]}
+          />
         ) : (
-          <div id="text vals" className="flex w-full">
+          <div id="text vals" className="flex h-full w-full">
             <p
               contentEditable={editMode}
               tabIndex={0}
               onBlur={clickedOut}
               onInput={(e) => setVal(e.currentTarget.textContent)}
-              className={`${expandCard ? "h-fit break-all whitespace-break-spaces" : hVal(rcSize, "max") + " truncate"} ${hVal(rcSize)} text-sm`}
+              className={`${expandCard ? "h-fit break-all whitespace-break-spaces" : hVal(rcSize, "max") + " truncate"} ${hVal(rcSize)} flex h-full w-full text-sm`}
             >
               {val ? val.toString() : "-"}
             </p>
