@@ -141,7 +141,7 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
     >
       <section className="flex h-full w-[78%] flex-col truncate rounded-xl px-1">
         <p
-          className={`${type == "DEFAULT" && "text-yellow-600/80"} text-sm font-semibold`}
+          className={`${type == "DEFAULT" && "text-yellow-600"} text-sm font-semibold`}
         >
           {name}
         </p>
