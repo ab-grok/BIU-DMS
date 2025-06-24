@@ -395,10 +395,10 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     throw { customMessage: "Table not found" };
   }
   const udata = userId + "&" + title + "&" + firstname;
-  console.log(
-    "getUserAccess, got past checkUser and getSession, udata: ",
-    udata,
-  );
+  // console.log(
+  //   "getUserAccess, got past checkUser and getSession, udata: ",
+  //   udata,
+  // );
   const meta = await getMetadata({
     dbName,
     tbName,

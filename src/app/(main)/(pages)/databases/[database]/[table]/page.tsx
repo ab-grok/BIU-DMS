@@ -98,10 +98,14 @@ export default function TableRows() {
         else return p;
       });
       console.log("in [table] got past setRc, currTb: ", currTb);
+      getRc();
       setIsLoading((p) => p.replaceAll("tbData", ""));
     })();
   }, [created.rc, created.rh]);
 
+  function getRc() {
+    console.log("got rc from [tables]: ", rc);
+  }
   React.useEffect(() => {
     const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
     if (!currUA) {

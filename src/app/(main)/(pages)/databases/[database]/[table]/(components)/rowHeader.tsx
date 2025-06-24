@@ -31,6 +31,8 @@ export function RowHeader({
   canEdit,
   rhScroll,
 }: rowHeader) {
+  // const header = React.useMemo(()=>{},[JSON.stringify(thisRc.rcHeader)])
+  console.log("in rcHeader, thisRc: ", thiRc);
   const { hideQA } = useSelection();
   const { rcSize } = useRcConfig();
   const { pressAnim, setPressAnim } = useButtonAnim();
@@ -129,7 +131,7 @@ function RowItem({ name, type, keys, i }: rowItem) {
         <div className="flex justify-between">
           <p className="text-bw/70 text-xs">{rType[tNum]}</p>
           <div className="flex h-[1rem] rounded-xl px-0.5">
-            {keys.map((a, i) => {
+            {keys?.map((a, i) => {
               return (
                 <KeysButton
                   key={a + i}
