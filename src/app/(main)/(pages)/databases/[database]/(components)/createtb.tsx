@@ -194,6 +194,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
     const postTb = {
       columns: createTbCol,
       ...createTbMeta,
+      dbName: db,
       viewers,
       editors,
       isPrivate: 1,
