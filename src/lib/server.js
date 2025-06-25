@@ -748,12 +748,12 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     if (colName.toLowerCase() == "updated_at") updatedAtFound = true;
     if (colName.toLowerCase() == "updated_by") updatedByFound = true;
   }
-  console.log(
-    "updatedAtFound : ",
-    updatedAtFound,
-    " updatedByFound: ",
-    updatedByFound,
-  );
+  // console.log(
+  //   "updatedAtFound : ",
+  //   updatedAtFound,
+  //   " updatedByFound: ",
+  //   updatedByFound,
+  // );
 
   if (!updatedAtFound) now = new Date();
 
@@ -784,11 +784,12 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     }
 
     const values = []; //val1, val2, val3
-    for (const val of Object.values(cols)) {
+    for (const val of Object.values(colVals)) {
       values.push(main`${val}`);
     }
     valuesArr.push(main`(${main`${values}`}, ${now}, ${udata} )`);
   }
+  // console.log("past colvals loop, colArr: ", colArr, "");
 
   const valsArrs = valuesArr.reduce(
     (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
