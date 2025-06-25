@@ -1,7 +1,7 @@
 "use server";
 //?auth.array handles fragments (tagged) not raw stings == FALSE
 //?auth.array can escape array values as is == FALSE
-//auth`somethign ${value}` treats value as paramterized and 'something' as literal -- must use ${} to be parameterized
+//auth`somethign ${value}` treats 'value' as paramterized and 'something' as literal -- must use ${} to be parameterized
 //${string} parameterizes string, unless its a tagged template.
 //identifiers must be quoted "users"
 //auth([values]) also escapes an array of values not just identifier names. based on inference
@@ -804,7 +804,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${main(...colArr)}, updated_at, updated_by) values ${valuesArr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${main(...colArr)}, updated_at, updated_by) values ${main.array(valuesArr)} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
