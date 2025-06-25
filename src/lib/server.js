@@ -784,10 +784,10 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     }
 
     const values = []; //val1, val2, val3
-    for (const val of Object.values(colVals)) {
+    for (const val of Object.values(cols)) {
       values.push(main`${val}`);
     }
-    valuesArr.push(main`(${main`${values}`}, ${now}, ${udata} )`);
+    valuesArr.push(main`(${values}, ${now}, ${udata} )`);
   }
   // console.log("past colvals loop, colArr: ", colArr, "");
 
@@ -796,7 +796,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     main``,
   );
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${main(valsArrs)} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${valuesArr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
