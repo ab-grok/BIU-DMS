@@ -16,9 +16,9 @@ export default function Database() {
   const { setNotify, notify } = useNotifyContext();
   const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
-  const currTbFound = useRef(false);
   const { allTbs, setAllTbs, uData } = useFetchContext();
   const currTbs = useMemo(() => {
+    // using as condition to show alternative to list tbs. dbName should be defined even when tblist is []
     return allTbs.find((t) => t.dbName == currDb);
   }, [allTbs]);
 
@@ -27,7 +27,7 @@ export default function Database() {
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
     console.log("allTbs.length: ", allTbs.length);
-    !currTbFound.current &&
+    !currTbs &&
       setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
 
     let tbFound = false;
@@ -43,7 +43,6 @@ export default function Database() {
         setAllTbs((p) => {
           for (const [i, { dbName, tbList }] of p.entries()) {
             if (dbName == currDb) {
-              currTbFound.current = true;
               tbFound = true;
               console.log(
                 "in [database] in setAllTbs loop, dbName: ",
@@ -82,7 +81,7 @@ export default function Database() {
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
-        {currTbFound.current &&
+        {currTbs &&
           (currTbs?.tbList?.length ? (
             currTbs.tbList.map((a, i) => (
               <TableCard
