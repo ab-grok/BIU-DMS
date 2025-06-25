@@ -84,7 +84,7 @@ export default function UserTag({
           onClick={() => delFn(name, "del")}
           className={` ${clicked ? (clickedColor ?? colorHover) : hovered && `ring-2`} ${!hovered && thisHover && color} absolute -right-[15px] flex h-full w-fit translate-x-1 cursor-pointer items-center rounded-r-[5px] pr-0.5 opacity-0 shadow-2xs backdrop-blur-3xl transition-all group-hover/ut:translate-x-0 group-hover/ut:opacity-100`}
         >
-          <Trash2 className="size-4 rotate-45 stroke-red-600 stroke-3" />
+          <Trash2 className="size-4 stroke-red-600 stroke-3" />
         </span>
       )}
     </div>

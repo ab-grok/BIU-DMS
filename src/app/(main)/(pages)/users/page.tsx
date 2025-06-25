@@ -96,7 +96,7 @@ export default function AllUsers() {
           </div>
         </section>
       </header>
-      <main className="h-[93%] w-full overflow-auto">
+      <main className="relative h-[93%] w-full overflow-auto">
         {users?.map((a, i) => (
           <User
             i={i + 1}
@@ -184,10 +184,10 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
     <div
       onMouseEnter={() => handleHover(i + 1)}
       onMouseLeave={() => handleHover(0)}
-      className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} mb-1 flex h-fit min-w-full bg-cyan-900`}
+      className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} relative mb-1 flex h-fit min-w-full bg-cyan-900`}
     >
       <Index
-        className="mr-2 w-[2rem] self-center bg-transparent"
+        className="bg-bw/30 sticky left-0 mr-2 w-[2rem] self-center backdrop-blur-3xl"
         size={6}
         i={i}
       />

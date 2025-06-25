@@ -584,15 +584,15 @@ export async function createTb({
         ? col.name
         : `Random_name${Math.floor(Math.random() * 1000)}`;
       let type =
-        col.type == "number"
+        col.type == 2
           ? col.ai
             ? `serial`
             : `real`
-          : col.type == "boolean"
+          : col.type == 4
             ? `boolean`
-            : col.type == "file"
+            : col.type == 5
               ? `file` // [base64, fileType, fileName, isFile]
-              : col.type == "date"
+              : col.type == 3
                 ? `timestamp`
                 : `text`;
       let def =

@@ -489,15 +489,15 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           fn1={() => handleMultiTables()}
           fn2={uAccess.edit ? () => handleAddUsers(1) : () => requestRole(1)}
           fn3={uAccess.edit ? () => handleAddUsers(2) : () => requestRole(1)}
-          fn4={() =>
+          fn4={() => {
             setConfirmDialog({
               type: "table",
               action: "delete",
               head: "Are you sure you want to",
               name: Tb.tbName,
               confirmFn: deleteTable,
-            })
-          }
+            });
+          }}
         />
       </section>
     </div>
