@@ -288,7 +288,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             </div>
             <div
               onClick={() => handleEnter("door")}
-              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} group/enter bg-sub-bg/80 h-[80%] w-1/3 cursor-pointer items-center justify-end rounded-2xl pr-3 transition-all hover:shadow-sm`}
+              className={`${selectedTb?.includes(Tb.tbName) ? "flex" : "hidden group-hover:flex"} ${btnClicked && "scale-95"} group/enter bg-sub-bg/80 h-[80%] w-1/3 cursor-pointer items-center justify-end rounded-2xl pr-3 transition-all hover:shadow-sm`}
             >
               {!(uAccess.view || uAccess.edit) ? (
                 <LockIcon

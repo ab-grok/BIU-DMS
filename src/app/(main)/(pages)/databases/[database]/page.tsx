@@ -23,8 +23,8 @@ export default function Database() {
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
     console.log("allTbs.length: ", allTbs.length);
-    !currTbs &&
-      setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
+    // !currTbs &&
+    setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
 
     let tbFound = false;
     (async () => {
