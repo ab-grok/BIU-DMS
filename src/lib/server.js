@@ -727,10 +727,9 @@ export async function getTbData({ dbName, tbName, orderBy, token32, where }) {
 export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   // colVals: {col1:val1, col2:val2}[]
 
-  // already call getUserAccess in gettbSchema
-  // const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
-  // if (!edit) throw { customMessage: "Unauthorized" };
-  // console.log("in insertData, edit: ", edit);
+  // already call getUserAccess in gettbSchema but need edit and udata
+  const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
+  if (!edit) throw { customMessage: "Unauthorized" };
 
   if (!(typeof colVals[0] == "object") || !colVals.length) {
     throw {
