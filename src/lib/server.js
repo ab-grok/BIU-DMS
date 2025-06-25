@@ -4,7 +4,7 @@
 //auth`somethign ${value}` treats 'value' as paramterized and 'something' as literal -- must use ${} to be parameterized
 //${string} parameterizes string, unless its a tagged template.
 //identifiers must be quoted "users"
-//auth([values]) also escapes an array of values not just identifier names. based on inference
+//auth([values]) also escapes an array of values not just identifier names. based on inference == false
 
 //?auth.array(vals) inserts parenthesis per array (nested arrays have nested parenthesis?)
 import { v4 as uuidv4 } from "uuid";
@@ -769,7 +769,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   }
 
   let colArr = []; //col1, col2
-  let valuesArr = []; // (...), (...)
+  let multiValArr = []; // (...), (...)
   console.log("in insertTbData, colvals: ", colVals);
 
   for (const [i, cols] of colVals.entries()) {
@@ -783,12 +783,21 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       }
     }
 
-    const values = []; //val1, val2, val3
+    const valuesArr = []; //val1, val2, val3
     for (const val of Object.values(cols)) {
-      values.push(main`${val}`);
+      valuesArr.push(main`${val}`);
     }
+
+    const valueStr = valuesArr.reduce(
+      (agg, val, i) => {
+        if (i == 0) return val;
+        return main`${agg},${val}`;
+      },
+      main``,
+    );
+
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
-    valuesArr.push(main`(${main(values.push(now, udata))})`);
+    multiValArr.push(main`( ${valueStr} )`);
   }
   console.log("in insertTbData, udata: ", udata);
   // console.log(
@@ -797,14 +806,14 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   //   "`````````",
   // );
 
-  const valsArrs = valuesArr.reduce(
+  const multiValStr = multiValArr.reduce(
     (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
     main``,
   );
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${main(colArr)}, updated_at, updated_by) values ${main(valuesArr)} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${main(colArr)}, updated_at, updated_by) values ${multiValStr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
