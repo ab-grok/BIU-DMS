@@ -12,7 +12,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
-import { getCookie } from "./sessions";
+import { getCookie, validateSession } from "./sessions";
 
 const main = postgres(process.env.MAINDB, {
   ssl: true,
@@ -727,10 +727,10 @@ export async function getTbData({ dbName, tbName, orderBy, token32, where }) {
 export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   // colVals: {col1:val1, col2:val2}[]
 
-  const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
-  if (!edit) throw { customMessage: "Unauthorized" };
-
-  console.log("in insertData, edit: ", edit);
+  // already call getUserAccess in gettbSchema
+  // const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
+  // if (!edit) throw { customMessage: "Unauthorized" };
+  // console.log("in insertData, edit: ", edit);
 
   if (!(typeof colVals[0] == "object") || !colVals.length) {
     throw {
@@ -738,9 +738,10 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       message: "ColVals in wrong format",
     };
   }
+  //get Table meta from schema to optionally create updated_at/by columns
+  const { schema } = await getTbSchema({ dbName, tbName, token32 });
 
-  //get Table meta to optionally create updated_at/by columns
-  const { schema } = await getTbSchema({ dbName, tbName });
+  console.log("in insertTbData, got past getTbSchema, schema: ", schema);
   const now = new Date();
   let updatedAtFound = false;
   let updatedByFound = false;
@@ -806,7 +807,7 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const col2 = whereArr[1][0];
   const val2 = whereArr[1][1];
 
-  const res = main`update table ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+  const res = main`update ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
   if (!metaAdded) throw { customMessage: "Meta not added" };
 
@@ -847,6 +848,43 @@ export async function renameSchema({ dbName, userId, newDbName }) {
   //getUserAccess
   if (!(await checkDb(dbName))) throw { customMessage: "Unauthorized!" };
   await auth`alter schema ${auth(dbName)} rename to ${newDbName} `;
+}
+
+export async function makeRequests({ dbName, tbName, ReqEdit }) {
+  if (!(await checkDb(dbName))) throw { customMessage: "Database not found" };
+  console.log("in makeRequests, dbName: ", dbName, " tbName: ", tbName);
+  const { token32 } = await getCookie();
+  const { userId, firstname, title } = await getSession({
+    token32,
+    getId: true,
+  });
+  const uData = userId + "&" + title + "&" + firstname;
+
+  if (!userId || !firstname)
+    throw { customMessage: "Couldn't make request; User not found" };
+
+  const { createdBy } = await getMetadata({ dbName, tbName });
+  if (!createdBy)
+    throw { customMessage: "Couldn't get the database or table's creator" };
+
+  const res = auth`update "metadata" set "edit_requests" = "edit_requests" || ${[uData]} where dbName = ${dbName} ${tbName ? auth`and tbName = ${tbName}` : auth``}`;
+
+  return { error: null };
+  // let col = auth`${auth(dbName)}`
+  // if (tbName) col += auth`.${auth(tbName)}`
+  // const res = auth`insert into ${col} `
+}
+
+export async function getRequests({ path }) {
+  const { token32 } = await getCookie();
+  const { userId, firstname, title } = await getSession({
+    token32,
+    getId: true,
+  });
+
+  if (!userId) throw { customMessage: "Unauthorized" };
+
+  const res = auth`select view_request, edit_request from `;
 }
 
 async function searchField() {
@@ -937,7 +975,7 @@ export async function delSession({ userId }) {
 
 export async function updateSession({ sessionId, expires_at }) {
   const rowUpd =
-    await auth`update user_session set expires_at = ${expires_at} where id = ${sessionId} returning *`;
+    await auth`update "user_session" set expires_at = ${expires_at} where id = ${sessionId} returning *`;
   console.log("rowUpd from updsession: " + rowUpd);
   if (!rowUpd[0]) return false;
   return true;
