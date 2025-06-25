@@ -743,7 +743,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   // console.log("in insertTbData, got past getTbSchema, schema: ", schema);
   let updatedAtFound = false;
   let updatedByFound = false;
-  let now;
+  let now = new Date();
   for (const { colName } of schema) {
     if (colName.toLowerCase() == "updated_at") updatedAtFound = true;
     if (colName.toLowerCase() == "updated_by") updatedByFound = true;
@@ -754,8 +754,6 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   //   " updatedByFound: ",
   //   updatedByFound,
   // );
-
-  if (!updatedAtFound) now = new Date();
 
   if (!updatedAtFound || !updatedByFound) {
     try {
@@ -792,6 +790,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
     valuesArr.push(main`(${values}, ${now}, ${udata} )`);
   }
+  console.log("in insertTbData, udata: ", udata);
   // console.log(
   //   "```````` past colvals loop, colArr: ``````````",
   //   colArr,
@@ -805,7 +804,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${valuesArr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${main(colArr)}, updated_at, updated_by) values ${valuesArr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
