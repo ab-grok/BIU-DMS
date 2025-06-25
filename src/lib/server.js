@@ -230,8 +230,8 @@ export async function getMetadata({ dbName, tbName, asString }) {
   }
   // const { name, title } = await checkUser({ userId: row[0].userId });
   if (asString) {
-    viewers = rowSel[0].viewers.join(",");
-    editors = rowSel[0].editors.join(",");
+    viewers = rowSel[0].viewers?.join(",");
+    editors = rowSel[0].editors?.join(",");
   } else {
     viewers = rowSel[0].viewers;
     editors = rowSel[0].editors;
@@ -548,7 +548,7 @@ export async function createTb({
   editors,
 }) {
   const { token32 } = await getCookie();
-  console.log("in createTb, token32: ", token32);
+  console.log("in createTb, token32: ", token32, "dbName: ", dbName);
   try {
     const { userId, firstname, title } = await getSession({
       token32,
@@ -788,7 +788,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       valuesArr.push(main`${val}`);
     }
 
-    const valueStr = valuesArr.reduce(
+    const valuesStr = valuesArr.reduce(
       (agg, val, i) => {
         if (i == 0) return val;
         return main`${agg},${val}`;
@@ -797,7 +797,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     );
 
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
-    multiValArr.push(main`( ${valueStr} )`);
+    multiValArr.push(main`( ${valuesStr} )`);
   }
   console.log("in insertTbData, udata: ", udata);
   // console.log(

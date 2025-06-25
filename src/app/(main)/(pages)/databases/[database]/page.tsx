@@ -41,7 +41,7 @@ export default function Database() {
         });
       } else {
         setAllTbs((p) => {
-          for (const [i, { dbName, tbList }] of p.entries()) {
+          for (const [i, { dbName, tbList }] of p?.entries()) {
             if (dbName == currDb) {
               tbFound = true;
               console.log(
@@ -52,9 +52,9 @@ export default function Database() {
               );
               if (tbList?.length != tbArr?.length) {
                 const currP = [
-                  ...p.slice(0, i),
+                  ...p?.slice(0, i),
                   { dbName: currDb, tbList: tbArr as Tb[] },
-                  ...p.slice(i + 1),
+                  ...p?.slice(i + 1),
                 ];
                 return currP;
               } else return p;
