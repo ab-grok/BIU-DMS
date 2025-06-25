@@ -21,6 +21,7 @@ import { hVal, RowItem, wVal } from "./rows";
 import Loading from "@/components/loading";
 import { useFetchContext, rcData } from "@/app/(main)/(pages)/fetchcontext";
 import { deleteTableData, insertTableData } from "@/lib/actions";
+import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 
 type createRcType = {
   nRcScroll: (e: any) => void;
@@ -60,6 +61,7 @@ export function NewRow({
   const { isLoading, setIsLoading } = useLoading();
   const { pressAnim, setPressAnim } = useButtonAnim();
   const { setConfirmDialog } = useConfirmDialog();
+  const { setCreated } = useSelection();
   const { rcSize } = useRcConfig();
   const { setNotify } = useNotifyContext();
   const uniqueCols: { col: string; key: "PRIMARY" | "UNIQUE" }[] = [];
@@ -143,12 +145,14 @@ export function NewRow({
     error && setNotify({ danger: true, message: error });
     return true;
   }
+
   async function insertRow(colVals: Record<string, string>[]) {
     const { error } = await insertTableData(tbPath, colVals);
     if (error) {
       setNotify({ danger: true, message: error });
       return;
     }
+    setCreated((p) => ({ ...p, rh: JSON.stringify(Object.values(colVals)) }));
     form.reset();
   }
 

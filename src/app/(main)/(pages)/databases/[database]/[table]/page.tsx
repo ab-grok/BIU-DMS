@@ -42,8 +42,8 @@ export default function TableRows() {
       const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
       const { tbData, error } = await getTableData(dbName, tbName);
       console.log("in getTb rowHeader currTb,: ", tbPath);
-      console.log("in [table] got tbSchema: ", tbSchema, " . Error1: ", error1);
-      console.log("in [table] got tbData: ", tbData, " . Error: ", error);
+      // console.log("in [table] got tbSchema: ", tbSchema, " . Error1: ", error1);
+      // console.log("in [table] got tbData: ", tbData, " . Error: ", error);
 
       if (error || error1) {
         setNotify({ message: error1 || error, danger: true });
@@ -93,14 +93,9 @@ export default function TableRows() {
         else return p;
       });
       console.log("in [table] got past setRc, currTb: ", currTb);
-      getRc();
       setIsLoading((p) => p.replaceAll("tbData", ""));
     })();
   }, [created.rc, created.rh]);
-
-  function getRc() {
-    console.log("got rc from [tables]: ", rc);
-  }
 
   React.useEffect(() => {
     const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
