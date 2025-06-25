@@ -772,6 +772,8 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   let multiValArr = []; // (...), (...)
   console.log("in insertTbData, colvals: ", colVals);
 
+  const updatedColVals = colVals;
+
   for (const [i, cols] of colVals.entries()) {
     console.log("in colVals loop, cols: ", cols);
     if (i == 0) {
@@ -788,6 +790,9 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       valuesArr.push(main`${val}`);
     }
 
+    if (!updatedAtFound) valuesArr.push(main`${now}`);
+    if (!updatedByFound) colArr.push(main`${udata}`);
+
     const valuesStr = valuesArr.reduce(
       (agg, val, i) => {
         if (i == 0) return val;
@@ -799,6 +804,10 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
     multiValArr.push(main`( ${valuesStr} )`);
   }
+
+  if (!updatedAtFound) colArr.push(main("updated_at"));
+  if (!updatedByFound) colArr.push(main("updated_by"));
+
   console.log("in insertTbData, udata: ", udata);
   // console.log(
   //   "```````` past colvals loop, colArr: ``````````",
@@ -819,7 +828,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}, updated_at, updated_by) values ${multiValsStr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}) values ${multiValsStr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
