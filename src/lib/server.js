@@ -819,7 +819,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}, updated_at, updated_by) values ${multiValStr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}, updated_at, updated_by) values ${multiValsStr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
