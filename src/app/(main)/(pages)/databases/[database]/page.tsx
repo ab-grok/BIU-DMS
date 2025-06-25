@@ -50,7 +50,7 @@ export default function Database() {
                 "\n ... tbList: ",
                 tbList,
               );
-              if (tbList.length != tbArr?.length) {
+              if (tbList?.length != tbArr?.length) {
                 const currP = [
                   ...p.slice(0, i),
                   { dbName: currDb, tbList: tbArr as Tb[] },
