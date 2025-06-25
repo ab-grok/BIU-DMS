@@ -1,6 +1,6 @@
 export default function Requests() {
   function getVERequests() {
-    const { dbRequests, tbRequests } = await getRequests();
+    const { dbRequests, tbRequests } = getRequests();
   }
   return <div>view requests</div>;
 }
