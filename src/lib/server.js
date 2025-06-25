@@ -788,7 +788,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       values.push(main`${val}`);
     }
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
-    valuesArr.push(main`(${main(values)}, ${now}, ${udata} )`);
+    valuesArr.push(main`(${main(values.push(now, udata))})`);
   }
   console.log("in insertTbData, udata: ", udata);
   // console.log(
