@@ -772,63 +772,69 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   let multiValArr = []; // (...), (...)
   console.log("in insertTbData, colvals: ", colVals);
 
-  const updatedColVals = colVals;
+  const updatedColVals = colVals.map((a, i) => {
+    return {
+      ...a,
+      ...(!updatedAtFound ? { updated_at: now } : {}),
+      ...(!updatedByFound ? { updated_by: udata } : {}),
+    };
+  });
 
-  for (const [i, cols] of colVals.entries()) {
-    console.log("in colVals loop, cols: ", cols);
-    if (i == 0) {
-      //can optimize
-      for (const a of Object.keys(cols)) {
-        console.log("in cols loop , a: ", a);
-        //to get column names
-        colArr.push(main(a));
-      }
-    }
+  // for (const [i, cols] of colVals.entries()) {
+  //   console.log("in colVals loop, cols: ", cols);
+  //   if (i == 0) {
+  //     //can optimize
+  //     for (const a of Object.keys(cols)) {
+  //       console.log("in cols loop , a: ", a);
+  //       //to get column names
+  //       colArr.push(main(a));
+  //     }
+  //   }
 
-    const valuesArr = []; //val1, val2, val3
-    for (const val of Object.values(cols)) {
-      valuesArr.push(main`${val}`);
-    }
+  //   const valuesArr = []; //val1, val2, val3
+  //   for (const val of Object.values(cols)) {
+  //     valuesArr.push(main`${val}`);
+  //   }
 
-    if (!updatedAtFound) valuesArr.push(main`${now}`);
-    if (!updatedByFound) colArr.push(main`${udata}`);
+  //   if (!updatedAtFound) valuesArr.push(main`${now}`);
+  //   if (!updatedByFound) colArr.push(main`${udata}`);
 
-    const valuesStr = valuesArr.reduce(
-      (agg, val, i) => {
-        if (i == 0) return val;
-        return main`${agg},${val}`;
-      },
-      main``,
-    );
+  //   const valuesStr = valuesArr.reduce(
+  //     (agg, val, i) => {
+  //       if (i == 0) return val;
+  //       return main`${agg},${val}`;
+  //     },
+  //     main``,
+  //   );
 
-    // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
-    multiValArr.push(main`( ${valuesStr} )`);
-  }
+  //   // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
+  //   multiValArr.push(main`( ${valuesStr} )`);
+  // }
 
-  if (!updatedAtFound) colArr.push(main("updated_at"));
-  if (!updatedByFound) colArr.push(main("updated_by"));
+  // if (!updatedAtFound) colArr.push(main("updated_at"));
+  // if (!updatedByFound) colArr.push(main("updated_by"));
 
-  console.log("in insertTbData, udata: ", udata);
   // console.log(
   //   "```````` past colvals loop, colArr: ``````````",
   //   colArr,
   //   "`````````",
   // );
 
-  const multiValsStr = multiValArr.reduce(
-    (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
-    main``,
-  );
+  // const multiValsStr = multiValArr.reduce(
+  //   (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
+  //   main``,
+  // );
 
-  const colsStr = colArr.reduce(
-    (agg, col, i) => (i == 0 ? main(col) : main`${agg},${main(col)}`),
-    main``,
-  );
+  // const colsStr = colArr.reduce(
+  //   (agg, col, i) => (i == 0 ? main(col) : main`${agg},${main(col)}`),
+  //   main``,
+  // );
 
   console.log("got past valsArrs");
+  console.log("in insertTbData, udata: ", udata);
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}) values ${multiValsStr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} ${main(updatedColVals)} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
