@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import TableCard from "./(components)/tbcard";
 import Loading from "@/components/loading";
 import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
@@ -16,15 +16,19 @@ export default function Database() {
   const { setNotify, notify } = useNotifyContext();
   const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
+  const currTbFound = useRef(false);
   const { allTbs, setAllTbs, uData } = useFetchContext();
-  const currTbs = allTbs.find((t) => t.dbName == currDb);
+  const currTbs = useMemo(() => {
+    return allTbs.find((t) => t.dbName == currDb);
+  }, [allTbs]);
+
   // onclick of addEditors/users set the state blank?
 
   useEffect(() => {
     console.log("in [database], useLoading: " + isLoading);
     console.log("allTbs.length: ", allTbs.length);
-    // !currTbs &&
-    setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
+    !currTbFound.current &&
+      setIsLoading((p) => (!p.includes(currDb) ? p + currDb + "," : p));
 
     let tbFound = false;
     (async () => {
@@ -39,6 +43,7 @@ export default function Database() {
         setAllTbs((p) => {
           for (const [i, { dbName, tbList }] of p.entries()) {
             if (dbName == currDb) {
+              currTbFound.current = true;
               tbFound = true;
               console.log(
                 "in [database] in setAllTbs loop, dbName: ",
