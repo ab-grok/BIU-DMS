@@ -742,21 +742,29 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   const { schema } = await getTbSchema({ dbName, tbName, token32 });
 
   console.log("in insertTbData, got past getTbSchema, schema: ", schema);
-  const now = new Date();
   let updatedAtFound = false;
   let updatedByFound = false;
+  let now;
   for (const { colName } of schema) {
     if (colName.toLowerCase() == "updated_at") updatedAtFound = true;
     if (colName.toLowerCase() == "updated_by") updatedByFound = true;
-    if (updatedAtFound && updatedByFound) break;
   }
+  console.log(
+    "updatedAtFound : ",
+    updatedAtFound,
+    " updatedByFound: ",
+    updatedByFound,
+  );
+
+  if (!updatedAtFound) now = new Date();
 
   if (!updatedAtFound || !updatedByFound) {
     try {
+      console.log("trying to alter table in insertTbData");
       let updRes =
         await main`alter table ${main(dbName)}.${main(tbName)} ${!updatedAtFound ? main`add column updated_at timestamp` : main``} ${!updatedByFound ? main.unsafe(`${!updatedAtFound ? "," : ""} add column updated_by text`) : main``}`;
-      console.log("table altered in insertTbData");
     } catch (e) {
+      console.log("error in insertTbData :", e);
       throw {
         customMessage: "metacolumns not found and failed to create them!",
       };
