@@ -82,18 +82,25 @@ export default function Database() {
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
-        {currTbs?.tbList?.length ? (
-          currTbs.tbList.map((a, i) => (
-            <TableCard key={i} uData={uData} Tb={a} i={i + 1} dbName={currDb} />
-          ))
-        ) : !(create == "table") ? (
-          <div className="p-6 text-4xl italic">
-            {" "}
-            No tables yet. Create a table
-          </div>
-        ) : (
-          <div className="p-6 text-4xl italic"> Creating a table...</div>
-        )}
+        {currTbFound.current &&
+          (currTbs?.tbList?.length ? (
+            currTbs.tbList.map((a, i) => (
+              <TableCard
+                key={i}
+                uData={uData}
+                Tb={a}
+                i={i + 1}
+                dbName={currDb}
+              />
+            ))
+          ) : !(create == "table") ? (
+            <div className="p-6 text-4xl italic">
+              {" "}
+              No tables yet. Create a table
+            </div>
+          ) : (
+            <div className="p-6 text-4xl italic"> Creating a table...</div>
+          ))}
       </section>
     </div>
   );

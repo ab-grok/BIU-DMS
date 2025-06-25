@@ -806,14 +806,20 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   //   "`````````",
   // );
 
-  const multiValStr = multiValArr.reduce(
+  const multiValsStr = multiValArr.reduce(
     (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
     main``,
   );
+
+  const colsStr = colArr.reduce(
+    (agg, col, i) => (i == 0 ? main(col) : main`${agg},${main(col)}`),
+    main``,
+  );
+
   console.log("got past valsArrs");
 
   const res =
-    await main`insert into ${main(dbName)}.${main(tbName)} (${main(colArr)}, updated_at, updated_by) values ${multiValStr} returning *`;
+    await main`insert into ${main(dbName)}.${main(tbName)} (${colsStr}, updated_at, updated_by) values ${multiValStr} returning *`;
 
   if (!res[0]) throw { customMessage: "Insert failed" };
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
