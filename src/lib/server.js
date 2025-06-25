@@ -779,7 +779,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       for (const a of Object.keys(cols)) {
         console.log("in cols loop , a: ", a);
         //to get column names
-        colArr.push(main`${main(a)}`);
+        colArr.push(main(a));
       }
     }
 
