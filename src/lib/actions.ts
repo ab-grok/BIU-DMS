@@ -7,6 +7,7 @@ import {
   deleteTbData,
   getAllUsers,
   getDb,
+  getRequests,
   getSession,
   getTables,
   getTbData,
@@ -211,9 +212,16 @@ export async function getTableData(
       }
     },
     [`${dbName}-${tbName}-tbData`],
-    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 86400 },
+    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 36000 },
   );
   return await tbData();
+}
+
+//path = dbName, dbName/tbName
+export async function getAccessRequests(path: string) {
+  //use context instead of unstable_cache;
+
+  const { error } = await getRequests();
 }
 
 export async function getUA(dbName: string, tbName?: string) {
@@ -274,7 +282,7 @@ export async function insertTableData(
   } catch (e: any) {
     console.log(e);
     return {
-      error: (e.customMessage as string) || "Trouble deleting data, try again",
+      error: (e.customMessage as string) || "COuld't insert data, try again.",
     };
   }
 }

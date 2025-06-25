@@ -775,9 +775,11 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("in insertTbData, colvals: ", colVals);
 
   for (const [i, cols] of colVals.entries()) {
+    console.log("in colVals loop, cols: ", cols);
     if (i == 0) {
       //can optimize
       for (const a of Object.keys(cols)) {
+        console.log("in cols loop , a: ", cols);
         //to get column names
         colArr.push(main`${main(a)}`);
       }
@@ -787,9 +789,14 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     for (const val of Object.values(cols)) {
       values.push(main`${val}`);
     }
+    console.log("````````` After vals loop , values: ", values, "`````````");
     valuesArr.push(main`(${values}, ${now}, ${udata} )`);
   }
-  // console.log("past colvals loop, colArr: ", colArr, "");
+  console.log(
+    "```````` past colvals loop, colArr: ``````````",
+    colArr,
+    "`````````",
+  );
 
   const valsArrs = valuesArr.reduce(
     (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
