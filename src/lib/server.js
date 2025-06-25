@@ -740,7 +740,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   //get Table meta from schema to optionally create updated_at/by columns
   const { schema } = await getTbSchema({ dbName, tbName, token32 });
 
-  console.log("in insertTbData, got past getTbSchema, schema: ", schema);
+  // console.log("in insertTbData, got past getTbSchema, schema: ", schema);
   let updatedAtFound = false;
   let updatedByFound = false;
   let now;
@@ -779,7 +779,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     if (i == 0) {
       //can optimize
       for (const a of Object.keys(cols)) {
-        console.log("in cols loop , a: ", cols);
+        console.log("in cols loop , a: ", a);
         //to get column names
         colArr.push(main`${main(a)}`);
       }
@@ -789,19 +789,21 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     for (const val of Object.values(cols)) {
       values.push(main`${val}`);
     }
-    console.log("````````` After vals loop , values: ", values, "`````````");
+    // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
     valuesArr.push(main`(${values}, ${now}, ${udata} )`);
   }
-  console.log(
-    "```````` past colvals loop, colArr: ``````````",
-    colArr,
-    "`````````",
-  );
+  // console.log(
+  //   "```````` past colvals loop, colArr: ``````````",
+  //   colArr,
+  //   "`````````",
+  // );
 
   const valsArrs = valuesArr.reduce(
     (agg, vArr, i) => (i == 0 ? vArr : main`${agg},${vArr}`),
     main``,
   );
+  console.log("got past valsArrs");
+
   const res =
     await main`insert into ${main(dbName)}.${main(tbName)} (${colArr}, updated_at, updated_by) values ${valuesArr} returning *`;
 

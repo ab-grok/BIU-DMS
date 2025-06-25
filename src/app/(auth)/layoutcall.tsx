@@ -17,7 +17,7 @@ export default function LayoutCall({
   const { isLoading, setIsLoading, authPath } = useLoading();
 
   useEffect(() => {
-    setIsLoading((p) => p + "authLogo,");
+    !loaded && setIsLoading((p) => p + "authLogo,");
   }, []);
 
   const { theme, setTheme } = useTheme();

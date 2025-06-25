@@ -172,7 +172,7 @@ export function NewRow({
       onScroll={nRcScroll}
       ref={ref}
       id="nrcScroll"
-      className={`group/nrc scrollbar-custom border-main-bg/80 relative mb-0.5 flex min-h-[5rem] w-full items-center overflow-x-auto overflow-y-hidden border-b-2 bg-gradient-to-b from-green-500/30 to-green-400/20 shadow-sm hover:to-green-400/30 hover:shadow-lg`}
+      className={`group/nrc scrollbar-custom border-main-bg/80 relative mb-0.5 flex min-h-[5rem] w-full items-center overflow-x-auto overflow-y-hidden border-b-2 bg-gradient-to-b from-blue-600/30 to-blue-400/20 shadow-sm hover:from-blue-400/20 hover:shadow-sm`}
     >
       <Index
         i={0}
