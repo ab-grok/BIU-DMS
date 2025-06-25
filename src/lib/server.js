@@ -548,21 +548,21 @@ export async function createTb({
   editors,
 }) {
   const { token32 } = await getCookie();
-  console.log("in createTb, token32: ", token32, "dbName: ", dbName);
+  // console.log("in createTb, token32: ", token32, "dbName: ", dbName);
   try {
     const { userId, firstname, title } = await getSession({
       token32,
       getId: true,
     });
     const udata = userId + "&" + title + "&" + firstname;
-    console.log("udata from createTb (got session): ", udata);
+    // console.log("udata from createTb (got session): ", udata);
     if (await checkTb({ dbName, tbName })) {
       return {
         error: "Table already exists.",
       };
     }
     console.log(
-      "in create tb dbName: ",
+      "in createtb dbName: ",
       dbName,
       "...tbName: ",
       tbName,
