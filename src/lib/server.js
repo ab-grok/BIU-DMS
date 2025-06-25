@@ -900,6 +900,7 @@ export async function getRequests({ path }) {
   if (!userId) throw { customMessage: "Unauthorized" };
 
   const res = auth`select view_request, edit_request from `;
+  return { error: false };
 }
 
 async function searchField() {
