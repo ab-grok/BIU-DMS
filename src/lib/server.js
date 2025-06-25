@@ -743,7 +743,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   // console.log("in insertTbData, got past getTbSchema, schema: ", schema);
   let updatedAtFound = false;
   let updatedByFound = false;
-  let now = new Date();
+  const now = new Date();
   for (const { colName } of schema) {
     if (colName.toLowerCase() == "updated_at") updatedAtFound = true;
     if (colName.toLowerCase() == "updated_by") updatedByFound = true;
@@ -788,7 +788,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
       values.push(main`${val}`);
     }
     // console.log("````````` After vals loop , values: ", values, "`````````");  //got here
-    valuesArr.push(main`(${values}, ${now}, ${udata} )`);
+    valuesArr.push(main`(${main.array(values)}, ${now}, ${udata} )`);
   }
   console.log("in insertTbData, udata: ", udata);
   // console.log(
