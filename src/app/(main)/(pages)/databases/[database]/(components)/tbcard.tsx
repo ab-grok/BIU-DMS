@@ -50,18 +50,22 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   const { setConfirmDialog } = useConfirmDialog();
   const {
     setSelectedTbUsers,
-    // multiSelectedTb,
-    // setMultiSelectedTb,
     selectedTbUsers,
     selectedTb,
     setSelectedTb,
     setCreated,
   } = useSelection();
+  const items = ["Author", "Created on", "Last updated", "Editor"];
+  const TbMeta = [
+    [Tb.createdBy?.split("&")[2], Tb.createdBy?.split("&")[1]],
+    [dateAbrev(Tb.createdAt)],
+    [dateAbrev(Tb.updatedAt)],
+    [Tb.updatedBy?.split("&")[2], Tb.updatedBy?.split("&")[1]],
+  ];
 
   useEffect(() => {
     (async () => {
       const u = uData.split("&")[0];
-      console.log("uData in TableCard: ", uData);
       Tb.viewers?.forEach((a) => {
         if (a.includes(u[0])) setUAccess({ view: true, edit: false });
         // setViewers((p) => {
@@ -204,17 +208,9 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     }
   }
 
-  const items = ["Author", "Created on", "Last updated", "Editor"];
-  const TbMeta = [
-    [Tb.createdBy?.split("&")[2], Tb.createdBy?.split("&")[1]],
-    [dateAbrev(Tb.createdAt)],
-    [dateAbrev(Tb.updatedAt)],
-    [Tb.updatedBy?.split("&")[2], Tb.updatedBy?.split("&")[1]],
-  ];
-
   function dateAbrev(d?: Date) {
-    if (!d) return "";
-
+    console.log("in date abrev, date: ", d);
+    console.log("in date abrev, typeof date: ", typeof d);
     if (!(d instanceof Date)) return "";
     const dateStr = d?.toLocaleDateString("en-US", {
       month: "short",
