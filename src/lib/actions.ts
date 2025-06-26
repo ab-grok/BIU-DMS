@@ -363,7 +363,7 @@ export async function timeAgo(iso: string): Promise<string> {
   return `${seconds}s`;
 }
 
-export function dateAbrev(dStr?: string) {
+export async function dateAbrev(dStr?: string) {
   const d = new Date(dStr || Date.now());
   const dateStr = d?.toLocaleDateString("en-US", {
     month: "short",
