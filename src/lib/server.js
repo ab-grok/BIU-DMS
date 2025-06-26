@@ -991,7 +991,7 @@ export async function getAllUsers(addMeta) {
             : currU.created.db.push(md.db);
         }
       }
-      users.push({ ...u, currU });
+      users.push({ ...u, ...currU });
     });
   } else users = allUsers;
 

@@ -16,7 +16,7 @@ export default function AllUsers() {
   useEffect(() => {
     setIsLoading((p) => p + "users,");
     (async () => {
-      revalidate("users");
+      revalidate("users"); //------------  remove
       const allUsers = await getUsers();
       if (!allUsers) {
         console.log("couldnt get users");
@@ -141,7 +141,6 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
     const viewDb: string[] = [];
     const createdDb: string[] = [];
     const createdTb: string[] = [];
-
     user.edits?.forEach((a, j) => {
       if (a.tb) {
         editTb.push(`${a.db}/${a.tb}`);
