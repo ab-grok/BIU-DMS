@@ -75,8 +75,8 @@ export type Tb = {
   tbName: string;
   rowCount: number;
   createdBy: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   updatedBy: string;
   description: string;
   private: boolean;

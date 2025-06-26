@@ -208,10 +208,8 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     }
   }
 
-  function dateAbrev(d?: Date) {
-    console.log("in date abrev, date: ", d);
-    console.log("in date abrev, typeof date: ", typeof d);
-    if (!(d instanceof Date)) return "";
+  function dateAbrev(dStr: string) {
+    const d = new Date(dStr);
     const dateStr = d?.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
