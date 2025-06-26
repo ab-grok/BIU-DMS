@@ -15,10 +15,13 @@ import { useSelection } from "../../selectcontext";
 import AddUsers from "@/app/(main)/(components)/addusers";
 import { useFetchContext } from "../../fetchcontext";
 import ConfirmDialog from "@/app/(main)/(components)/confirmdialog";
+import { useSideContext } from "@/app/(main)/layoutcontext";
 
 export default function Database() {
   const currDb = useParams()?.database as string;
   const { isLoading, setIsLoading } = useLoading();
+  const { showToolbar } = useSideContext().context;
+
   const { setNotify, notify } = useNotifyContext();
   const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
@@ -85,30 +88,35 @@ export default function Database() {
       {(addUsers.type?.includes("tb") ||
         addUsers.type?.includes("New Table")) && <AddUsers />}
       <CreateTb uData={uData} db={currDb} i={0} />
-      <section
-        className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
+
+      <main
+        className={`${showToolbar ? "h-[33.9rem]" : "h-[36.9rem]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
-        {confirmDialog.type == "table" && <ConfirmDialog />}
-        {currTbs &&
-          (currTbs.tbList?.length ? (
-            currTbs.tbList.map((a, i) => (
-              <TableCard
-                key={i}
-                uData={uData}
-                Tb={a}
-                i={i + 1}
-                dbName={currDb}
-              />
-            ))
-          ) : !(create == "table") ? (
-            <div className="p-6 text-4xl italic">
-              {" "}
-              No tables yet. Create a table
-            </div>
-          ) : (
-            <div className="p-6 text-4xl italic"> Creating a table...</div>
-          ))}
-      </section>
+        <section
+          className={`${create == "table" && "mt-[14.2rem]"} w-full overflow-y-auto scroll-smooth transition-all`}
+        >
+          {confirmDialog.type == "table" && <ConfirmDialog />}
+          {currTbs &&
+            (currTbs.tbList?.length ? (
+              currTbs.tbList.map((a, i) => (
+                <TableCard
+                  key={i}
+                  uData={uData}
+                  Tb={a}
+                  i={i + 1}
+                  dbName={currDb}
+                />
+              ))
+            ) : !(create == "table") ? (
+              <div className="p-6 text-4xl italic">
+                {" "}
+                No tables yet. Create a table
+              </div>
+            ) : (
+              <div className="p-6 text-4xl italic"> Creating a table...</div>
+            ))}
+        </section>
+      </main>
     </div>
   );
 }
