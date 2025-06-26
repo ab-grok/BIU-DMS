@@ -144,8 +144,8 @@ export default function TableRows() {
         />
       </header>
       <main
+        className={` ${showToolbar ? "h-[33.9rem]" : "h-[36.9rem]"} relative flex w-full flex-col`}
         // className={` ${showToolbar ? "h-[33.9rem]" : "h-[36.9rem]"} relative flex w-full flex-col`}
-        className={`relative flex w-full flex-1 flex-col`}
       >
         {create == "record" && (
           <NewRow
@@ -164,6 +164,7 @@ export default function TableRows() {
           ref={rowRef}
           nRc={create == "record"}
           thisRc={thisRc as rcData}
+          uData={uData}
         />
       </main>
     </div>

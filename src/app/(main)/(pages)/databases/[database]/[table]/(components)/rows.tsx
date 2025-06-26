@@ -32,6 +32,7 @@ type rowType = {
   canEdit: boolean;
   nRc: boolean;
   thisRc: rcData;
+  uData: string;
 };
 
 const hSizes = { lg: "[10rem]", md: "[6rem]", sm: "[3rem]" };
@@ -61,6 +62,7 @@ export function Rows({
   ref,
   canEdit,
   nRc,
+  uData,
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
   const { selectedRc, setSelectedRc } = useSelection();
@@ -169,6 +171,7 @@ export function Rows({
                         ri={b}
                         canEdit={canEdit}
                         isDefault={b[0] == "updated_at" || b[0] == "updated_by"}
+                        uData={uData}
                       />
                     ); //filter out ID column
                 })}
