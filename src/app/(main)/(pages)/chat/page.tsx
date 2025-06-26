@@ -1,6 +1,13 @@
+import Loading from "@/components/loading";
+
 export default function Chat() {
   function getMessages() {
     // const { dbRequests, tbRequests } = getRequests();
   }
-  return <div> </div>;
+  return (
+    <div>
+      {" "}
+      <Loading />
+    </div>
+  );
 }

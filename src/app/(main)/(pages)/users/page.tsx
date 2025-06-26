@@ -33,7 +33,7 @@ export default function AllUsers() {
   return (
     <div className="relative flex h-[98%] w-full flex-col items-center">
       <header className="scrollbar-custom mb-1 flex h-[3.4rem] w-full overflow-x-auto rounded-sm border-b-2 p-0.5 select-none">
-        <div className="h-full w-[2rem]"></div>
+        <div className="bg-row-bg1 h-full w-[2rem]"></div>
         <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[0.5rem] font-semibold">
           Users
         </section>
@@ -98,7 +98,7 @@ export default function AllUsers() {
           </div>
         </section>
       </header>
-      <main className="relative flex h-[93%] w-full flex-col overflow-auto">
+      <main className="relative flex h-[94%] w-full flex-col overflow-auto">
         {users?.map((a, i) => (
           <User
             i={i + 1}
@@ -195,7 +195,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       />
       <section
         title={`Go to ${user.title + " " + user.firstname + "'s"} page`}
-        className="flex w-[36.5%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
+        className="flex w-[37%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
       >
         <div className="space-x-1 hover:underline">
           <span> {user.title} </span>
@@ -211,7 +211,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       <Separator orientation="vertical" />
       <section
         id="views"
-        className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[29.8%] min-w-[12rem] flex-none rounded-[5px] p-1"
+        className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[30%] min-w-[12rem] flex-none rounded-[5px] p-1"
       >
         <div className="flex min-h-full w-1/2 flex-col">
           {views.db?.map((a) => (
