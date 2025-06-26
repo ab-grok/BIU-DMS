@@ -64,7 +64,6 @@ export function Rows({
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
   const { selectedRc, setSelectedRc } = useSelection();
-  const { rc } = useFetchContext();
   const rcSchema = thisRc?.rcHeader?.reduce(
     (agg, col) => {
       col.colName != "ID" && (agg[col.colName] = col.type);
@@ -137,51 +136,84 @@ export function Rows({
       ref={ref}
       className={`${nRc && "mt-[5rem]"} relative flex h-full flex-col overflow-auto transition-all`}
     >
-      {thisRc?.rcRows?.map((a, i) => {
-        const thisRow = JSON.stringify(Object.entries(a).slice(0, 2));
-        return (
-          <div
-            key={i}
-            onClick={() => rcClicked(thisRow)}
-            className={`group ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg1/50"} hover:bg-bw/20 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
-          >
-            <Index
-              i={i + 1}
-              morph={(rcs?.rows.length || 0) > 1 ? "selected" : undefined}
-              className="sticky w-[2rem]"
-              size={6}
-              selected={rcs?.rows.includes(thisRow)}
-            />
+      {thisRc?.rcRows && thisRc.rcRows.length ? (
+        thisRc?.rcRows?.map((a, i) => {
+          const thisRow = JSON.stringify(Object.entries(a).slice(0, 2));
+          return (
             <div
-              className={`${rcs?.rows.includes(thisRow) ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+              key={i}
+              onClick={() => rcClicked(thisRow)}
+              className={`group ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg1/50"} hover:bg-bw/20 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
             >
-              {Object.entries(a).map((b, j) => {
-                if ((b[0] as string) !== "ID")
-                  return (
-                    <RowItem
-                      key={j}
-                      colType={(rcSchema && rcSchema[b[0]]) || typeof b[1]}
-                      tbPath={tbPath}
-                      where={thisRow}
-                      // nRow={i}
-                      nCol={j}
-                      ri={b}
-                      canEdit={canEdit}
-                    />
-                  ); //filter out ID column
-              })}
+              <Index
+                i={i + 1}
+                morph={(rcs?.rows.length || 0) > 1 ? "selected" : undefined}
+                className="sticky w-[2rem]"
+                size={6}
+                selected={rcs?.rows.includes(thisRow)}
+              />
+              <div
+                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+              >
+                {Object.entries(a).map((b, j) => {
+                  if ((b[0] as string) !== "ID")
+                    return (
+                      <RowItem
+                        key={j}
+                        colType={(rcSchema && rcSchema[b[0]]) || typeof b[1]}
+                        tbPath={tbPath}
+                        where={thisRow}
+                        // nRow={i}
+                        nCol={j}
+                        ri={b}
+                        canEdit={canEdit}
+                      />
+                    ); //filter out ID column
+                })}
+              </div>
+              <QuickActions
+                action1={`${canEdit ? "Delete" : ""}`}
+                fn1={() => {}}
+                hoverColor1={canEdit ? "red" : `green`}
+                action2="Select"
+                fn2={() => rcSelected(thisRow)}
+                hoverColor2="brown"
+              />
             </div>
-            <QuickActions
-              action1={`${canEdit ? "Delete" : ""}`}
-              fn1={() => {}}
-              hoverColor1={canEdit ? "red" : `green`}
-              action2="Select"
-              fn2={() => rcSelected(thisRow)}
-              hoverColor2="brown"
-            />
+          );
+        })
+      ) : (
+        <div
+          key={0}
+          onClick={() => rcClicked("fillerRow")}
+          className={`group bg-row-bg1 hover:bg-bw/20 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
+        >
+          <Index
+            i={0}
+            className="sticky w-[2rem]"
+            size={6}
+            selected={rcs?.rows.includes("fillerRow")}
+          />
+          <div
+            className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+          >
+            {thisRc?.rcHeader?.map((b, j) => {
+              if (b.colName !== "ID")
+                return (
+                  <RowItem
+                    key={j}
+                    colType={b.type}
+                    tbPath={tbPath}
+                    // nRow={i}
+                    nCol={j}
+                    ri={[b.colName, ""]}
+                    canEdit={false}
+                  />
+                ); //filter out ID column
+            })}
           </div>
-        );
-      })}
+        </div>
+      )}
     </div>
   );
 }
