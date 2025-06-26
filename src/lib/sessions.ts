@@ -129,11 +129,15 @@ type revalidate =
   | "tbSchema"
   | "tbData";
 
-export async function revalidate(name: revalidate, all?: string) {
+export async function revalidate(
+  name: revalidate,
+  type?: "path" | "all",
+  path?: string,
+) {
   const { token32 } = await getCookie();
-  if (all) {
-    revalidateTag(name);
-  } else {
+  if (type == "all") revalidateTag(name);
+  else if (path) revalidateTag(path + "-" + name);
+  else {
     revalidateTag(`${name}-${token32}`);
   }
   console.log("revalidated '", name, "'");

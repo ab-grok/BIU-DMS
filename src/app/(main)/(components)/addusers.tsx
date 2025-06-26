@@ -86,9 +86,9 @@ export default function AddUsers({ height }: { height?: string }) {
         className={`${addUsers.type ? "scale-100" : "scale-0"} bg-tb-row1 ring-main-bg/50 relative flex h-fit max-h-[80%] w-[40%] min-w-[15rem] flex-col items-center rounded-[5px] shadow-2xl ring-2 shadow-black transition-all delay-200 sm:min-w-[25rem]`}
       >
         <header className="bg-main-fg flex h-fit min-h-[4rem] w-full min-w-fit overflow-hidden border-b-2 py-2">
-          <section className="relative flex max-h-full w-[40%] flex-col items-center px-2 select-none">
+          <section className="relative flex max-h-full w-[40%] flex-col justify-center px-2 select-none">
             {" "}
-            <div className={`text-bw/80 flex`}>
+            <div className={`text-bw/80 relative flex`}>
               <span
                 className={`max-w-[7rem] truncate ${dbTb.tb ? "text-bw/60 justify-end text-[7px] md:text-[11px]" : "text-[10px] md:text-[15px]"} h-full`}
               >
@@ -98,7 +98,7 @@ export default function AddUsers({ height }: { height?: string }) {
                 <span className="text-[10px] md:text-[15px]">/{dbTb.tb}</span>
               )}
             </div>
-            <span className="text-bw/60 absolute bottom-0 left-0 text-[10px] md:text-[14px]">
+            <span className="text-bw/60 absolute bottom-0 left-2 text-[10px] md:text-[14px]">
               {" "}
               Add {addUsers.category}
               {addUsers.category == "editors"

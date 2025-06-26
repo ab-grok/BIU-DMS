@@ -50,10 +50,10 @@ export function checkType(t: string) {
   else return "string";
 }
 
-export const createRcSchema = (rcHeader: colSchema[]) => {
+export const createRcSchema = (tbHeader: colSchema[]) => {
   const shape: Record<string, z.ZodTypeAny> = {};
-  // console.log("in createRcSchema, rcHeader: ", rcHeader);
-  rcHeader?.forEach((col) => {
+  // console.log("in createRcSchema, tbHeader: ", tbHeader);
+  tbHeader?.forEach((col) => {
     if (col.colName == "ID") return;
     let validator: z.ZodTypeAny;
     const cT = col.type;

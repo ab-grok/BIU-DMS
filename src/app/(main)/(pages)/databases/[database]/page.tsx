@@ -16,12 +16,12 @@ import AddUsers from "@/app/(main)/(components)/addusers";
 import { useFetchContext } from "../../fetchcontext";
 import ConfirmDialog from "@/app/(main)/(components)/confirmdialog";
 import { useSideContext } from "@/app/(main)/layoutcontext";
+import { TableFiller } from "./(components)/tbfiller";
 
 export default function Database() {
   const currDb = useParams()?.database as string;
   const { isLoading, setIsLoading } = useLoading();
   const { showToolbar } = useSideContext().context;
-
   const { setNotify, notify } = useNotifyContext();
   const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
@@ -107,13 +107,8 @@ export default function Database() {
                   dbName={currDb}
                 />
               ))
-            ) : !(create == "table") ? (
-              <div className="p-6 text-4xl italic">
-                {" "}
-                No tables yet. Create a table
-              </div>
             ) : (
-              <div className="p-6 text-4xl italic"> Creating a table...</div>
+              <TableFiller uData={uData} />
             ))}
         </section>
       </main>

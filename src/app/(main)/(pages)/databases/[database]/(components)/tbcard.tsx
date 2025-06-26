@@ -13,7 +13,7 @@ import { QuickActions } from "../../(components)/quickactions";
 import Marker from "@/components/marker";
 import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
-import { Tb } from "@/lib/actions";
+import { dateAbrev, Tb } from "@/lib/actions";
 import {
   useAddUsers,
   useConfirmDialog,
@@ -28,6 +28,9 @@ type tbType = {
   uData: string;
   dbName: string;
 };
+
+export const tbMeta = ["Author", "Created on", "Last updated", "Editor"];
+
 export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   const router = useRouter();
 
@@ -55,8 +58,8 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     setSelectedTb,
     setCreated,
   } = useSelection();
-  const items = ["Author", "Created on", "Last updated", "Editor"];
-  const TbMeta = [
+
+  const tbMetaVals = [
     [Tb.createdBy?.split("&")[2], Tb.createdBy?.split("&")[1]],
     [dateAbrev(Tb.createdAt)],
     [dateAbrev(Tb.updatedAt)],
@@ -96,14 +99,15 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   }
 
   function handleCardClicked(e: React.UIEvent<HTMLElement>) {
-    selectedTb != tbPath && setSelectedTb(tbPath);
+    selectedTb.length > 1 ||
+      (selectedTb[0] != tbPath && setSelectedTb([tbPath]));
     const trigger = (e.target as HTMLElement).id;
     if (
       // e.target == e.currentTarget ||
       trigger == "viewers" ||
       trigger == "editors"
     ) {
-      tbPath == selectedTb && setCardExpand(!cardExpand);
+      tbPath == selectedTb.join() && setCardExpand(!cardExpand);
     }
   }
 
@@ -113,7 +117,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   //rearrange to {}[]: {dbOrTb:, users:} -- three actions to perform viewers/editors/delete,, will need to filter
   function handleUserSel(id: string) {
     const uPath = `${id}?${dbName}/${Tb.tbName},`;
-    setSelectedTb(tbPath);
+    setSelectedTb([tbPath]);
 
     if (selectedTbUsers?.viewers?.includes(uPath)) {
       setSelectedTbUsers((p) => ({
@@ -153,11 +157,11 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
 
   function requestRole(n: number) {}
 
-  function handleMultiTables() {
+  function selectMultiTables() {
     if (selectedTb?.includes(tbPath)) {
-      setSelectedTb((p) => p.replace(tbPath, ""));
+      setSelectedTb((p) => p.filter((a) => a != tbPath));
     } else {
-      setSelectedTb((p) => p + tbPath);
+      setSelectedTb((p) => [...p, tbPath]);
     }
   }
 
@@ -206,16 +210,6 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
     } else {
       n == 1 ? setExpandusers("edit") : setExpandusers("");
     }
-  }
-
-  function dateAbrev(dStr: string) {
-    const d = new Date(dStr);
-    const dateStr = d?.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-    });
-    return dateStr;
   }
 
   // const views = [
@@ -301,10 +295,8 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             className="bg-bw/10 px-1' flex h-fit min-h-[6rem] w-full items-center gap-x-[1%] rounded-2xl p-0.5 shadow-sm"
           >
             <div className="flex h-full min-w-[50%] flex-col justify-center gap-y-1.5 text-[12px]">
-              {items.map((a, i) => (
-                <TableAttr key={i} hover={metaHover} title={a} i={i + 1}>
-                  <TbIcons i={i + 1} />
-                </TableAttr>
+              {tbMeta.map((a, i) => (
+                <TableAttr key={i} hover={metaHover} title={a} i={i + 1} />
               ))}
             </div>
             <Separator orientation="vertical" className="bg-main-bg/10" />
@@ -313,12 +305,12 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
               onMouseLeave={() => handleMetaHover(0)}
               className="flex h-full min-w-[40%] flex-col justify-center gap-y-1 pt-1"
             >
-              {TbMeta &&
-                TbMeta.map((a, i) => (
+              {tbMetaVals &&
+                tbMetaVals.map((a, i) => (
                   <UserTag
                     key={i + 4}
-                    name={TbMeta[i][0]}
-                    title={TbMeta[i][1]}
+                    name={tbMetaVals[i][0]}
+                    title={tbMetaVals[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
                     cap={15}
                   />
@@ -480,7 +472,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           hoverColor1="blue"
           hoverColor2="green"
           hoverColor4="red"
-          fn1={() => handleMultiTables()}
+          fn1={() => selectMultiTables()}
           fn2={uAccess.edit ? () => handleAddUsers(1) : () => requestRole(1)}
           fn3={uAccess.edit ? () => handleAddUsers(2) : () => requestRole(1)}
           fn4={() =>
@@ -504,7 +496,7 @@ type tableAttr = {
   i: number;
 };
 
-function TableAttr({
+export function TableAttr({
   children,
   title,
   hover,
@@ -538,7 +530,7 @@ function TableAttr({
         {title}:
       </span>
       <span className={`${anim ? iconColor : `text-bw/30`} absolute right-0`}>
-        {children}
+        <TbIcons i={i + 1} />
       </span>
     </div>
   );

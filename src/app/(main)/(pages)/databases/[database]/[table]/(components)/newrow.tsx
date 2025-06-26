@@ -19,15 +19,16 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { hVal, RowItem, wVal } from "./rows";
 import Loading from "@/components/loading";
-import { useFetchContext, rcData } from "@/app/(main)/(pages)/fetchcontext";
+import { useFetchContext, tbRcs } from "@/app/(main)/(pages)/fetchcontext";
 import { deleteTableData, insertTableData } from "@/lib/actions";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
+import { revalidate } from "@/lib/sessions";
 
 type createRcType = {
   nRcScroll: (e: any) => void;
   tbPath: string;
   ref: React.RefObject<HTMLDivElement | null>;
-  thisRc: rcData;
+  thisTb: tbRcs;
   nRc: boolean;
   uData: string;
 };
@@ -52,7 +53,7 @@ export function NewRow({
   nRcScroll,
   tbPath,
   ref,
-  thisRc,
+  thisTb,
   nRc,
   uData,
 }: createRcType) {
@@ -65,11 +66,11 @@ export function NewRow({
   const { rcSize } = useRcConfig();
   const { setNotify } = useNotifyContext();
   const uniqueCols: { col: string; key: "PRIMARY" | "UNIQUE" }[] = [];
-  const formSchema = createRcSchema(thisRc?.rcHeader);
+  const formSchema = createRcSchema(thisTb?.tbHeader);
   type formType = z.infer<typeof formSchema>;
 
   const defaultValues = useMemo(() => {
-    return thisRc?.rcHeader?.reduce(
+    return thisTb?.tbHeader?.reduce(
       (acc, col) => {
         if (col.colName != "ID") {
           let defVal: any;
@@ -86,10 +87,10 @@ export function NewRow({
       },
       {} as Record<string, any>,
     );
-  }, [JSON.stringify(thisRc?.rcHeader)]);
+  }, [JSON.stringify(thisTb?.tbHeader)]);
 
   useEffect(() => {
-    thisRc?.rcHeader?.forEach((a, i) => {
+    thisTb?.tbHeader?.forEach((a, i) => {
       if (a.keys?.includes("PRIMARY"))
         uniqueCols.push({ col: a.colName, key: "PRIMARY" });
       else if (a.keys?.includes("UNIQUE"))
@@ -111,9 +112,9 @@ export function NewRow({
     let uniqueFound: { col: string; index: number; key: string } | null = null; //using its index. Will use to point user to entry
     let where = "";
     for (const { col, key } of uniqueCols) {
-      const index = thisRc.rcRows?.findIndex((a, i) => {
+      const index = thisTb.tbRows?.findIndex((a, i) => {
         if (a[col] == rowData[col]) {
-          where = JSON.stringify(Object.entries(thisRc.rcRows[i]).slice(0, 2));
+          where = JSON.stringify(Object.entries(thisTb.tbRows[i]).slice(0, 2));
         }
         return a[col] == rowData[col];
       });
@@ -137,6 +138,7 @@ export function NewRow({
     }
 
     await insertRow([values]);
+    revalidate("tbData", "path");
     setIsLoading((p) => p.replace("nRc", ""));
   }
 
@@ -152,6 +154,7 @@ export function NewRow({
       setNotify({ danger: true, message: error });
       return;
     }
+    revalidate("tbData", "path", tbPath);
     setCreated((p) => ({ ...p, rh: JSON.stringify(Object.values(colVals)) }));
     form.reset();
   }
@@ -189,7 +192,7 @@ export function NewRow({
           onSubmit={form.handleSubmit(nRcSubmitted)}
           className="flex h-full w-fit min-w-full items-center pl-[0.35rem]"
         >
-          {thisRc?.rcHeader?.map((col, i) => {
+          {thisTb?.tbHeader?.map((col, i) => {
             const err = !!form.formState.errors[col.colName];
             if (col.colName != "ID")
               return (

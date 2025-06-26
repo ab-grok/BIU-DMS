@@ -8,13 +8,13 @@ type tbArr = {
   tbList: Tb[];
 }[];
 
-export type rcData = {
+export type tbRcs = {
   tbPath: string; //dbName/tbName
-  rcRows: rowData[];
-  rcHeader: colSchema[];
+  tbRows: rowData[];
+  tbHeader: colSchema[];
 };
 
-type rcType = rcData[];
+type rcType = tbRcs[];
 
 export type uAccess = {
   tb: { tbPath: string; edit: boolean }[];

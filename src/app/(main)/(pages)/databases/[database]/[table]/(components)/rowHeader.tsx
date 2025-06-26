@@ -14,25 +14,26 @@ import { useRcConfig } from "@/app/(main)/layoutcontext";
 import { wVal } from "./rows";
 import { useButtonAnim } from "@/components/count";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
-import { rcData } from "@/app/(main)/(pages)/fetchcontext";
+import { tbRcs } from "@/app/(main)/(pages)/fetchcontext";
+import { revalidate } from "@/lib/sessions";
 
 type rowHeader = {
   tbPath: string;
   ref: React.RefObject<HTMLDivElement | null>;
   canEdit: boolean;
   rhScroll: (e: any) => void;
-  thisRc: rcData;
+  thisTb: tbRcs;
 };
 
 export function RowHeader({
   tbPath,
-  thisRc,
+  thisTb,
   ref,
   canEdit,
   rhScroll,
 }: rowHeader) {
-  // const header = React.useMemo(()=>{},[JSON.stringify(thisRc.rcHeader)])
-  console.log("in rcHeader, thisRc: ", thisRc);
+  // const header = React.useMemo(()=>{},[JSON.stringify(thisTb.tbHeader)])
+  console.log("in tbHeader, thisTb: ", thisTb);
   const { hideQA } = useSelection();
   const { rcSize } = useRcConfig();
   const { pressAnim, setPressAnim } = useButtonAnim();
@@ -67,8 +68,8 @@ export function RowHeader({
           </div>
         </div>
         <div className="flex h-full min-w-fit pl-[2.35rem]">
-          {thisRc?.rcHeader &&
-            thisRc?.rcHeader?.map((a, i) => {
+          {thisTb?.tbHeader &&
+            thisTb?.tbHeader?.map((a, i) => {
               if (a.colName != "ID")
                 return (
                   <HeaderItem
@@ -81,6 +82,7 @@ export function RowHeader({
                       isDefault(a.colName) ? "DEFAULT" : "",
                     ].filter(Boolean)}
                     i={i}
+                    tbPath={tbPath}
                   />
                 );
             })}
@@ -103,10 +105,12 @@ type headerItem = {
   type: string;
   keys: string[]; //["PRIMARY KEY", "UNIQUE"]
   i: number;
+  tbPath: string;
 };
 
-function HeaderItem({ name, type, keys, i }: headerItem) {
-  const [colClicked, setColClicked] = React.useState(false);
+function HeaderItem({ name, type, keys, i, tbPath }: headerItem) {
+  const { orderBy, setOrderBy } = useSelection();
+
   const { rcSize } = useRcConfig();
 
   const t = (
@@ -133,6 +137,19 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
     if (a.includes("PRIMARY")) return 0;
     if (a.includes("DEFAULT")) return 4;
     else return 2;
+  }
+
+  async function orderClicked() {
+    revalidate("tbData", "path", tbPath);
+    setOrderBy((p) => ({
+      ...p,
+      rc:
+        p.rc.order == "desc"
+          ? { col: name, order: "asc" }
+          : { col: name, order: "desc" },
+    }));
+    //trigger rc dependency
+    //revalidate tbpath-tbData
   }
 
   return (
@@ -167,12 +184,12 @@ function HeaderItem({ name, type, keys, i }: headerItem) {
         </div>
       </section>
       <section
-        title={`Order ${colClicked ? "descending" : "ascending"}`}
-        onClick={() => setColClicked(!colClicked)}
+        title={`Order ${orderBy.rc.order == "desc" ? "descending" : "ascending"}`}
+        onClick={orderClicked}
         className="group/se hover:bg-bw/1 flex h-full w-[2rem] cursor-pointer flex-col items-center rounded-xl"
       >
         <ChevronDown
-          className={`group-hover/se:bg-bw/3 opacity-0 group-hover/ri:opacity-100 ${colClicked && "rotate-180"} rounded-xl`}
+          className={`group-hover/se:bg-bw/3 opacity-0 group-hover/ri:opacity-100 ${orderBy.rc.order == "desc" && "rotate-180"} rounded-xl`}
         />
         <RcIcon type={rType[tNum]} name={name} />
       </section>

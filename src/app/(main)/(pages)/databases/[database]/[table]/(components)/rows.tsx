@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ControllerRenderProps } from "react-hook-form";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
-import { rcData, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
+import { tbRcs, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
 import { deleteTableData, updateTableData } from "@/lib/actions";
 import UserTag from "@/components/usertag";
@@ -31,7 +31,7 @@ type rowType = {
   ref: React.RefObject<HTMLDivElement | null>;
   canEdit: boolean;
   nRc: boolean;
-  thisRc: rcData;
+  thisTb: tbRcs;
   uData: string;
 };
 
@@ -56,7 +56,7 @@ export function wVal(rcSize: rcDim) {
 }
 
 export function Rows({
-  thisRc,
+  thisTb,
   scrolling,
   tbPath,
   ref,
@@ -66,7 +66,7 @@ export function Rows({
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
   const { selectedRc, setSelectedRc } = useSelection();
-  const rcSchema = thisRc?.rcHeader?.reduce(
+  const rcSchema = thisTb?.tbHeader?.reduce(
     (agg, col) => {
       col.colName != "ID" && (agg[col.colName] = col.type);
       return agg;
@@ -85,21 +85,21 @@ export function Rows({
   function rcClicked(thisRow: string) {
     setSelectedRc((p) => {
       let rcI = 0;
-      const thisRc = p?.find((a, i) => {
+      const thisTb = p?.find((a, i) => {
         rcI = i;
         return a.path == tbPath;
       });
-      if (thisRc) {
-        if (thisRc.rows.length > 1 || !thisRc.rows.includes(thisRow)) {
-          thisRc.rows = thisRc.rows.filter((p) => p !== thisRow);
+      if (thisTb) {
+        if (thisTb.rows.length > 1 || !thisTb.rows.includes(thisRow)) {
+          thisTb.rows = thisTb.rows.filter((p) => p !== thisRow);
           return [
             ...p.filter((r) => r.path !== tbPath),
-            { ...thisRc, rows: [thisRow] },
+            { ...thisTb, rows: [thisRow] },
           ];
         } else
           return [
             ...p.filter((r) => r.path !== tbPath),
-            { ...thisRc, rows: [] },
+            { ...thisTb, rows: [] },
           ];
       } else {
         return [...p, { path: tbPath, rows: [thisRow] }];
@@ -110,21 +110,21 @@ export function Rows({
   function rcSelected(thisRow: string) {
     setSelectedRc((p) => {
       let rcI = 0;
-      const thisRc = p?.find((a, i) => {
+      const thisTb = p?.find((a, i) => {
         a.path == tbPath && (rcI = i);
         return a.path == tbPath;
       });
-      if (thisRc) {
-        if (thisRc.rows.includes(thisRow)) {
+      if (thisTb) {
+        if (thisTb.rows.includes(thisRow)) {
           return [
             ...p.slice(0, rcI),
-            { ...thisRc, rows: thisRc.rows.filter((a) => a !== thisRow) },
+            { ...thisTb, rows: thisTb.rows.filter((a) => a !== thisRow) },
             ...p.slice(rcI + 1),
           ].filter(Boolean);
         } else {
           return [
             ...(p || []),
-            { ...thisRc, rows: [...thisRc.rows, thisRow] },
+            { ...thisTb, rows: [...thisTb.rows, thisRow] },
           ].filter(Boolean);
         }
       }
@@ -139,8 +139,8 @@ export function Rows({
       ref={ref}
       className={`${nRc && "mt-[5rem]"} relative flex h-full flex-col overflow-auto transition-all`}
     >
-      {thisRc?.rcRows && thisRc.rcRows.length ? (
-        thisRc?.rcRows?.map((a, i) => {
+      {thisTb?.tbRows && thisTb.tbRows.length ? (
+        thisTb?.tbRows?.map((a, i) => {
           const thisRow = JSON.stringify(Object.entries(a).slice(0, 2));
           return (
             <div
@@ -210,7 +210,7 @@ export function Rows({
           <div
             className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
           >
-            {thisRc?.rcHeader?.map((b, j) => {
+            {thisTb?.tbHeader?.map((b, j) => {
               if (b.colName !== "ID")
                 return (
                   <RowItem

@@ -12,17 +12,17 @@ import {
   rowData,
 } from "@/lib/actions";
 import { useLoading, useNotifyContext } from "@/app/dialogcontext";
-import { rcData, useFetchContext } from "../../../fetchcontext";
+import { tbRcs, useFetchContext } from "../../../fetchcontext";
 import { Rows } from "./(components)/rows";
 import { NewRow } from "./(components)/newrow";
 import { useSideContext } from "@/app/(main)/layoutcontext";
 
 export default function TableRows() {
-  const { created, create } = useSelection();
   const { database: dbName, table: tbName } = useParams() as Record<
     string,
     string
   >;
+  const { created, create, orderBy } = useSelection();
   const tbPath = dbName + "/" + tbName;
   const { setNotify } = useNotifyContext();
   const { rc, setRc, setUAccess, uAccess, uData } = useFetchContext();
@@ -32,7 +32,7 @@ export default function TableRows() {
   const [canEdit, setCanEdit] = React.useState(false);
   const nrcRef = React.useRef<HTMLDivElement | null>(null);
   const { showToolbar } = useSideContext().context;
-  const thisRc = rc.find((a) => a.tbPath == tbPath);
+  const thisTb = rc.find((a) => a.tbPath == tbPath);
 
   console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
 
@@ -40,7 +40,7 @@ export default function TableRows() {
     (async () => {
       setIsLoading((p) => p + "tbData");
       const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
-      const { tbData, error } = await getTableData(dbName, tbName);
+      const { tbData, error } = await getTableData(dbName, tbName, orderBy.rc);
       console.log("in getTb rowHeader currTb,: ", tbPath);
       // console.log("in [table] got tbSchema: ", tbSchema, " . Error1: ", error1);
       // console.log("in [table] got tbData: ", tbData, " . Error: ", error);
@@ -49,31 +49,31 @@ export default function TableRows() {
         setNotify({ message: error1 || error, danger: true });
         return;
       }
-      let currTb: rcData | undefined = rc.find((a) => (a.tbPath = tbPath));
+      let currTb: tbRcs | undefined = rc.find((a) => (a.tbPath = tbPath));
       const placeTb = {
         tbPath: tbPath,
-        rcRows: [] as rowData[],
-        rcHeader: [] as colSchema[],
+        tbRows: [] as rowData[],
+        tbHeader: [] as colSchema[],
       };
       setRc((p) => {
-        let updRc = [] as rcData[];
+        let updRc = [] as tbRcs[];
         let rcFound = false;
         for (const [i, a] of p.entries()) {
           if (a.tbPath == tbPath) {
             rcFound = true;
-            if (a.rcHeader.length != tbSchema?.length) {
+            if (a.tbHeader.length != tbSchema?.length) {
               currTb = {
                 ...(currTb || placeTb),
-                rcHeader: tbSchema as colSchema[],
+                tbHeader: tbSchema as colSchema[],
               };
               updRc = [...p.filter((rc) => rc.tbPath != tbPath), currTb].filter(
                 Boolean,
               );
             }
-            if (a.rcRows.length != tbData?.length) {
+            if (a.tbRows.length != tbData?.length) {
               currTb = {
                 ...(currTb || placeTb),
-                rcRows: tbData as rowData[],
+                tbRows: tbData as rowData[],
               };
               updRc = [...p.filter((rc) => rc.tbPath != tbPath), currTb].filter(
                 Boolean,
@@ -84,10 +84,10 @@ export default function TableRows() {
         if (!rcFound) {
           currTb = {
             ...(currTb || placeTb),
-            rcRows: tbData as rowData[],
-            rcHeader: tbSchema as colSchema[],
+            tbRows: tbData as rowData[],
+            tbHeader: tbSchema as colSchema[],
           };
-          updRc = [...p, { ...(currTb as rcData) }].filter(Boolean);
+          updRc = [...p, { ...(currTb as tbRcs) }].filter(Boolean);
         }
         if (updRc.length) return updRc;
         else return p;
@@ -95,7 +95,7 @@ export default function TableRows() {
       console.log("in [table] got past setRc, currTb: ", currTb);
       setIsLoading((p) => p.replaceAll("tbData", ""));
     })();
-  }, [created.rc, created.rh]);
+  }, [created.rc, created.rh, JSON.stringify(orderBy.rc)]);
 
   React.useEffect(() => {
     const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
@@ -140,7 +140,7 @@ export default function TableRows() {
           canEdit={canEdit}
           tbPath={tbPath}
           ref={headerRef}
-          thisRc={thisRc as rcData}
+          thisTb={thisTb as tbRcs}
         />
       </header>
       <main
@@ -152,7 +152,7 @@ export default function TableRows() {
             nRcScroll={scrolling}
             tbPath={tbPath}
             ref={nrcRef}
-            thisRc={thisRc as rcData}
+            thisTb={thisTb as tbRcs}
             nRc={create == "record"}
             uData={uData}
           />
@@ -163,7 +163,7 @@ export default function TableRows() {
           scrolling={scrolling}
           ref={rowRef}
           nRc={create == "record"}
-          thisRc={thisRc as rcData}
+          thisTb={thisTb as tbRcs}
           uData={uData}
         />
       </main>

@@ -188,7 +188,7 @@ type getTableData = {
 export async function getTableData(
   dbName: string,
   tbName: string,
-  orderBy?: string,
+  orderBy?: { col: string; order: string },
   where?: string,
 ): Promise<getTableData> {
   const { token32 } = await getCookie();
@@ -211,8 +211,8 @@ export async function getTableData(
         return { error: e.customMessage || "Something went wrong!" };
       }
     },
-    [`${dbName}-${tbName}-tbData`],
-    { tags: ["tbData", `${dbName}-${tbName}-tbData`], revalidate: 36000 },
+    [`${dbName}/${tbName}-tbData`],
+    { tags: ["tbData", `${dbName}/${tbName}-tbData`], revalidate: 36000 },
   );
   return await tbData();
 }
@@ -361,6 +361,16 @@ export async function timeAgo(iso: string): Promise<string> {
   else if (hours > 0) return `${hours}h`;
   else if (minutes > 0) return `${minutes}min`;
   return `${seconds}s`;
+}
+
+export function dateAbrev(dStr?: string) {
+  const d = new Date(dStr || Date.now());
+  const dateStr = d?.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+  });
+  return dateStr;
 }
 
 // async function getUserAccess(db?: string, tb?: string): Promise<number> {

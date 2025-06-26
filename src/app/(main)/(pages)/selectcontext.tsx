@@ -38,6 +38,9 @@ type selectUsers = {
 };
 
 type created = { db: string; tb: string; rc: string; rh: string };
+export type orderType = { db: orderObj; tb: orderObj; rc: orderObj }; //col&$asc
+const orderObj = { col: "", order: "asc" };
+type orderObj = { col: string; order: string };
 
 export type selectedRc = {
   path: string; //dbName/tbName
@@ -53,14 +56,16 @@ type selections = {
   setViews: Dispatch<React.SetStateAction<views>>; //count of viewers seen on the users_page header
   edits: views;
   setEdits: Dispatch<React.SetStateAction<views>>;
-  selectedTb: string;
-  setSelectedTb: Dispatch<React.SetStateAction<string>>;
+  selectedTb: string[];
+  setSelectedTb: Dispatch<React.SetStateAction<string[]>>;
   selectedRc: selectedRc[];
   setSelectedRc: Dispatch<React.SetStateAction<selectedRc[]>>;
   create: string;
   setCreate: Dispatch<React.SetStateAction<string>>; //db/tb
   created: created;
   setCreated: Dispatch<React.SetStateAction<created>>; // for retriggering effects (can be used for )
+  setOrderBy: Dispatch<React.SetStateAction<orderType>>; //
+  orderBy: orderType;
   hideQA: boolean;
   setHideQA: Dispatch<React.SetStateAction<boolean>>;
   createTbMeta: createTbMeta;
@@ -77,10 +82,15 @@ export default function SelectionContext({
   children: React.ReactNode;
 }) {
   // const [multiSelectedTb, setMultiSelectedTb] = useState<string>("");
-  const [selectedTb, setSelectedTb] = useState<string>("");
+  const [selectedTb, setSelectedTb] = useState([] as string[]);
   const [selectedRc, setSelectedRc] = useState([] as selectedRc[]);
   const [create, setCreate] = useState<string>("");
   const [created, setCreated] = useState({ db: "", tb: "", rc: "", rh: "" });
+  const [orderBy, setOrderBy] = useState({
+    db: orderObj,
+    tb: orderObj,
+    rc: orderObj,
+  });
   const [hideQA, setHideQA] = useState(false);
   const [createTbMeta, setCreateTbMeta] = useState({} as createTbMeta);
   const [createDbMeta, setCreateDbMeta] = useState({} as createDbMeta);
@@ -119,6 +129,8 @@ export default function SelectionContext({
         setSelectedRc,
         hideQA,
         setHideQA,
+        orderBy,
+        setOrderBy,
       }}
     >
       {children}

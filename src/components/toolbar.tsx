@@ -25,27 +25,30 @@ export function Toolbar() {
   const [pressedAllTb, setPressedAllTb] = useState(false);
   const [count, setCount] = useState(0);
   const { pressAnim, setPressAnim } = useButtonAnim();
-  const { allTbs } = useFetchContext();
   const { showToolbar } = useSideContext().context;
+  const { rc, setRc, allTbs } = useFetchContext();
   const {
     database: dbName,
     table: tbName,
     record: rcName,
   } = useParams() as Record<string, string>;
-  const { create, setCreate, selectedTb, setSelectedTb, selectedRc } =
-    useSelection();
+  const {
+    create,
+    setCreate,
+    selectedTb,
+    setSelectedTb,
+    selectedRc,
+    setSelectedRc,
+  } = useSelection();
   const router = useRouter();
-  const currRc = selectedRc?.find((a) => a.path == dbName + "/" + tbName);
+  const currSelRc = selectedRc?.find((a) => a.path == dbName + "/" + tbName);
 
   function selAll() {
     setPressAnim("sA");
     if (page.record) {
       //??
-    } else if (page.tb) {
-    } //select all rc
-    else if (page.db) {
-      selectAllTb();
-    }
+    } else if (page.tb) selectAllRc();
+    else if (page.db) selectAllTb();
   }
 
   function reRoute(n: number) {
@@ -76,22 +79,39 @@ export function Toolbar() {
     }
   }
 
-  async function selectAllTb() {
+  function selectAllTb() {
     //tbPath = dbName/tbName,
     if (!pressedAllTb) {
       for (const { dbName, tbList } of allTbs) {
         if (page.db == dbName) {
           tbList.forEach((a) => {
-            const tbPath = dbName + "/" + a.tbName + ",";
+            const tbPath = dbName + "/" + a.tbName;
             setSelectedTb((p) => {
               if (p.includes(tbPath)) return p;
-              else return p + tbPath;
+              else return [...p, tbPath];
             });
           });
         }
       }
-      setPressedAllTb(!pressedAllTb);
-    } else setSelectedTb("");
+    } else setSelectedTb([]);
+    setPressedAllTb(!pressedAllTb);
+  }
+
+  function selectAllRc() {
+    const tbPath = `${dbName}/${tbName}`;
+    if (!pressedAllTb) {
+      const currTb = rc.find((a) => a.tbPath == tbPath);
+      setSelectedRc((p) => [
+        ...p.filter((a) => a.path != tbPath),
+        {
+          path: tbPath,
+          rows: currTb?.tbRows?.map((a) =>
+            JSON.stringify(Object.entries(a).slice(0, 2)),
+          ) || [""],
+        },
+      ]);
+    } else setSelectedRc((p) => [...p.filter((a) => a.path != tbPath)]);
+    setPressedAllTb(!pressedAllTb);
   }
 
   function countTb() {}
@@ -107,14 +127,14 @@ export function Toolbar() {
 
   useEffect(() => {
     if (page.tb) {
-      if (currRc && currRc.rows?.length > 1) setCount(currRc.rows.length);
+      if (currSelRc && currSelRc.rows?.length > 1)
+        setCount(currSelRc.rows.length);
     } else {
       if (page.db) {
-        const tbCount = selectedTb.split(",").filter(Boolean).length;
-        if (tbCount > 1) setCount(tbCount);
+        if (selectedTb.length > 1) setCount(selectedTb.length);
       }
     }
-  }, [currRc?.rows?.length, selectedTb]);
+  }, [currSelRc?.rows?.length, selectedTb]);
 
   return (
     <header

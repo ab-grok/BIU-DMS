@@ -77,7 +77,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   // }
 
   function handleCardClicked(e: React.MouseEvent<HTMLElement>) {
-    !selectedTb.includes("createNew") && setSelectedTb("createNew");
+    !selectedTb.includes("createNew") && setSelectedTb(["createNew"]);
   }
 
   const form = useForm<createTbType>({
