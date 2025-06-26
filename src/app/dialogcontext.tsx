@@ -11,7 +11,7 @@ import NotificationBar from "@/components/notificationbar";
 
 //loading context
 type dialogTypes = {
-  authPath: number; //signup, login
+  authPath: number; //signup-0, login-1
   setAuthPath: Dispatch<SetStateAction<number>>;
   isLoading: string; //comma separated string including all loading components
   setIsLoading: Dispatch<SetStateAction<string>>;

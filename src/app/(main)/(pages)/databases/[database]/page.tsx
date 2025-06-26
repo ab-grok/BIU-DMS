@@ -3,12 +3,18 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import TableCard from "./(components)/tbcard";
 import Loading from "@/components/loading";
-import { useAddUsers, useLoading, useNotifyContext } from "@/app/dialogcontext";
+import {
+  useAddUsers,
+  useConfirmDialog,
+  useLoading,
+  useNotifyContext,
+} from "@/app/dialogcontext";
 import { listTables, Tb, ListTbsType } from "@/lib/actions";
 import CreateTb from "./(components)/createtb";
 import { useSelection } from "../../selectcontext";
 import AddUsers from "@/app/(main)/(components)/addusers";
 import { useFetchContext } from "../../fetchcontext";
+import ConfirmDialog from "@/app/(main)/(components)/confirmdialog";
 
 export default function Database() {
   const currDb = useParams()?.database as string;
@@ -17,6 +23,7 @@ export default function Database() {
   const { create, setCreated, created } = useSelection();
   const { addUsers } = useAddUsers();
   const { allTbs, setAllTbs, uData } = useFetchContext();
+  const { confirmDialog } = useConfirmDialog();
   const currTbs = useMemo(() => {
     // using as condition to show alternative to list tbs. dbName should be defined even when tblist is []
     return allTbs.find((t) => t.dbName == currDb);
@@ -81,8 +88,9 @@ export default function Database() {
       <section
         className={`${create == "table" ? "mt-[14.2rem] h-[56.6%]" : "h-[92.4%]"} w-full overflow-y-auto scroll-smooth transition-all`}
       >
+        {confirmDialog.type == "table" && <ConfirmDialog />}
         {currTbs &&
-          (currTbs?.tbList?.length ? (
+          (currTbs.tbList?.length ? (
             currTbs.tbList.map((a, i) => (
               <TableCard
                 key={i}
