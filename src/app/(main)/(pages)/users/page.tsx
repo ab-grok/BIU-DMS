@@ -31,7 +31,7 @@ export default function AllUsers() {
   const { isLoading, setIsLoading } = useLoading();
 
   return (
-    <div className="relative flex h-[98%] w-full flex-col items-center">
+    <div className="relative flex h-[100%] w-full flex-col items-center">
       <header className="scrollbar-custom mb-1 flex h-[3.4rem] w-full overflow-x-auto rounded-sm border-b-2 p-0.5 select-none">
         <div className="bg-row-bg1 h-full w-[2rem]"></div>
         <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[0.5rem] font-semibold">
@@ -98,7 +98,7 @@ export default function AllUsers() {
           </div>
         </section>
       </header>
-      <main className="relative flex h-[99%] w-full flex-col overflow-auto">
+      <main className="relative flex h-[96%] w-full flex-col overflow-auto">
         {users?.map((a, i) => (
           <User
             i={i + 1}
