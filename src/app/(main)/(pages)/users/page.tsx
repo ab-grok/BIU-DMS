@@ -33,6 +33,7 @@ export default function AllUsers() {
   return (
     <div className="relative flex h-[98%] w-full flex-col items-center">
       <header className="scrollbar-custom mb-1 flex h-[3.4rem] w-full items-stretch overflow-x-auto rounded-sm border-b-2 p-0.5 select-none">
+        <div className="h-full w-full"></div>
         <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[2.5rem] font-semibold">
           Users
         </section>
@@ -185,7 +186,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
     <div
       onMouseEnter={() => handleHover(i + 1)}
       onMouseLeave={() => handleHover(0)}
-      className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} relative mb-1 flex h-fit min-w-full bg-cyan-900`}
+      className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} relative mb-1 flex h-fit min-w-full items-stretch bg-cyan-900`}
     >
       <Index
         className="sticky left-0 mr-2 h-full w-[2rem] self-center backdrop-blur-3xl"
