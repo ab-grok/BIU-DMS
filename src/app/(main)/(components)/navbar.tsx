@@ -38,7 +38,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className="bg-nav-grad ring-main-bg/60 absolute top-0.5 z-5 ml-[1rem] flex h-[3rem] w-[90%] flex-none items-center justify-between gap-1 self-center overflow-hidden rounded-[5px] shadow-lg ring-2 shadow-black">
+    <div className="bg-nav-grad ring-main-bg/60 absolute top-0.5 z-5 ml-[0.7rem] flex h-[3rem] w-[90%] flex-none items-center justify-between gap-1 self-center overflow-hidden rounded-[5px] shadow-lg ring-2 shadow-black">
       <div className="bg-bw/10 flex h-full w-1/3 flex-none items-center rounded-xs px-1">
         {" "}
         <span
