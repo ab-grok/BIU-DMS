@@ -22,6 +22,7 @@ export default function AllUsers() {
         console.log("couldnt get users");
         return;
       }
+      console.log("in users, allUsers: ", allUsers);
       setUsers(allUsers);
       setIsLoading((p) => p.replace("users,", ""));
     })();
