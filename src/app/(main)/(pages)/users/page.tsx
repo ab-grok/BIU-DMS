@@ -98,7 +98,7 @@ export default function AllUsers() {
           </div>
         </section>
       </header>
-      <main className="relative flex h-[96%] w-full flex-col overflow-auto">
+      <main className="relative flex h-[99%] w-full flex-col overflow-auto">
         {users?.map((a, i) => (
           <User
             i={i + 1}
@@ -208,7 +208,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           <span>Tables: {created.tb?.length || 0}</span>
         </div>
       </section>
-      <Separator orientation="vertical" className="bg-main-bg" />
+      <Separator orientation="vertical" className="bg-main-bg/50" />
       <section
         id="views"
         className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[30.5%] min-w-[12rem] flex-none rounded-[5px] p-1"
@@ -236,7 +236,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           ))}
         </div>
       </section>
-      <Separator orientation="vertical" className="bg-main-bg" />
+      <Separator orientation="vertical" className="bg-main-bg/50" />
       <section
         id="edits"
         className="bg-tb-row1/30 flex h-full min-h-[2.5rem] w-[30%] min-w-[12rem] rounded-[5px] p-1"
