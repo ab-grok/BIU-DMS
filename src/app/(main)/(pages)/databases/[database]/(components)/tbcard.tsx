@@ -13,7 +13,7 @@ import { QuickActions } from "../../(components)/quickactions";
 import Marker from "@/components/marker";
 import { useSelection } from "../../../selectcontext";
 import { useRouter } from "next/navigation";
-import { dateAbrev, Tb } from "@/lib/actions";
+import { Tb } from "@/lib/actions";
 import {
   useAddUsers,
   useConfirmDialog,
@@ -30,6 +30,15 @@ type tbType = {
 };
 
 export const tbMeta = ["Author", "Created on", "Last updated", "Editor"];
+export function dateAbrev(dStr?: string) {
+  const d = new Date(dStr || Date.now());
+  const dateStr = d?.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+  });
+  return dateStr;
+}
 
 export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   const router = useRouter();

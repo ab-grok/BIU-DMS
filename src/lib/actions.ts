@@ -363,16 +363,6 @@ export async function timeAgo(iso: string): Promise<string> {
   return `${seconds}s`;
 }
 
-export async function dateAbrev(dStr?: string) {
-  const d = new Date(dStr || Date.now());
-  const dateStr = d?.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "2-digit",
-  });
-  return dateStr;
-}
-
 // async function getUserAccess(db?: string, tb?: string): Promise<number> {
 //   //0 - none, 1 - view, 2 - edit
 //   const {userId, level} = (await validateSession())?.userId;
