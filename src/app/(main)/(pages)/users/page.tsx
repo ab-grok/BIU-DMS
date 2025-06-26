@@ -188,7 +188,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} relative mb-1 flex h-fit min-w-full bg-cyan-900`}
     >
       <Index
-        className="sticky left-0 mr-2 w-[2rem] self-center backdrop-blur-3xl"
+        className="sticky left-0 mr-2 h-full w-[2rem] self-center backdrop-blur-3xl"
         size={6}
         i={i}
       />
