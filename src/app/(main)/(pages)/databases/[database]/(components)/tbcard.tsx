@@ -496,7 +496,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
               head: "Are you sure you want to",
               name: Tb.tbName,
               confirmFn: deleteTable,
-            });
+            })
           }
         />
       </section>
