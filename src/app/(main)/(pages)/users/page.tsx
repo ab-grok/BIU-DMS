@@ -32,8 +32,8 @@ export default function AllUsers() {
 
   return (
     <div className="relative flex h-[98%] w-full flex-col items-center">
-      <header className="scrollbar-custom mb-1 flex h-[3.4rem] w-full overflow-x-auto rounded-sm border-b-2 p-0.5 select-none">
-        <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[2.5rem] font-bold">
+      <header className="scrollbar-custom mb-1 flex h-[3.4rem] w-full items-stretch overflow-x-auto rounded-sm border-b-2 p-0.5 select-none">
+        <section className="bg-row-bg2 text-bw/70 flex w-[40%] min-w-[12rem] items-center pl-[2.5rem] font-semibold">
           Users
         </section>
         <section className="bg-row-bg1 relative flex h-full w-[30%] min-w-[12rem] flex-none flex-col">
@@ -97,7 +97,7 @@ export default function AllUsers() {
           </div>
         </section>
       </header>
-      <main className="relative h-[93%] w-full overflow-auto">
+      <main className="relative flex h-[93%] w-full flex-col overflow-auto">
         {users?.map((a, i) => (
           <User
             i={i + 1}
