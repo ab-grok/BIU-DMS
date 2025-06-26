@@ -42,7 +42,7 @@ export default function AllUsers() {
             <Index
               i={viewsCount.tb + viewsCount.db}
               size={4}
-              className="text-bw/50 bg-transparent text-xs"
+              className="text-bw/50 sticky bg-transparent text-xs"
             />
           </span>
           <div className="text-bw/50 flex w-full flex-none text-sm">
@@ -51,7 +51,7 @@ export default function AllUsers() {
               <Index
                 i={viewsCount.db}
                 size={4}
-                className="text-bw/50 bg-transparent text-xs"
+                className="text-bw/50 sticky bg-transparent text-xs"
               />{" "}
             </span>
             <Separator orientation="vertical" />
@@ -60,7 +60,7 @@ export default function AllUsers() {
               <Index
                 i={viewsCount.tb}
                 size={4}
-                className="text-bw/50 bg-transparent text-xs"
+                className="text-bw/50 sticky bg-transparent text-xs"
               />{" "}
             </span>
           </div>
@@ -72,7 +72,7 @@ export default function AllUsers() {
             <Index
               i={editsCount.db + editsCount.tb}
               size={4}
-              className="text-bw/50 bg-transparent text-xs"
+              className="text-bw/50 sticky bg-transparent text-xs"
             />
           </span>
           <div className="text-bw/50 flex w-full text-sm">
@@ -81,7 +81,7 @@ export default function AllUsers() {
               <Index
                 i={editsCount.db}
                 size={4}
-                className="text-bw/50 bg-transparent text-xs"
+                className="text-bw/50 sticky bg-transparent text-xs"
               />
             </span>
             <Separator orientation="vertical" />
@@ -90,7 +90,7 @@ export default function AllUsers() {
               <Index
                 i={editsCount.tb}
                 size={4}
-                className="text-bw/50 bg-transparent text-xs"
+                className="text-bw/50 sticky bg-transparent text-xs"
               />
             </span>
           </div>
@@ -187,7 +187,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       className={`${i % 2 == 0 ? "bg-row-bg2" : "bg-row-bg1"} relative mb-1 flex h-fit min-w-full bg-cyan-900`}
     >
       <Index
-        className="bg-bw/30 sticky left-0 mr-2 w-[2rem] self-center backdrop-blur-3xl"
+        className="sticky left-0 mr-2 w-[2rem] self-center backdrop-blur-3xl"
         size={6}
         i={i}
       />
