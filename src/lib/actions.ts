@@ -241,9 +241,8 @@ export async function updateTableData(
   col: string,
   val: any,
 ) {
-  const pathArr = tbPath.split("/");
-  const dbName = tbPath[0];
-  const tbName = tbPath[1];
+  const dbName = tbPath.split("/")[0];
+  const tbName = tbPath.split("/")[1];
   const whereArr = JSON.parse(where);
   try {
     const changed = await updateTbData(dbName, tbName, whereArr, col, val);

@@ -383,11 +383,11 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     getId: true,
   });
   if (!userId) {
-    console.log("getUserAccess, Couldn't get session");
+    console.log("Error: getUserAccess, Couldn't get session");
     return none;
   }
   if (!tbName && !(await checkDb(dbName))) {
-    console.log("getUserAccess, Db not found");
+    console.log("Error: getUserAccess, Db not found");
     throw { customMessage: "Db not found" };
   }
   if (tbName && !(await checkTb({ dbName, tbName }))) {
@@ -847,6 +847,14 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const { token32 } = await getCookie();
   const { edit, udata } = getUserAccess({ dbName, tbName, token32 });
   if (!edit) throw { customMessage: "Unauthorized" };
+  console.log(
+    "in updateTbData, whereArr: ",
+    whereArr,
+    " col: ",
+    col,
+    " val: ",
+    val,
+  );
 
   const col1 = whereArr[0][0];
   const val1 = whereArr[0][1];

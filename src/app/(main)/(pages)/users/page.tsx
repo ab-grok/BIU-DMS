@@ -195,7 +195,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       />
       <section
         title={`Go to ${user.title + " " + user.firstname + "'s"} page`}
-        className="flex w-[38%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
+        className="flex w-[39%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
       >
         <div className="space-x-1 hover:underline">
           <span> {user.title} </span>
