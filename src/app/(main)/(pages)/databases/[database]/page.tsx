@@ -90,7 +90,7 @@ export default function Database() {
       <CreateTb uData={uData} db={currDb} i={0} />
 
       <main
-        className={`${showToolbar ? "h-[33.9rem]" : "h-[36.9rem]"} w-full overflow-y-auto scroll-smooth transition-all`}
+        className={`${showToolbar ? "h-[36.9rem]" : "h-[39.9rem]"} w-full overflow-y-auto scroll-smooth`}
       >
         <section
           className={`${create == "table" && "mt-[14.2rem]"} w-full overflow-y-auto scroll-smooth transition-all`}
