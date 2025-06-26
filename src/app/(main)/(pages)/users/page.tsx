@@ -195,7 +195,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       />
       <section
         title={`Go to ${user.title + " " + user.firstname + "'s"} page`}
-        className="flex w-[39%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
+        className="flex w-[38.5%] min-w-[9.5rem] cursor-pointer flex-col justify-center gap-1 overflow-hidden rounded-[5px] text-sm select-none"
       >
         <div className="space-x-1 hover:underline">
           <span> {user.title} </span>
@@ -211,7 +211,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
       <Separator orientation="vertical" className="bg-main-bg/50" />
       <section
         id="views"
-        className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[30.5%] min-w-[12rem] flex-none rounded-[5px] p-1"
+        className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[30%] min-w-[12rem] flex-none rounded-[5px] p-1"
       >
         <div className="flex min-h-full w-1/2 flex-col">
           {views.db?.map((a) => (

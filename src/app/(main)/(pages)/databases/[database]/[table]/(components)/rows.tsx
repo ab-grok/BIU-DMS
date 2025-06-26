@@ -10,7 +10,7 @@ import { rcDim, useRcConfig } from "@/app/(main)/layoutcontext";
 import { DateTimePicker } from "@/components/ui/datetimepicker";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useNotifyContext } from "@/app/dialogcontext";
+import { useConfirmDialog, useNotifyContext } from "@/app/dialogcontext";
 import { FaDownload, FaFilePdf, FaFileWord } from "react-icons/fa";
 import { AudioLines, FileArchive } from "lucide-react";
 import { useButtonAnim } from "@/components/count";
@@ -22,7 +22,7 @@ import { ControllerRenderProps } from "react-hook-form";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 import { rcData, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
-import { updateTableData } from "@/lib/actions";
+import { deleteTableData, updateTableData } from "@/lib/actions";
 import UserTag from "@/components/usertag";
 
 type rowType = {
@@ -72,6 +72,7 @@ export function Rows({
     {} as Record<string, string>,
   );
   const rcs = selectedRc.find((p) => p.path == tbPath);
+  const { setConfirmDialog } = useConfirmDialog();
 
   // useEffect(() => {
   //   const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
@@ -167,13 +168,22 @@ export function Rows({
                         nCol={j}
                         ri={b}
                         canEdit={canEdit}
+                        isDefault={b[0] == "updated_at" || b[0] == "updated_by"}
                       />
                     ); //filter out ID column
                 })}
               </div>
               <QuickActions
                 action1={`${canEdit ? "Delete" : ""}`}
-                fn1={() => {}}
+                fn1={() =>
+                  setConfirmDialog({
+                    type: "row",
+                    head: "Are you sure you want to",
+                    action: "delete",
+                    name: Object.values(a)[0]?.toString() || "this record",
+                    confirmFn: () => deleteTableData(tbPath, thisRow),
+                  })
+                }
                 hoverColor1={canEdit ? "red" : `green`}
                 action2="Select"
                 fn2={() => rcSelected(thisRow)}
@@ -309,7 +319,7 @@ export function RowItem({
 
   function clickedOut() {
     if (field) return;
-    if (canEdit && editMode && valChanged && where && ri) {
+    if (canEdit && editMode && valChanged.current && where && ri) {
       (async () => {
         const { error } = await updateTableData(tbPath, where, ri[0], val);
         error && setNotify({ message: error, danger: true });
