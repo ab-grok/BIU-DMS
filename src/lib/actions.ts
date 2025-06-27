@@ -292,10 +292,16 @@ export async function alterTable() {
 
 //users: {userId, title, firstname, username, level, edits[], views[], created[]},, edits;{db:,tb:}
 
+// type views = {
+//   db: string;
+//   tb: string;
+// };
+
 type views = {
-  db: string;
-  tb: string;
+  db: string[]; //dbName
+  tb: string[]; //dbName/tbName
 };
+
 export type allUsers = {
   id: string;
   title: string;
@@ -303,9 +309,9 @@ export type allUsers = {
   lastname: string;
   username: string;
   level: number;
-  edits: views[];
-  views: views[];
-  created: views[];
+  edits: views;
+  views: views;
+  created: views;
 };
 
 export async function getUsers(): Promise<Array<allUsers> | null> {

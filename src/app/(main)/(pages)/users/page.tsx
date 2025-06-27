@@ -135,36 +135,30 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
   }, [edits]);
 
   useEffect(() => {
-    const editTb: string[] = [];
-    const editDb: string[] = [];
-    const viewTb: string[] = [];
-    const viewDb: string[] = [];
-    const createdDb: string[] = [];
-    const createdTb: string[] = [];
-    user.edits?.forEach((a, j) => {
-      if (a.tb) {
-        editTb.push(`${a.db}/${a.tb}`);
-      } else if (a.db) {
-        editDb.push(a.db);
-      }
-    });
+    let editTb: string[] = [];
+    let editDb: string[] = [];
+    let viewTb: string[] = [];
+    let viewDb: string[] = [];
+    let createdDb: string[] = [];
+    let createdTb: string[] = [];
 
-    user.views?.forEach((a, j) => {
-      if (a.tb) {
-        viewTb.push(`${a.db}/${a.tb}`);
-      } else if (a.db) {
-        viewDb.push(a.db);
-      }
-    });
+    // if (user.edits.tb.length) editTb = user.edits.tb;
+    // else if (user.edits.db.length) editDb = user.edits.db;
 
-    user.created?.forEach((a) => {
-      if (a.tb) createdTb.push(`${a.db}/${a.tb}`);
-      else if (a.db) createdDb.push(a.db);
-    });
+    // if (user.views.tb.length) viewTb = user.views.tb;
+    // else if (user.views.db.length) editDb = user.views.db;
 
-    setEdits({ tb: editTb, db: editDb });
-    setViews({ tb: viewTb, db: viewDb });
-    setCreated({ tb: createdTb, db: createdDb });
+    // if (user.created.tb.length) createdTb = user.created.tb;
+    // else if (user.created.db.length) createdDb = user.created.db;
+
+    // user.created?.forEach((a) => {         // previous implementation
+    //   if (a.tb) createdTb.push(`${a.db}/${a.tb}`);
+    //   else if (a.db) createdDb.push(a.db);
+    // });
+
+    setEdits({ tb: user.edits.tb, db: user.edits.db });
+    setViews({ tb: user.views.tb, db: user.views.db });
+    setCreated({ tb: user.created.tb, db: user.created.db });
   }, []);
 
   function handleHover(i: number) {
