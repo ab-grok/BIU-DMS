@@ -232,7 +232,7 @@ function Users({ u, i }: Users) {
           <UserTag
             hovered={hovered == 1}
             name={u.firstname + " " + u.lastname}
-            title={u.title}
+            ttl={u.title}
             clicked={
               addUsers.category == "viewers"
                 ? addUsers.viewers?.includes(u.id)

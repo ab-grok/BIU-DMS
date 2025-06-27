@@ -447,7 +447,7 @@ export function RowItem({
         ) : isDefault ? (
           <UserTag
             name={uData?.split("&")[1] || ""}
-            title={uData?.split("&")[2]}
+            ttl={uData?.split("&")[2]}
           />
         ) : (
           <div id="text vals" className="flex h-full w-full">

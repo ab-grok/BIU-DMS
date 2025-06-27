@@ -319,7 +319,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                   <UserTag
                     key={i + 4}
                     name={tbMetaVals[i][0]}
-                    title={tbMetaVals[i][1]}
+                    ttl={tbMetaVals[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
                     cap={15}
                   />
@@ -374,7 +374,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                       </span>
                       <UserTag
                         name={v[2]}
-                        title={v[1]}
+                        ttl={v[1]}
                         className="w-fit justify-start text-xs font-normal"
                         hovered={viewerHover == i + 1}
                       />
@@ -445,7 +445,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
                       </span>
                       <UserTag
                         name={e[2]}
-                        title={e[1]}
+                        ttl={e[1]}
                         className="w-fit justify-start text-xs font-normal"
                         hovered={editorHover == i + 1}
                       />

@@ -94,7 +94,7 @@ export function TableFiller({ uData }: { uData: string }) {
                   <UserTag
                     key={i + 4}
                     name={tbMetaVals[i][0]}
-                    title={tbMetaVals[i][1]}
+                    ttl={tbMetaVals[i][1]}
                     className={`${i < 2 ? "bg-green-600/70" : "bg-amber-600/70"} text-xs`}
                     cap={15}
                   />

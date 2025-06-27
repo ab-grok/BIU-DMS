@@ -272,7 +272,7 @@ function UsersTable() {
             >
               <UserTag
                 name={a.firstname}
-                title={a.title}
+                ttl={a.title}
                 className="cursor-pointer text-xs"
                 colorCode={1}
                 cap={15}
@@ -316,7 +316,7 @@ function UsersTable() {
             >
               <UserTag
                 name={a.firstname}
-                title={a.title}
+                ttl={a.title}
                 className="cursor-pointer text-xs"
                 colorCode={1}
                 cap={15}

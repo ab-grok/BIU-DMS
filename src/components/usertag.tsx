@@ -7,6 +7,7 @@ import { useState } from "react";
 export default function UserTag({
   name,
   id,
+  ttl,
   title,
   className,
   hovered,
@@ -20,7 +21,8 @@ export default function UserTag({
 }: {
   name: string;
   id?: string;
-  title?: string;
+  title?: string; //description
+  ttl?: string; //Mr.
   className?: string;
   hovered?: boolean;
   clicked?: boolean | number; //shared w group inline
@@ -57,6 +59,7 @@ export default function UserTag({
 
   return (
     <div
+      title={title}
       onMouseEnter={() => setHover(1)}
       onMouseLeave={() => setHover(0)}
       onClick={pushRoute}
@@ -65,11 +68,8 @@ export default function UserTag({
         className,
       )}
     >
-      {title && (
-        <span className="mr-1 flex h-full items-end text-[10px]">
-          {" "}
-          {title}{" "}
-        </span>
+      {ttl && (
+        <span className="mr-1 flex h-full items-end text-[10px]"> {ttl} </span>
       )}
       {name ? (
         <span className="flex h-full w-fit items-end overflow-hidden">

@@ -205,16 +205,17 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           {user.views.db?.map((a) => (
             <UserTag
               key={a}
-              name={a}
+              name={a.split("/")[1]}
               className="text-xs"
               colorCode={4}
-              cap={10}
+              cap={15}
             />
           ))}
         </div>
         <div id="views tb" className="flex min-h-full w-1/2 flex-col">
           {user.views.tb?.map((a) => (
             <UserTag
+              title={a.split("/")[0]}
               key={a}
               name={a}
               className="text-xs"
@@ -236,14 +237,15 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
               key={a}
               className="text-xs"
               colorCode={6}
-              cap={10}
+              cap={15}
             />
           ))}
         </div>
         <div className="flex min-h-full w-1/2 flex-wrap gap-1">
           {user.edits.tb?.map((a, i) => (
             <UserTag
-              name={a}
+              title={a.split("/")[0]}
+              name={a.split("/")[1]}
               key={a}
               className="text-xs"
               colorCode={3}
