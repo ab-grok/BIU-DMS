@@ -126,51 +126,46 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
   const { pressAnim, setPressAnim } = useButtonAnim();
   const [clicked, setClicked] = useState(0);
   const [hover, setHover] = useState(0);
-  const [edits, setEdits] = useState({} as views); //tb holds the dbname/tbname
-  const [views, setViews] = useState({} as views);
-  const [created, setCreated] = useState({} as views);
+  // const [edits, setEdits] = useState({} as views); //tb holds the dbname/tbname
+  // const [views, setViews] = useState({} as views);
+  // const [created, setCreated] = useState({} as views);
+
+  // useEffect(() => {
+  //   if (i == 1) console.log("edits from useEffect: " + JSON.stringify(edits));
+  // }, [edits]);
 
   useEffect(() => {
-    if (i == 1) console.log("edits from useEffect: " + JSON.stringify(edits));
-  }, [edits]);
-
-  useEffect(() => {
-    let editTb: string[] = [];
-    let editDb: string[] = [];
-    let viewTb: string[] = [];
-    let viewDb: string[] = [];
-    let createdDb: string[] = [];
-    let createdTb: string[] = [];
-
+    // let editTb: string[] = [];
+    // let editDb: string[] = [];
+    // let viewTb: string[] = [];
+    // let viewDb: string[] = [];
+    // let createdDb: string[] = [];
+    // let createdTb: string[] = [];
     // if (user.edits.tb.length) editTb = user.edits.tb;
     // else if (user.edits.db.length) editDb = user.edits.db;
-
     // if (user.views.tb.length) viewTb = user.views.tb;
     // else if (user.views.db.length) editDb = user.views.db;
-
     // if (user.created.tb.length) createdTb = user.created.tb;
     // else if (user.created.db.length) createdDb = user.created.db;
-
     // user.created?.forEach((a) => {         // previous implementation
     //   if (a.tb) createdTb.push(`${a.db}/${a.tb}`);
     //   else if (a.db) createdDb.push(a.db);
     // });
-
-    setEdits({ tb: user.edits.tb, db: user.edits.db });
-    setViews({ tb: user.views.tb, db: user.views.db });
-    setCreated({ tb: user.created.tb, db: user.created.db });
+    // setEdits({ tb: user.edits.tb, db: user.edits.db });
+    // setViews({ tb: user.views.tb, db: user.views.db });
+    // setCreated({ tb: user.created.tb, db: user.created.db });
   }, []);
 
   function handleHover(i: number) {
     setHover(i);
     if (i) {
       setEditsCount({
-        db: edits.db.length,
-        tb: edits.tb.length,
+        db: user.edits.db.length,
+        tb: user.edits.tb.length,
       });
       setViewsCount({
-        db: views.db.length,
-        tb: views.tb.length,
+        db: user.views.db.length,
+        tb: user.views.tb.length,
       });
     }
   }
@@ -197,8 +192,8 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
         </div>
         <div className="text-bw/60 space-x-2 text-xs">
           <span>Level: {user.level}</span>
-          <span>Databases: {created.db?.length || 0} </span>
-          <span>Tables: {created.tb?.length || 0}</span>
+          <span>Databases: {user.created.db?.length || ""} </span>
+          <span>Tables: {user.created.tb?.length || ""}</span>
         </div>
       </section>
       <Separator orientation="vertical" className="bg-main-bg/50" />
@@ -207,7 +202,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
         className="bg-tb-row1/50 flex h-full min-h-[2.5rem] w-[30%] min-w-[12rem] flex-none rounded-[5px] p-1"
       >
         <div className="flex min-h-full w-1/2 flex-col">
-          {views.db?.map((a) => (
+          {user.views.db?.map((a) => (
             <UserTag
               key={a}
               name={a}
@@ -218,13 +213,13 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           ))}
         </div>
         <div id="views tb" className="flex min-h-full w-1/2 flex-col">
-          {views.tb?.map((a) => (
+          {user.views.tb?.map((a) => (
             <UserTag
               key={a}
               name={a}
               className="text-xs"
               colorCode={4}
-              cap={10}
+              cap={15}
             />
           ))}
         </div>
@@ -235,7 +230,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
         className="bg-tb-row1/30 flex h-full min-h-[2.5rem] w-[30%] min-w-[12rem] rounded-[5px] p-1"
       >
         <div className="line-clamp-1 flex h-full min-w-1/2 gap-1 break-words">
-          {edits.db?.map((a, i) => (
+          {user.edits.db?.map((a, i) => (
             <UserTag
               name={a}
               key={a}
@@ -246,13 +241,13 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           ))}
         </div>
         <div className="flex min-h-full w-1/2 flex-wrap gap-1">
-          {edits.tb?.map((a, i) => (
+          {user.edits.tb?.map((a, i) => (
             <UserTag
               name={a}
               key={a}
               className="text-xs"
               colorCode={3}
-              cap={10}
+              cap={15}
             />
           ))}
         </div>
