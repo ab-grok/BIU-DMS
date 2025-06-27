@@ -45,7 +45,7 @@ export default function SideBar() {
   return (
     <div
       onClick={() => showAvatar(1)}
-      className={` ${(sbState.sbExpanded ?? true) && sbState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sbState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 z-5 flex h-[50rem] max-h-[100%] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
+      className={` ${(sbState.sbExpanded ?? true) && sbState.route ? "relative left-[5%] max-w-[15rem] min-w-[15rem]" : sbState.route ? "relative left-[5%] w-[3rem] max-w-[3rem] lg:max-w-[15rem] lg:min-w-[15rem]" : "absolute left-[8%] w-full max-w-[15rem] sm:left-[25%] md:left-[25%] md:max-w-[30rem] lg:left-[33.3%]"} bg-main-bg ring-main-bg/50 max-h-[100% z-5 flex h-[50rem] items-center justify-center rounded-[5px] shadow-lg ring-1 shadow-black transition-all`}
     >
       <main className="bg-main-fg relative flex h-[99.8%] w-[99.2%] flex-col gap-[2px] overflow-hidden rounded-[5px] p-1">
         <section
