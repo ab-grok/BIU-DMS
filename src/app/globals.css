@@ -180,13 +180,17 @@
     font-family: var(--font-geist-pro);
     font-size: 100 900;
   }
+
+  .scrollbar-custom {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: auto;
+  }
   .scrollbar-custom::-webkit-scrollbar {
     width: 0px;
     height: 0px;
-  }
-  .scrollbar-vertical::-webkit-scrollbar-button {
-    background: var(--main-fg);
-    border-radius: 20px;
+    background: transparent;
+    display: none;
   }
   .scrollbar-horizontal::-webkit-scrollbar {
     height: 2px;
