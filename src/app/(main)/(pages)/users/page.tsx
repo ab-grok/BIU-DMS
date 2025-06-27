@@ -205,7 +205,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
           {user.views.db?.map((a) => (
             <UserTag
               key={a}
-              name={a.split("/")[1]}
+              name={a}
               className="text-xs"
               colorCode={4}
               cap={15}
@@ -217,7 +217,7 @@ function User({ i, setEditsCount, setViewsCount, user }: user) {
             <UserTag
               title={a.split("/")[0]}
               key={a}
-              name={a}
+              name={a.split("/")[1]}
               className="text-xs"
               colorCode={4}
               cap={15}
