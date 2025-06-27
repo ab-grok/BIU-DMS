@@ -146,6 +146,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
   function handleAddUsers(n: number) {
     const vData = Tb.viewers.filter(Boolean).join(",");
     const eData = Tb.editors.filter(Boolean).join(",");
+    console.log("handleUsers fired, vData: ", vData, "```eData: ", eData);
     if (n == 1) {
       setAddUsers({
         category: "viewers",
@@ -474,8 +475,9 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
           action2={`${uAccess.edit ? "Add viewer" : !uAccess.view ? "Request view" : ""}`}
           action3={`${uAccess.edit ? "Add editor" : "Request edit"}`}
           action4={`${uAccess.edit ? "Delete" : ""}`}
-          hoverColor1="blue"
+          hoverColor1="brown"
           hoverColor2="green"
+          hoverColor3="blue"
           hoverColor4="red"
           fn1={() => selectMultiTables()}
           fn2={uAccess.edit ? () => handleAddUsers(1) : () => requestRole(1)}
