@@ -16,7 +16,7 @@ export default function AllUsers() {
   useEffect(() => {
     setIsLoading((p) => p + "users,");
     (async () => {
-      revalidate("users"); //------------  remove
+      // revalidate("users"); //------------  remove
       const allUsers = await getUsers();
       if (!allUsers) {
         console.log("couldnt get users");
