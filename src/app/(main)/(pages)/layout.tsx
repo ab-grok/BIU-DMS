@@ -16,7 +16,7 @@ export default function PageLayout({
     <SelectionContext>
       <FetchContext>
         <div
-          className={` ${sbState.route ? "scale-100" : "scale-0"} ${sbState.sbExpanded ? "" : ""} ring-main-bg absolute left-[18%] flex h-[40rem] max-h-screen w-full max-w-[80%] items-center justify-center rounded-[5px] shadow-lg ring-2 shadow-black transition-all duration-200 sm:left-[15%] lg:relative lg:left-[5%] lg:max-w-[71%] xl:max-w-[74%]`}
+          className={` ${sbState.route ? "scale-100" : "scale-0"} ${sbState.sbExpanded ? "" : ""} ring-maidn-bg absolute left-[18%] flex h-[40rem] max-h-[40rem] w-full max-w-[80%] items-center justify-center rounded-[5px] shadow-lg ring-2 shadow-black ring-amber-500 transition-all duration-200 sm:left-[15%] lg:relative lg:left-[5%] lg:max-w-[71%] xl:max-w-[74%]`}
         >
           {" "}
           <div className="h-[99.8%] w-[99.8%] overflow-hidden rounded-[5px]">
