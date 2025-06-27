@@ -55,7 +55,7 @@ export function TableFiller({ uData }: { uData: string }) {
             title="Your table looks like this"
             className="flex min-h-[3rem] w-[15rem] cursor-default items-center justify-between pr-1"
           >
-            <div className="w-1/2">
+            <div className="w-1/2 text-sm">
               <span>{uData.split("&")[2] + "'s table"}</span>
               <div className="text-bw/70 flex items-center gap-1 text-xs">
                 <span>Rows</span>

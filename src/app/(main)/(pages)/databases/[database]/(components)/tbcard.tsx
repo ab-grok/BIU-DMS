@@ -273,11 +273,7 @@ export default function TableCard({ Tb, i, uData, dbName }: tbType) {
             className="flex min-h-[3rem] w-[15rem] cursor-default items-center justify-between pr-1"
           >
             <div className="w-1/2">
-              <span>
-                {Tb.tbName.length > 17
-                  ? Tb.tbName.slice(0, 17) + "..."
-                  : Tb.tbName}
-              </span>
+              <span className="w-full truncate">{Tb.tbName}</span>
               <div className="text-bw/70 flex items-center gap-1 text-xs">
                 <span>Rows</span>
                 <Count n={Tb.rowCount} />
