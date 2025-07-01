@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
-  const { setSbState, sbState, showToolbar, setShowToolbar } =
+  const { setSbState, sbState, showToolbar, setShowToolbar, setShowTag } =
     useSideContext().context;
   const [refreshing, setRefreshing] = React.useState(false);
   const router = useRouter();
@@ -51,7 +51,13 @@ export default function Navbar() {
           />
         </span>
         <span className="bg-main-fg/50 flex size-11 flex-none items-center justify-center rounded-full">
-          <Image src={logo} alt="Logo" className={`size-10`} />
+          <Image
+            onMouseEnter={() => setShowTag(true)}
+            onMouseLeave={() => setShowTag(false)}
+            src={logo}
+            alt="Logo"
+            className={`size-10`}
+          />{" "}
         </span>
         <span className="text-main-bg ml-1 hidden text-xl font-bold select-none sm:flex">
           {" "}
