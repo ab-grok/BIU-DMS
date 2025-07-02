@@ -24,6 +24,7 @@ import { tbRcs, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
 import { deleteTableData, pgFile, updateTableData } from "@/lib/actions";
 import UserTag from "@/components/usertag";
+import { revalidate } from "@/lib/sessions";
 
 type rowType = {
   scrolling: (e: any) => void;
@@ -377,9 +378,8 @@ export function RowItem({
 
   function clickedOut() {
     if (field) return;
-    console.log("in clickedout before condition");
     console.log(
-      "in clickedout after conditions, canEdit: ",
+      "in clickedout after before conditions, canEdit: ",
       canEdit,
       " valChanged.current: ",
       valChanged.current,
@@ -387,12 +387,14 @@ export function RowItem({
       ri,
     );
     if (canEdit && editMode && valChanged.current && where && ri) {
+      console.log("in clickedOut within conditions");
       (async () => {
         const { error } = await updateTableData(tbPath, where, ri[0], val);
         error && setNotify({ message: error, danger: true });
         //can put a green indicator for updated rows -- pulse green on the borders
         valChanged.current = false;
       })();
+      revalidate("tbData", "path", tbPath);
     }
   }
 
