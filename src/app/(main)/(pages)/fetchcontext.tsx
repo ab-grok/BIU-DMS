@@ -21,7 +21,7 @@ export type uAccess = {
   tb: string;
   db: string;
   edit: boolean;
-}[];
+};
 
 type fetchContext = {
   dbs: db[];
@@ -32,8 +32,8 @@ type fetchContext = {
   setUdata: React.Dispatch<React.SetStateAction<string>>;
   rc: rcType;
   setRc: React.Dispatch<React.SetStateAction<rcType>>;
-  uAccess: uAccess;
-  setUAccess: React.Dispatch<SetStateAction<uAccess>>;
+  uAccess: uAccess[];
+  setUAccess: React.Dispatch<SetStateAction<uAccess[]>>;
 };
 
 export function useFetchContext() {
@@ -50,7 +50,7 @@ export default function FetchContext({
   const [allTbs, setAllTbs] = React.useState([] as tbArr);
   const [uData, setUdata] = React.useState("");
   const [rc, setRc] = React.useState([] as rcType);
-  const [uAccess, setUAccess] = React.useState({} as uAccess);
+  const [uAccess, setUAccess] = React.useState([] as uAccess[]);
 
   return (
     <fetchContext.Provider

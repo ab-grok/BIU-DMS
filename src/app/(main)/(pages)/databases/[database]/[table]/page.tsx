@@ -12,7 +12,7 @@ import {
   rowData,
 } from "@/lib/actions";
 import { useLoading, useNotifyContext } from "@/app/dialogcontext";
-import { tbRcs, useFetchContext } from "../../../fetchcontext";
+import { tbRcs, uAccess, useFetchContext } from "../../../fetchcontext";
 import { Rows } from "./(components)/rows";
 import { NewRow } from "./(components)/newrow";
 import { useSideContext } from "@/app/(main)/layoutcontext";
@@ -100,7 +100,10 @@ export default function TableRows() {
   React.useEffect(() => {
     const d = tbPath.split("/")[0];
     const t = tbPath.split("/")[1];
-    const currUA = uAccess?.find((a) => a.db == d && a.tb == t);
+    let currUA: uAccess | undefined;
+    if (uAccess) {
+      currUA = uAccess?.find((a) => a.db == d && a.tb == t);
+    }
     if (!currUA) {
       (async () => {
         const { edit, view, level } = await getUA(dbName, tbName);
