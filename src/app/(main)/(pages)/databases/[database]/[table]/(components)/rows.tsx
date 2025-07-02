@@ -156,7 +156,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRow)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl bg-red-600 p-0`}
+                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -306,8 +306,8 @@ export function RowItem({
     const fileType = v[2].replace(")", "");
 
     console.log("v[1]/fileData from pg: ", fileName);
-    console.log("v[1]/fileData from pg: ", v[1]);
-    console.log("v[2]/fileType from pg: ", v[2]);
+    console.log("v[1]/fileData from pg: ", fileData);
+    console.log("v[2]/fileType from pg: ", fileType);
 
     // console.log("v from pg: ", v);
     return fileType.includes("/");
@@ -429,7 +429,7 @@ export function RowItem({
   }
   return (
     <div
-      className={`${nCol % 2 == 0 ? "bg-tb-row2/50" : "bg-tb-row2/5"} ${expandCard && !field ? "" : `${hVal(rcSize, "max")}`} ${hVal(rcSize)} ${wVal(rcSize)} flex items-center justify-center p-0`}
+      className={`${nCol % 2 == 0 ? "bg-tb-row2/50" : "bg-tb-row2/5"} ${expandCard && !field ? "" : `${hVal(rcSize, "max")}`} ${hVal(rcSize)} ${wVal(rcSize)} flex flex-1 items-center justify-center p-0`}
     >
       <div
         id="row item"
