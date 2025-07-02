@@ -773,8 +773,15 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
   console.log("in insertTbData, colvals: ", colVals);
 
   const updatedColVals = colVals.map((a, i) => {
+    const updA = {};
+    Object.entries(a).forEach((b) => {
+      if (b[1].fileData) {
+        updA[b[0]] =
+          main`ROW(fileName: ${b[1].fileName},fileData: ${b[1].fileData},fileType: ${b[1].fileType} ) :: file`;
+      } else updA[b[0]] = b[1];
+    });
     return {
-      ...a,
+      ...updA,
       ...(!updatedAtFound ? { updated_at: now } : {}),
       ...(!updatedByFound ? { updated_by: udata } : {}),
     };
