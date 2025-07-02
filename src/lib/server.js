@@ -860,6 +860,10 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const val1 = whereArr[0][1];
   const col2 = whereArr[1][0];
   const val2 = whereArr[1][1];
+  let updVal = val;
+  if (val?.fileData) {
+    updVal = main`ROW( ${val.fileName}, ${val.fileData}, ${val.fileType} ) :: file`;
+  }
 
   console.log(
     "in updateTbData, whereArr: ",
@@ -888,7 +892,7 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
   // );
 
   const res =
-    await main`update ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+    await main`update ${main(dbName)}.${main(tbName)} set ${main(col)} = ${updVal} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
   if (!metaAdded) throw { customMessage: "Meta not added" };
 
