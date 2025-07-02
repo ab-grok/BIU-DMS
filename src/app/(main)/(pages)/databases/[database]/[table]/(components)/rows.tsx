@@ -450,6 +450,12 @@ export function RowItem({
     }
   }
 
+  function itemClicked(e: React.MouseEvent<HTMLElement>, pressAnim: string) {
+    if (e.currentTarget.id == (e.target as HTMLElement).id) {
+      setPressAnim(pressAnim);
+    }
+  }
+
   function valDefined(val: val) {
     return val != undefined && val != null;
   }
@@ -481,9 +487,10 @@ export function RowItem({
             />
           ) : (
             <div
+              id="file input"
               onDragOver={() => setFileDrag(true)}
               onDragLeave={() => setFileDrag(false)}
-              onClick={() => setPressAnim("uplc")}
+              onClick={(e) => itemClicked(e, "uplc")}
               onDrop={fileDropped}
               tabIndex={0}
               onBlur={field?.onBlur || clickedOut}
@@ -504,7 +511,7 @@ export function RowItem({
             </div>
           )
         ) : colType.includes("timestamp") || val instanceof Date ? (
-          <div onClick={() => setPressAnim("nrcdt")} className="">
+          <div onClick={(e) => itemClicked(e, "nrcdt")} className="">
             <DateTimePicker
               err={err}
               onBlur={field?.onBlur || clickedOut}
@@ -715,11 +722,14 @@ function RenderFile({
       </p>
       <div
         //handle invalid uploads
+        id="Row file Input"
         onDragOver={() => setFileDrag(true)}
         onDragLeave={() => setFileDrag(false)}
-        onClick={() => {
-          inputRef.current?.click();
-          setPressAnim("uplc");
+        onClick={(e) => {
+          if (e.currentTarget.id == (e.target as HTMLElement).id) {
+            inputRef.current?.click();
+            setPressAnim("uplc");
+          }
         }}
         onDrop={fileDropped}
         tabIndex={0}

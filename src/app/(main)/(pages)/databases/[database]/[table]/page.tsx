@@ -92,7 +92,7 @@ export default function TableRows() {
         if (updRc.length) return updRc;
         else return p;
       });
-      console.log("in [table] got past setRc, currTb: ", currTb);
+      // console.log("in [table] got past setRc, currTb: ", currTb);
       setIsLoading((p) => p.replaceAll("tbData", ""));
     })();
   }, [created.rc, created.rh, JSON.stringify(orderBy.rc)]);

@@ -33,7 +33,7 @@ export function RowHeader({
   rhScroll,
 }: rowHeader) {
   // const header = React.useMemo(()=>{},[JSON.stringify(thisTb.tbHeader)])
-  console.log("in tbHeader, thisTb: ", thisTb);
+  // console.log("in tbHeader, thisTb: ", thisTb);
   const { hideQA } = useSelection();
   const { rcSize } = useRcConfig();
   const { pressAnim, setPressAnim } = useButtonAnim();
