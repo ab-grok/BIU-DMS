@@ -208,7 +208,7 @@ export function Rows({
             selected={rcs?.rows.includes("fillerRow")}
           />
           <div
-            className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+            className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-0`}
           >
             {thisTb?.tbHeader?.map((b, j) => {
               if (b.colName !== "ID")
@@ -297,11 +297,9 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
-    console.log("val from pg: ", val);
-    isPgFileCount.current += 1;
+    console.log("val[2] from pg: ", val[2]);
     console.log("isPgFileCount :", isPgFileCount.current);
-    console.log("val from pg: ", val);
-    if (isPgFileCount.current > 2) return false;
+    // console.log("val from pg: ", val);
 
     return (
       val && Array.isArray(val) && val[2] == "string" && val[2].includes("/")
