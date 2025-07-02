@@ -854,6 +854,18 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
 export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const { token32 } = await getCookie();
   const { edit, udata } = getUserAccess({ dbName, tbName, token32 });
+  console.log(
+    "in updateTbData, whereArr: ",
+    whereArr,
+    " col: ",
+    col,
+    " val: ",
+    val,
+    " edit: ",
+    edit,
+    " uData: ",
+    udata,
+  );
   if (!edit) throw { customMessage: "Unauthorized" };
   console.log(
     "in updateTbData, whereArr: ",
