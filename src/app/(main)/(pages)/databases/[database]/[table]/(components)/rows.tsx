@@ -412,7 +412,7 @@ export function RowItem({
                   />
                 </Label>
               ) : (
-                <FilePlus size={17} />
+                <FilePlus size={25} />
               )}
             </div>
           )
@@ -594,24 +594,24 @@ function RenderFile({
           className={`${imgSize(rcSize)} ring-bw/20`}
         />
       ) : fileType.startsWith("application/pdf") ? (
-        <FaFilePdf className="fill-red-500" size={17} />
+        <FaFilePdf className="fill-red-500" size={25} />
       ) : fileType.startsWith("text") ? (
-        <PiFileTxtFill size={17} />
+        <PiFileTxtFill size={25} />
       ) : fileType.startsWith("audio") ? (
-        <AudioLines size={17} />
+        <AudioLines size={25} />
       ) : fileType.startsWith("video") ? (
-        <MdSlowMotionVideo size={17} className="stroke-red-500" />
+        <MdSlowMotionVideo size={25} className="stroke-red-500" />
       ) : fileType.includes("/msword") ||
         fileType.includes("officedocument.wordprocessingml.document") ? (
-        <PiMicrosoftWordLogoFill size={17} className="fill-blue-600" />
+        <PiMicrosoftWordLogoFill size={25} className="fill-blue-600" />
       ) : fileType.includes("officedocument.spreadsheetml.sheet") ||
         fileType.includes("vnd.ms-excel") ? (
-        <RiFileExcel2Line size={17} className="fill-green-500" />
+        <RiFileExcel2Line size={25} className="fill-green-500" />
       ) : fileType.includes("openxmlformats-officedocument.presentationml") ||
         fileType.includes("vnd.ms-powerpoint") ? (
-        <PiMicrosoftPowerpointLogoFill size={17} className="fill-orange-600" />
+        <PiMicrosoftPowerpointLogoFill size={25} className="fill-orange-600" />
       ) : (
-        <FileArchive size={17} />
+        <FileArchive size={25} />
       )}
       <p
         className={`bg-bw/10 hover:bg-bw/20 rounded-xl text-[10px] ${!expandCard && "truncate"} `}
