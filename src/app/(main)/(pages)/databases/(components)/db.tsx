@@ -97,7 +97,7 @@ export default function Db({ db, i }: { db: db; i: number }) {
               <Count n={db.tbCount} />
             </div>{" "}
             <LogIn
-              className={`${pressAnim == "dbp" && "translate-x-0 scale-125"} absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
+              className={`absolute top-0 right-0 hidden size-5 transition-all group-hover:flex group-hover/dr:-translate-x-5`}
             />
           </div>
         </DbItem>

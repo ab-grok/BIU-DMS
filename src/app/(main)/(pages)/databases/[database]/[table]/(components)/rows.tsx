@@ -40,7 +40,7 @@ const wSizes = { lg: "[16rem]", md: "[10.75rem]", sm: "[5.5rem]" };
 const imgSz = { lg: "[4rem]", md: "[3rem]", sm: "[2rem]" };
 
 export function hVal(rcSize: rcDim, max?: "max") {
-  if (rcSize.h == "lg") return max ? "max-h-[10rem]" : "min-h-[10rem]";
+  if (rcSize.h == "lg") return max ? "max -h-[10rem]" : "min-h-[10rem]";
   if (rcSize.h == "md") return max ? "max-h-[6rem]" : "min-h-[6rem]";
   if (rcSize.h == "sm") return max ? "max-h-[3rem]" : "min-h-[3rem]";
 }
@@ -400,9 +400,9 @@ export function RowItem({
               onDrop={fileDropped}
               tabIndex={0}
               onBlur={field?.onBlur || clickedOut}
-              className={`${fileDrag ? "animate-logoExit bg-red-300/20 shadow-xs" : "bg-bw/10 shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
+              className={`group/fd ${fileDrag ? "animate-logoExit bg-red-300/20 shadow-xs" : "bg-bw/10 shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
             >
-              <Label>
+              <Label className="group-hover/fd:text-bw text-bw/80 text-sm">
                 {fileDrag ? "Drop file" : "Click or drag file"}
                 <Input onChange={uploadClicked} type="file" />
               </Label>
@@ -583,7 +583,7 @@ function RenderFile({
         <Image
           src={urlRef.current}
           alt={fileName}
-          className={`${imgSize(rcSize)} ring-bw/20 ring-1`}
+          className={`${imgSize(rcSize)} ring-bw/20`}
         />
       ) : fileType.startsWith("application/pdf") ? (
         <FaFilePdf className="fill-red-500" size={17} />
@@ -606,7 +606,7 @@ function RenderFile({
         <FileArchive size={17} />
       )}
       <p
-        className={`bg-bw/70 hover:bg-bw/80 text-sm ${!expandCard && "truncate"} `}
+        className={`bg-bw/10 hover:bg-bw/20 rounded-xl text-[10px] ${!expandCard && "truncate"} `}
       >
         {" "}
         {fileName}{" "}
