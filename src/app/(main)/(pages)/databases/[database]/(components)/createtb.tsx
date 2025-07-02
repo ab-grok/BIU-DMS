@@ -94,6 +94,7 @@ export default function CreateTb({ i, uData, db }: tbType) {
   const { setValue } = form;
 
   function colSubmitted(values: createTbType) {
+    console.log("col submitted, typeChange: ", typeChange);
     const columns = createTbSchema.parse(values);
     //if !title set error
     if (!createTbMeta.tbName) {
