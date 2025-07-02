@@ -377,6 +377,15 @@ export function RowItem({
 
   function clickedOut() {
     if (field) return;
+    console.log("in clickedout before condition");
+    console.log(
+      "in clickedout after conditions, canEdit: ",
+      canEdit,
+      " valChanged.current: ",
+      valChanged.current,
+      "ri: ",
+      ri,
+    );
     if (canEdit && editMode && valChanged.current && where && ri) {
       (async () => {
         const { error } = await updateTableData(tbPath, where, ri[0], val);
