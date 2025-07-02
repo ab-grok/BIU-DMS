@@ -65,11 +65,11 @@ export const createRcSchema = (tbHeader: colSchema[]) => {
     else if (checkType(cT) == "file")
       validator = z
         .custom<file>(
-          (val) => val.fileData instanceof ArrayBuffer,
+          (val) => val?.fileData instanceof ArrayBuffer,
           "File Required",
         )
         .refine(
-          (val) => val.fileSize && val.fileSize <= 5 * 1024 * 1024,
+          (val) => val?.fileSize && val?.fileSize <= 5 * 1024 * 1024,
           "Size should be less than 5mb",
         );
     else validator = z.string().min(1, "Field is not nullable"); //if (c == "text")
