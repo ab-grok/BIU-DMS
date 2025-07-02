@@ -649,7 +649,7 @@ function RenderFile({
       }}
       tabIndex={tabIndex}
       onBlur={onBlur}
-      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 py-2 transition-all`}
+      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} ${hVal(rcSize, "max")} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 py-2 transition-all`}
     >
       {fileHovered && !editMode ? (
         <FaDownload
