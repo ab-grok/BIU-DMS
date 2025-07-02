@@ -156,7 +156,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRow)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-0`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -296,16 +296,15 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
-    if (typeof val !== "string") return false;
-    try {
-      const v = JSON.parse(val);
-      console.log("v[2] from pg: ", v[2]);
-      // console.log("v from pg: ", v);
-      return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
-    } catch (e) {
-      console.log("isPgFile, got error: ", e);
-      return false;
-    }
+    console.log("isPgFile, val: ", val);
+
+    const v = val.split(",");
+
+    console.log("v[0]/fileName from pg: ", v[0]);
+    console.log("v[1]/fileData from pg: ", v[1]);
+    console.log("v[2]/fileType from pg: ", v[2]);
+    // console.log("v from pg: ", v);
+    return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
   }
 
   useEffect(() => {});
