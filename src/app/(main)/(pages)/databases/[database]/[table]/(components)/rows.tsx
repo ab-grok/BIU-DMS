@@ -285,6 +285,7 @@ export function RowItem({
   console.log("error state from RowItem, err: ", err);
 
   function isFile(val: any): val is file {
+    console.log("val from isFile: ", val);
     return (
       val &&
       typeof val == "object" &&

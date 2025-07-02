@@ -17,9 +17,11 @@ export type tbRcs = {
 type rcType = tbRcs[];
 
 export type uAccess = {
-  tb: { tbPath: string; edit: boolean }[];
-  // db: {dbPath: string, edit: boolean, view: boolean}[] // -- not needed
-};
+  //only [table]/rows use this. generalize to db and tb access
+  tb: string;
+  db: string;
+  edit: boolean;
+}[];
 
 type fetchContext = {
   dbs: db[];

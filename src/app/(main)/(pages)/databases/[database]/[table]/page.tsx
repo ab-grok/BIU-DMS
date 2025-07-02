@@ -98,15 +98,23 @@ export default function TableRows() {
   }, [created.rc, created.rh, JSON.stringify(orderBy.rc)]);
 
   React.useEffect(() => {
-    const currUA = uAccess.tb?.find((a) => a.tbPath == tbPath);
+    const d = tbPath.split("/")[0];
+    const t = tbPath.split("/")[1];
+    const currUA = uAccess.find((a) => a.db == d && a.tb == t);
     if (!currUA) {
       (async () => {
         const { edit, view, level } = await getUA(dbName, tbName);
-        console.log("in getTb rc, UA.edit: ", edit);
-        const UA = { tbPath, edit };
-
+        const UA = { tb: t, db: d, edit: edit };
+        console.log(
+          "in !currUA (uAccess not found): tb: ",
+          t,
+          " db: ",
+          d,
+          " edit:",
+          edit,
+        );
         setUAccess((p) => {
-          return { ...p, tb: [...(p.tb || []), UA].filter(Boolean) };
+          return [...p, UA];
         });
         setCanEdit(edit);
       })();
