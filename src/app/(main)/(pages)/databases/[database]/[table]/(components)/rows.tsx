@@ -66,7 +66,8 @@ export function Rows({
   uData,
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
-  const { selectedRc, setSelectedRc } = useSelection();
+  const { selectedRc, setSelectedRc, created } = useSelection();
+  const [alert, setAlert] = useState(false);
   const rcSchema = thisTb?.tbHeader?.reduce(
     (agg, col) => {
       col.colName != "ID" && (agg[col.colName] = col.type);
@@ -83,7 +84,7 @@ export function Rows({
   //   else setCanEdit(false);
   // }, []);
 
-  function rcClicked(thisRow: string) {
+  function rcClicked(thisRcWhere: string) {
     setSelectedRc((p) => {
       let rcI = 0;
       const thisTb = p?.find((a, i) => {
@@ -91,11 +92,11 @@ export function Rows({
         return a.path == tbPath;
       });
       if (thisTb) {
-        if (thisTb.rows.length > 1 || !thisTb.rows.includes(thisRow)) {
-          thisTb.rows = thisTb.rows.filter((p) => p !== thisRow);
+        if (thisTb.rows.length > 1 || !thisTb.rows.includes(thisRcWhere)) {
+          thisTb.rows = thisTb.rows.filter((p) => p !== thisRcWhere);
           return [
             ...p.filter((r) => r.path !== tbPath),
-            { ...thisTb, rows: [thisRow] },
+            { ...thisTb, rows: [thisRcWhere] },
           ];
         } else
           return [
@@ -103,12 +104,12 @@ export function Rows({
             { ...thisTb, rows: [] },
           ];
       } else {
-        return [...p, { path: tbPath, rows: [thisRow] }];
+        return [...p, { path: tbPath, rows: [thisRcWhere] }];
       }
     });
   }
 
-  function rcSelected(thisRow: string) {
+  function rcSelected(thisRcWhere: string) {
     setSelectedRc((p) => {
       let rcI = 0;
       const thisTb = p?.find((a, i) => {
@@ -116,22 +117,31 @@ export function Rows({
         return a.path == tbPath;
       });
       if (thisTb) {
-        if (thisTb.rows.includes(thisRow)) {
+        if (thisTb.rows.includes(thisRcWhere)) {
           return [
             ...p.slice(0, rcI),
-            { ...thisTb, rows: thisTb.rows.filter((a) => a !== thisRow) },
+            { ...thisTb, rows: thisTb.rows.filter((a) => a !== thisRcWhere) },
             ...p.slice(rcI + 1),
           ].filter(Boolean);
         } else {
           return [
             ...(p || []),
-            { ...thisTb, rows: [...thisTb.rows, thisRow] },
+            { ...thisTb, rows: [...thisTb.rows, thisRcWhere] },
           ].filter(Boolean);
         }
       }
-      return [...(p || []), { path: tbPath, rows: [thisRow] }].filter(Boolean);
+      return [...(p || []), { path: tbPath, rows: [thisRcWhere] }].filter(
+        Boolean,
+      );
     });
   }
+
+  useEffect(() => {
+    setAlert(true);
+    setTimeout(() => {
+      setAlert(false);
+    }, 1000);
+  }, [created.rc]);
 
   return (
     <div
@@ -142,11 +152,18 @@ export function Rows({
     >
       {thisTb?.tbRows && thisTb.tbRows.length ? (
         thisTb?.tbRows?.map((a, i) => {
-          const thisRow = JSON.stringify(Object.entries(a).slice(0, 2));
+          const thisRow = JSON.stringify(Object.entries(a));
+          console.log(
+            "in Rows, thisRow: ",
+            thisRow,
+            " created.rc: ",
+            created.rc,
+          );
+          const thisRcWhere = JSON.stringify(Object.entries(a).slice(0, 2));
           return (
             <div
               key={i}
-              onClick={() => rcClicked(thisRow)}
+              onClick={() => rcClicked(thisRcWhere)}
               className={`group ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg1/50"} hover:bg-bw/10 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
             >
               <Index
@@ -154,10 +171,10 @@ export function Rows({
                 morph={(rcs?.rows.length || 0) > 1 ? "selected" : undefined}
                 className="sticky w-[2rem]"
                 size={6}
-                selected={rcs?.rows.includes(thisRow)}
+                selected={rcs?.rows.includes(thisRcWhere)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${alert && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -166,7 +183,7 @@ export function Rows({
                         key={j}
                         colType={(rcSchema && rcSchema[b[0]]) || typeof b[1]}
                         tbPath={tbPath}
-                        where={thisRow}
+                        where={thisRcWhere}
                         // nRow={i}
                         nCol={j}
                         ri={b}
@@ -185,12 +202,12 @@ export function Rows({
                     head: "Are you sure you want to",
                     action: "delete",
                     name: Object.values(a)[0]?.toString() || "this record",
-                    confirmFn: () => deleteTableData(tbPath, thisRow),
+                    confirmFn: () => deleteTableData(tbPath, thisRcWhere),
                   })
                 }
                 hoverColor1={canEdit ? "red" : `green`}
                 action2="Select"
-                fn2={() => rcSelected(thisRow)}
+                fn2={() => rcSelected(thisRcWhere)}
                 hoverColor2="brown"
               />
             </div>
@@ -430,12 +447,6 @@ export function RowItem({
         fileType: file.type,
         fileSize: file.size,
       });
-      //   if (field) {
-      //     setVal(file);
-      //     return;
-      //   }
-      //   file.arrayBuffer().then((b) => {
-      // });
     }
   }
 
