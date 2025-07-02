@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useConfirmDialog, useNotifyContext } from "@/app/dialogcontext";
 import { FaDownload, FaFilePdf, FaFileWord } from "react-icons/fa";
-import { AudioLines, FileArchive } from "lucide-react";
+import { AudioLines, FileArchive, FilePlus } from "lucide-react";
 import { useButtonAnim } from "@/components/count";
 import { MdCancel, MdSlowMotionVideo } from "react-icons/md";
 import { RiFileExcel2Line } from "react-icons/ri";
@@ -400,12 +400,20 @@ export function RowItem({
               onDrop={fileDropped}
               tabIndex={0}
               onBlur={field?.onBlur || clickedOut}
-              className={`group/fd ${fileDrag ? "animate-logoExit bg-red-300/20 shadow-xs" : "bg-bw/10 shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
+              className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-300/20 shadow-xs" : "bg-bw/10 shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
             >
-              <Label className="group-hover/fd:text-bw text-bw/80 text-sm">
-                {fileDrag ? "Drop file" : "Click or drag file"}
-                <Input onChange={uploadClicked} type="file" />
-              </Label>
+              {canEdit && editMode ? (
+                <Label className="group-hover/fd:text-bw text-bw/80 text-[10px]">
+                  {fileDrag ? "Drop file" : "Click or drag file"}
+                  <Input
+                    onChange={uploadClicked}
+                    type="file"
+                    className="w-fit truncate bg-green-600 px-1 text-center shadow-sm hover:ring-2"
+                  />
+                </Label>
+              ) : (
+                <FilePlus size={17} />
+              )}
             </div>
           )
         ) : colType.includes("timestamp") || val instanceof Date ? (
@@ -572,7 +580,7 @@ function RenderFile({
       }}
       tabIndex={tabIndex}
       onBlur={onBlur}
-      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} hover:bg-bw/5 relative items-center justify-center rounded-xl transition-all`}
+      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 transition-all`}
     >
       {fileHovered ? (
         <FaDownload
