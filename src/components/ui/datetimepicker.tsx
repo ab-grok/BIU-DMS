@@ -849,7 +849,7 @@ const DateTimePicker = React.forwardRef<
               !displayDate && "text-bw",
               !disabled && "cursor-pointer",
               clicked && "scale-95",
-              err && "ring-red-600",
+              err && "ring-2 ring-red-600",
               className,
             )}
             ref={buttonRef}
