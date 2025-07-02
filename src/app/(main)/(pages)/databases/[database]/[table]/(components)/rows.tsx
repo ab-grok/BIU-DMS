@@ -22,7 +22,7 @@ import { ControllerRenderProps } from "react-hook-form";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 import { tbRcs, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
-import { deleteTableData, updateTableData } from "@/lib/actions";
+import { deleteTableData, pgFile, updateTableData } from "@/lib/actions";
 import UserTag from "@/components/usertag";
 
 type rowType = {
@@ -237,7 +237,8 @@ export type file = {
   fileType: string;
   fileSize?: number;
 };
-type val = string | boolean | number | null | Date | file | File;
+
+type val = string | boolean | number | null | Date | file | pgFile;
 type rowItem = {
   ri?: [string, val];
   nCol: number;
@@ -285,13 +286,18 @@ export function RowItem({
   console.log("error state from RowItem, err: ", err);
 
   function isFile(val: any): val is file {
-    console.log("val from isFile: ", val);
     return (
       val &&
       typeof val == "object" &&
       "fileData" in val &&
       "fileName" in val &&
       "fileType" in val
+    );
+  }
+
+  function isPgFile(val: any): val is pgFile {
+    return (
+      val && Array.isArray(val) && val[2] == "string" && val[2].includes("/")
     );
   }
 
@@ -312,12 +318,12 @@ export function RowItem({
 
   useEffect(() => {
     if (isDefault && colType.includes("timestamp")) setVal(new Date());
-    else if (ri) {
-      if (isFile(ri[1])) {
-        console.log("~~~~~~fileData: ", ri[1].fileData);
+    else if (ri && ri[1]) {
+      if (isPgFile(ri[1])) {
+        console.log("~~~~~~fileData: ", ri[1][2]);
         console.log(
           "~~~~~~fileData.indexof(`x`): ",
-          (ri[1].fileData as string).indexOf(`x`),
+          (ri[1][1] as string).indexOf(`x`),
         );
 
         // const fileFromHex = hexToUint8Array(ri[1].fileData);
@@ -326,6 +332,7 @@ export function RowItem({
         // const uint8 = hexToUint8Array(pgHex);
         // // If you need an ArrayBuffer:
         // const arrayBuffer = uint8.buffer;
+        return;
       }
       setVal(ri[1]);
     }

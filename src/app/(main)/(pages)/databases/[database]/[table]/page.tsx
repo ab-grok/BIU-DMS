@@ -102,6 +102,7 @@ export default function TableRows() {
     const t = tbPath.split("/")[1];
     let currUA: uAccess | undefined;
     if (uAccess) {
+      //did not work with just uAccess?.find() -- why??
       currUA = uAccess?.find((a) => a.db == d && a.tb == t);
     }
     if (!currUA) {
