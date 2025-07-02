@@ -46,7 +46,7 @@ export function checkType(t: string) {
   if (c == "integer" || c == "real" || c == "serial") return "number";
   else if (c == "boolean") return "boolean";
   else if (c.includes("timestamp")) return "date";
-  else if (c == "file") return "file";
+  else if (c == "file" || c == "user-defined") return "file";
   else return "string";
 }
 

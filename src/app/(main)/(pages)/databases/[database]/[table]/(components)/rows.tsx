@@ -382,7 +382,7 @@ export function RowItem({
         onMouseLeave={() => setItemHovered(false)}
         className={`group/x w-full ${expandCard && !field ? "h-fit min-h-full bg-green-800/50" : "h-full min-h-full hover:bg-green-700/10 hover:shadow-black"} shadow-shadow-bw relative flex h-full items-center justify-center overflow-hidden px-1 text-sm shadow-sm`}
       >
-        {colType == "USER-DEFINED" ? (
+        {colType == "USER-DEFINED" || colType == "file" ? (
           isFile(val) ? (
             <RenderFile
               onBlur={field?.onBlur || clickedOut}
