@@ -345,9 +345,10 @@ export function RowItem({
           thisFile.current?.fileName,
         );
         console.log("Array buffer: ", arrayBuffer);
+        setVal(thisFile.current);
         return;
       }
-      setVal(thisFile.current);
+      setVal(ri[1]);
     }
 
     console.log("canEdit: ", canEdit, "editMode: ", editMode);
