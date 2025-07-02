@@ -174,7 +174,8 @@ export async function getTableSchema(
   return sch;
 }
 
-export type rcVal = string | boolean | number | null | Date | file | File;
+export type pgFile = [string, string, string];
+export type rcVal = string | boolean | number | null | Date | file | pgFile;
 type file = {
   fileData: Uint8Array;
   fileName: string;
