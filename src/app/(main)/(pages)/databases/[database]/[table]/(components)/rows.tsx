@@ -651,7 +651,7 @@ function RenderFile({
       onBlur={onBlur}
       className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 py-2 transition-all`}
     >
-      {fileHovered ? (
+      {fileHovered && !editMode ? (
         <FaDownload
           size={25}
           className={`${pressAnim.includes("ftbn") && "translate-y-1"} fill-blue-700 transition-all`}
@@ -698,7 +698,7 @@ function RenderFile({
         }}
         onDrop={fileDropped}
         tabIndex={0}
-        className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 rounded-xl transition-all`}
+        className={`group/fd ${editMode ? "flex" : "hidden"} p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 rounded-xl transition-all`}
       >
         <Label className="text-[10px]">
           {fileDrag ? "Drop file" : "Click or drag file"}
