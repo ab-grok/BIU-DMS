@@ -276,7 +276,7 @@ export function RowItem({
   const [expandCard, setExpandCard] = useState(false);
   const [itemHovered, setItemHovered] = useState(false);
   const [val, setVal] = useState<val>(null);
-  const [thisFile, setThisFile] = useState({} as file);
+  const thisFile = useRef({} as file);
   const [fileDrag, setFileDrag] = useState(false);
   const { editMode } = useRcConfig();
   const { rcSize, setRcSize } = useRcConfig();
@@ -311,7 +311,7 @@ export function RowItem({
     // console.log("v[1]/fileData from pg: ", currFile.fileData);
     // console.log("v[2]/fileType from pg: ", currFile.fileType);
 
-    setThisFile(currFile);
+    thisFile.current = currFile;
     // console.log("v from pg: ", v);
     return currFile.fileType.includes("/");
   }
@@ -322,7 +322,7 @@ export function RowItem({
   }
 
   function hexToUint8Array(hex: string) {
-    const bytes = new Uint8Array((thisFile.fileData as string)?.length / 2);
+    const bytes = new Uint8Array(hex?.length / 2);
     for (let i = 0; i < bytes.length; i++) {
       bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
     }
@@ -335,17 +335,19 @@ export function RowItem({
       console.log("in RowItem's useEffect before isPgFile");
       if (isPgFile(ri[1])) {
         // console.log("~~~~~~fileData: ", thisFile.fileData);
-        const fileFromHex = hexToUint8Array(thisFile?.fileData as string);
+        const fileFromHex = hexToUint8Array(
+          thisFile.current?.fileData as string,
+        );
         // If you need an ArrayBuffer:
         const arrayBuffer = fileFromHex.buffer;
         console.log(
           "setting buffer in useEffect, fileName: ",
-          thisFile.fileName,
+          thisFile.current?.fileName,
         );
         console.log("Array buffer: ", arrayBuffer);
         return;
       }
-      setVal(ri[1]);
+      setVal(thisFile.current);
     }
 
     console.log("canEdit: ", canEdit, "editMode: ", editMode);
