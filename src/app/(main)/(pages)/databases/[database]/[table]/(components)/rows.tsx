@@ -699,9 +699,9 @@ function RenderFile({
         }}
         onDrop={fileDropped}
         tabIndex={0}
-        className={`group/fd ${editMode ? "flex" : "hidden"} p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 rounded-xl transition-all`}
+        className={`group/fd ${editMode ? "flex" : "hidden"} p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 h-[90%] w-[40%] max-w-[40%] rounded-xl transition-all`}
       >
-        <Label className="text-[10px]">
+        <Label className="brea h-full w-full text-[10px]">
           {fileDrag ? "Drop file" : "Click or drag file"}
           <Input
             ref={inputRef}
