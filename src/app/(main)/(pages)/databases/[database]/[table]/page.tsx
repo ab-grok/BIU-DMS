@@ -9,6 +9,7 @@ import {
   getTableData,
   getTableSchema,
   getUA,
+  rdVal,
   rowData,
 } from "@/lib/actions";
 import { useLoading, useNotifyContext } from "@/app/dialogcontext";
@@ -22,7 +23,7 @@ export default function TableRows() {
     string,
     string
   >;
-  const { created, create, orderBy } = useSelection();
+  const { created, setCreated, create, orderBy, setOrderBy } = useSelection();
   const tbPath = dbName + "/" + tbName;
   const { setNotify } = useNotifyContext();
   const { rc, setRc, setUAccess, uAccess, uData } = useFetchContext();
@@ -30,13 +31,13 @@ export default function TableRows() {
   const rowRef = React.useRef<HTMLDivElement | null>(null);
   const headerRef = React.useRef<HTMLDivElement | null>(null);
   const [canEdit, setCanEdit] = React.useState(false);
+  const [updatedRc, setUpdatedRc] = React.useState<[string, rdVal]>();
   const nrcRef = React.useRef<HTMLDivElement | null>(null);
   const { showToolbar } = useSideContext().context;
   const thisTb = rc?.find((a) => a.tbPath == tbPath);
 
-  console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
-
   React.useEffect(() => {
+    console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
     (async () => {
       setIsLoading((p) => p + "tbData");
       const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
@@ -61,7 +62,7 @@ export default function TableRows() {
         for (const [i, a] of p.entries()) {
           if (a.tbPath == tbPath) {
             rcFound = true;
-            if (a.tbHeader.length != tbSchema?.length) {
+            if (a.tbHeader.length != tbSchema?.length || created.rh) {
               currTb = {
                 ...(currTb || placeTb),
                 tbHeader: tbSchema as colSchema[],
@@ -69,8 +70,13 @@ export default function TableRows() {
               updRc = [...p.filter((rc) => rc.tbPath != tbPath), currTb].filter(
                 Boolean,
               );
+              setCreated((p) => ({ ...p, rh: "" }));
             }
-            if (a.tbRows.length != tbData?.length) {
+            if (
+              a.tbRows.length != tbData?.length ||
+              created.rc ||
+              orderBy.rc?.new
+            ) {
               currTb = {
                 ...(currTb || placeTb),
                 tbRows: tbData as rowData[],
@@ -78,6 +84,9 @@ export default function TableRows() {
               updRc = [...p.filter((rc) => rc.tbPath != tbPath), currTb].filter(
                 Boolean,
               );
+              setUpdatedRc(JSON.parse(created.rc));
+              setCreated((p) => ({ ...p, rc: "" }));
+              setOrderBy((p) => ({ ...p, rc: { ...p.rc, new: false } }));
             }
           }
         }
@@ -178,6 +187,7 @@ export default function TableRows() {
           nRc={create == "record"}
           thisTb={thisTb as tbRcs}
           uData={uData}
+          updatedRc={updatedRc}
         />
       </main>
     </div>

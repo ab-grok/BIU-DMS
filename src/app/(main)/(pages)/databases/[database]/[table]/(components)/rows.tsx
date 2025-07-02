@@ -40,6 +40,7 @@ type rowType = {
   nRc: boolean;
   thisTb: tbRcs;
   uData: string;
+  updatedRc: [string, rdVal] | undefined;
 };
 
 const hSizes = { lg: "[10rem]", md: "[6rem]", sm: "[3rem]" };
@@ -70,13 +71,11 @@ export function Rows({
   canEdit,
   nRc,
   uData,
+  updatedRc,
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
   const { selectedRc, setSelectedRc, created } = useSelection();
-  const [updatedRc, setUpdatedRc] = useState<{
-    new: boolean;
-    rc: [string, rdVal];
-  }>();
+  const [updatedAnim, setUpdatedAnim] = useState(false);
   const rcSchema = thisTb?.tbHeader?.reduce(
     (agg, col) => {
       col.colName != "ID" && (agg[col.colName] = col.type);
@@ -146,15 +145,17 @@ export function Rows({
   }
 
   useEffect(() => {
-    if (created.rc) {
-      const updatedRcRI = JSON.parse(created.rc);
+    //setting created.rc to null in [tables] useEffect making it useable as a condition. check that if this doesn't run.
+    if (updatedRc) {
       console.log("Row's useEffect() ran, created.rc: ", created.rc);
-      setUpdatedRc({ new: true, rc: updatedRcRI });
+      console.log("Row's useEffect() ran, updated.rc: ", updatedRc);
+      // const updatedRcRI = JSON.parse(created.rc);
+      setUpdatedAnim(true);
       setTimeout(() => {
-        setUpdatedRc({ new: false, rc: updatedRcRI });
+        setUpdatedAnim(false);
       }, 1000);
     }
-  }, [created.rc]);
+  }, [updatedRc]);
 
   return (
     <div
@@ -187,7 +188,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRcWhere)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${updatedRc?.rc && thisRow.includes(updatedRc?.rc) && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${updatedRc && thisRow.includes(updatedRc) && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")

@@ -145,8 +145,8 @@ function HeaderItem({ name, type, keys, i, tbPath }: headerItem) {
       ...p,
       rc:
         p.rc.order == "desc"
-          ? { col: name, order: "asc" }
-          : { col: name, order: "desc" },
+          ? { col: name, order: "asc", new: true }
+          : { col: name, order: "desc", new: true },
     }));
     //trigger rc dependency
     //revalidate tbpath-tbData

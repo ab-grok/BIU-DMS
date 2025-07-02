@@ -39,8 +39,9 @@ type selectUsers = {
 
 type created = { db: string; tb: string; rc: string; rh: string };
 export type orderType = { db: orderObj; tb: orderObj; rc: orderObj }; //col&$asc
-const orderObj = { col: "", order: "asc" };
-type orderObj = { col: string; order: string };
+
+const orderObj = { col: "", order: "asc", new: false };
+type orderObj = { col: string; order: string; new: boolean };
 
 export type selectedRc = {
   path: string; //dbName/tbName
