@@ -697,7 +697,7 @@ function RenderFile({
       }}
       tabIndex={tabIndex}
       onBlur={onBlur}
-      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} ${hVal(rcSize, "max")} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 py-2 transition-all`}
+      className={`flex w-full ${pressAnim.includes("fbtn") ? "scale-95" : "shadow-sm"} ${hVal(rcSize, "max")} hover:bg-bw/5 relative items-center space-x-2 rounded-xl px-2 py-1 transition-all`}
     >
       {fileHovered && !editMode ? (
         <FaDownload
@@ -708,7 +708,7 @@ function RenderFile({
         <Image
           src={urlRef}
           alt={fileName}
-          className={`${imgSize(rcSize)} ring-bw/20`}
+          className={`${imgSize(rcSize)} ring-bw/20 m-0 p-0`}
         />
       ) : fileType.startsWith("application/pdf") ? (
         <FaFilePdf className="fill-red-500" size={25} />
@@ -731,7 +731,7 @@ function RenderFile({
         <FileArchive size={25} />
       )}
       <p
-        className={`bg-bw/10 hover:bg-bw/20 w-[3.3rem] rounded-xl px-2 text-[10px] ${!expandCard && "truncate"} `}
+        className={`bg-bw/10 hover:bg-bw/20 ${editMode ? "w-[3.3rem]" : "w-[6rem]"} flex h-[80%] overflow-hidden rounded-xl px-2 text-[10px] ${!expandCard && "truncate"} `}
       >
         {" "}
         {fileName}{" "}
