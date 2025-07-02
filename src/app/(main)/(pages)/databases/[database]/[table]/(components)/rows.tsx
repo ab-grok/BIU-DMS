@@ -22,7 +22,13 @@ import { ControllerRenderProps } from "react-hook-form";
 import { useSelection } from "@/app/(main)/(pages)/selectcontext";
 import { tbRcs, useFetchContext } from "@/app/(main)/(pages)/fetchcontext";
 import { QuickActions } from "../../../(components)/quickactions";
-import { deleteTableData, pgFile, updateTableData } from "@/lib/actions";
+import {
+  deleteTableData,
+  pgFile,
+  rdVal,
+  rowData,
+  updateTableData,
+} from "@/lib/actions";
 import UserTag from "@/components/usertag";
 import { revalidate } from "@/lib/sessions";
 
@@ -67,7 +73,10 @@ export function Rows({
 }: rowType) {
   // const [rcSelections, setRcSelections] = useState({} as selectedRc);
   const { selectedRc, setSelectedRc, created } = useSelection();
-  const [alert, setAlert] = useState(false);
+  const [updatedRc, setUpdatedRc] = useState<{
+    new: boolean;
+    rc: [string, rdVal];
+  }>();
   const rcSchema = thisTb?.tbHeader?.reduce(
     (agg, col) => {
       col.colName != "ID" && (agg[col.colName] = col.type);
@@ -137,10 +146,14 @@ export function Rows({
   }
 
   useEffect(() => {
-    setAlert(true);
-    setTimeout(() => {
-      setAlert(false);
-    }, 1000);
+    if (created.rc) {
+      const updatedRcRI = JSON.parse(created.rc);
+      console.log("Row's useEffect() ran, created.rc: ", created.rc);
+      setUpdatedRc({ new: true, rc: updatedRcRI });
+      setTimeout(() => {
+        setUpdatedRc({ new: false, rc: updatedRcRI });
+      }, 1000);
+    }
   }, [created.rc]);
 
   return (
@@ -152,7 +165,7 @@ export function Rows({
     >
       {thisTb?.tbRows && thisTb.tbRows.length ? (
         thisTb?.tbRows?.map((a, i) => {
-          const thisRow = JSON.stringify(Object.entries(a));
+          const thisRow = Object.entries(a);
           console.log(
             "in Rows, thisRow: ",
             thisRow,
@@ -174,7 +187,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRcWhere)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${alert && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${thisRow.includes(updatedRc?.rc!) && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -403,6 +416,8 @@ export function RowItem({
       valChanged.current,
       "ri: ",
       ri,
+      " where: ",
+      where,
     );
     if (canEdit && editMode && valChanged.current && where && ri) {
       console.log("in clickedOut within conditions");
@@ -413,7 +428,7 @@ export function RowItem({
         valChanged.current = false;
       })();
       revalidate("tbData", "path", tbPath);
-      setCreated((p) => ({ ...p, rc: JSON.stringify(ri) }));
+      setCreated((p) => ({ ...p, rc: JSON.stringify([ri[0], val]) }));
     }
   }
 

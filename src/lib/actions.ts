@@ -175,7 +175,7 @@ export async function getTableSchema(
 }
 
 export type pgFile = [string, string, string];
-export type rcVal = string | boolean | number | null | Date | file | pgFile;
+export type rdVal = string | boolean | number | null | Date | file | pgFile;
 type file = {
   fileData: Uint8Array;
   fileName: string;
@@ -183,7 +183,7 @@ type file = {
   fileSize?: number; //a quick fix for zod in file input, not a parameter in database
 };
 export type rowData = {
-  [column: string]: rcVal; //file is custom type. File is js type used for zod check
+  [column: string]: rdVal; //file is custom type. File is js type used for zod check
 };
 
 type getTableData = {
