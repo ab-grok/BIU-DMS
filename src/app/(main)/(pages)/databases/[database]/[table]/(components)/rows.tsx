@@ -406,7 +406,7 @@ export function RowItem({
     }
   }
 
-  async function uploadClicked(e: React.ChangeEvent<HTMLInputElement>) {
+  async function uploaded(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
       const data = await file.arrayBuffer();
@@ -446,11 +446,13 @@ export function RowItem({
           isFile(val) ? (
             <RenderFile
               onBlur={field?.onBlur || clickedOut}
-              editMode={editMode}
+              editMode={editMode || !!field}
               tabIndex={0}
               file={val}
               expandCard={expandCard}
               fileHovered={itemHovered}
+              fileDropped={fileDropped}
+              uploaded={uploaded}
             />
           ) : (
             <div
@@ -466,7 +468,7 @@ export function RowItem({
                 <Label className="text-[10px]">
                   {fileDrag ? "Drop file" : "Click or drag file"}
                   <Input
-                    onChange={uploadClicked}
+                    onChange={uploaded}
                     type="file"
                     className="w-[4rem] truncate bg-gray-600 px-1 text-center text-[8px] shadow-sm hover:bg-green-600/80 hover:shadow-none"
                   />
@@ -559,6 +561,8 @@ type renderFile = {
   expandCard?: boolean;
   onBlur: (e?: any) => void;
   fileHovered?: boolean;
+  uploaded?: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  fileDropped?: (e: React.DragEvent<HTMLDivElement>) => Promise<void>;
 };
 
 function RenderFile({
@@ -568,11 +572,15 @@ function RenderFile({
   onBlur,
   fileHovered,
   tabIndex,
+  uploaded,
+  fileDropped,
 }: renderFile) {
+  const { setPressAnim, pressAnim } = useButtonAnim();
+  const [fileDrag, setFileDrag] = useState(false);
   const { fileData, fileType, fileName } = file;
   const { rcSize } = useRcConfig();
-  const { setPressAnim, pressAnim } = useButtonAnim();
-  const urlRef = useRef("");
+  const [urlRef, setUrlRef] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // const types = [
   //   "image/jpeg",
@@ -608,13 +616,13 @@ function RenderFile({
   }, [fileName, fileData]);
 
   useEffect(() => {
-    if (urlRef.current) {
-      URL.revokeObjectURL(urlRef.current);
-      urlRef.current = "";
+    if (urlRef) {
+      URL.revokeObjectURL(urlRef);
+      setUrlRef("");
     }
     const url = createBlobUrl();
-    urlRef.current = url;
-    return () => URL.revokeObjectURL(urlRef.current);
+    setUrlRef(url);
+    return () => URL.revokeObjectURL(urlRef);
   }, [createBlobUrl, fileData]);
 
   const fileClicked = useCallback(() => {
@@ -650,7 +658,7 @@ function RenderFile({
         />
       ) : fileType.startsWith("image") ? (
         <Image
-          src={urlRef.current}
+          src={urlRef}
           alt={fileName}
           className={`${imgSize(rcSize)} ring-bw/20`}
         />
@@ -664,7 +672,7 @@ function RenderFile({
         <MdSlowMotionVideo size={25} className="stroke-red-500" />
       ) : fileType.includes("/msword") ||
         fileType.includes("officedocument.wordprocessingml.document") ? (
-        <PiMicrosoftWordLogoFill size={25} className="fill-blue-600" />
+        <PiMicrosoftWordLogoFill size={30} className="fill-blue-600" />
       ) : fileType.includes("officedocument.spreadsheetml.sheet") ||
         fileType.includes("vnd.ms-excel") ? (
         <RiFileExcel2Line size={25} className="fill-green-500" />
@@ -680,6 +688,28 @@ function RenderFile({
         {" "}
         {fileName}{" "}
       </p>
+      <div
+        //handle invalid uploads
+        onDragOver={() => setFileDrag(true)}
+        onDragLeave={() => setFileDrag(false)}
+        onClick={() => {
+          inputRef.current?.click();
+          setPressAnim("uplc");
+        }}
+        onDrop={fileDropped}
+        tabIndex={0}
+        className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 rounded-xl transition-all`}
+      >
+        <Label className="text-[10px]">
+          {fileDrag ? "Drop file" : "Click or drag file"}
+          <Input
+            ref={inputRef}
+            onChange={uploaded}
+            type="file"
+            className="hidden w-[4rem] truncate bg-gray-600 px-1 text-center text-[8px] shadow-sm hover:bg-green-600/80 hover:shadow-none"
+          />
+        </Label>
+      </div>
       {/* <div 
       onClick={()=>handleClick("del")}
       className="hover:bg-bw/20 absolute top-0 right-0 size-5 rounded-full">
