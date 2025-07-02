@@ -427,7 +427,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     level,
   );
 
-  return { edit: edit, view: view, level: level, udata: udata };
+  return { edit, view, level, udata };
 }
 
 export async function createDb({
@@ -853,7 +853,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
 
 export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const { token32 } = await getCookie();
-  const { edit, udata } = getUserAccess({ dbName, tbName, token32 });
+  const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
   console.log(
     "in updateTbData, whereArr: ",
     whereArr,
