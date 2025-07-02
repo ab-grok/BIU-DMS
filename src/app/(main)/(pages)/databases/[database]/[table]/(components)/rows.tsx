@@ -188,7 +188,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRcWhere)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${updatedRc && thisRow.includes(updatedRc) && "ring-2 ring-green-600"} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRcWhere) ? "bg-bw/5 ring-2" : ""} ${updatedRc && thisRow.includes(updatedRc) ? "ring-2 ring-green-600" : "ring-shadow-bw/50"} ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -731,7 +731,7 @@ function RenderFile({
         <FileArchive size={25} />
       )}
       <p
-        className={`bg-bw/10 hover:bg-bw/20 rounded-xl px-2 text-[10px] ${!expandCard && "truncate"} `}
+        className={`bg-bw/10 hover:bg-bw/20 w-[3.3rem] rounded-xl px-2 text-[10px] ${!expandCard && "truncate"} `}
       >
         {" "}
         {fileName}{" "}
