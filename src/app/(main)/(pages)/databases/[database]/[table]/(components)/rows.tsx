@@ -294,6 +294,7 @@ export function RowItem({
     );
   }
 
+  useEffect(() => {});
   function isDate(val: any): val is Date {
     return val instanceof Date && !isNaN(val.getTime());
   }
