@@ -11,7 +11,7 @@ import tagLogo from "@/assets/images/tag_logo.png";
 
 export default function MainPage() {
   const { showTag, setShowTag } = useSideContext().context;
-  const sT = useRef<NodeJS.Timeout | undefined>(undefined);
+  const sT = useRef<NodeJS.Timeout[]>([]);
   const [tg1, setTg1] = useState(false);
   const [tg2, setTg2] = useState(false);
   const [tg3, setTg3] = useState(false);
@@ -21,28 +21,38 @@ export default function MainPage() {
     console.log("in main useEffect, showTag: ", showTag);
     console.log("in main useEffect, sT.current: ", sT.current);
     if (showTag) {
-      sT.current = setTimeout(() => {
-        setTg1(true);
-        sT.current = setTimeout(() => {
-          setTg2(true);
-          sT.current = setTimeout(() => {
-            setTg3(true);
-            sT.current = setTimeout(() => {
-              setTg4(true);
-              sT.current = setTimeout(() => {
-                setShowTag(false);
-                setTg1(false);
-                setTg2(false);
-                setTg3(false);
-                setTg4(false);
-                sT.current = undefined;
-              }, 6000);
-            }, 2000);
-          }, 1000);
-        }, 1000);
-      }, 2000);
+      sT.current.push(
+        setTimeout(() => {
+          setTg1(true);
+          sT.current.push(
+            setTimeout(() => {
+              setTg2(true);
+              sT.current.push(
+                setTimeout(() => {
+                  setTg3(true);
+                  sT.current.push(
+                    setTimeout(() => {
+                      setTg4(true);
+                      sT.current.push(
+                        setTimeout(() => {
+                          setShowTag(false);
+                          setTg1(false);
+                          setTg2(false);
+                          setTg3(false);
+                          setTg4(false);
+                          sT.current = [];
+                        }, 6000),
+                      );
+                    }, 2000),
+                  );
+                }, 1000),
+              );
+            }, 1000),
+          );
+        }, 2000),
+      );
     } else {
-      sT.current = undefined;
+      sT.current?.forEach((a) => clearTimeout(a));
     }
   }, [showTag]);
 
@@ -67,7 +77,7 @@ export default function MainPage() {
   return (
     <div className="absolute right-1 bottom-0">
       <main
-        className={` ${showTag ? "flex" : "hidden"} bg-gradient text-main-bg flex w-fit items-center justify-center space-x-1 rounded-full bg-radial from-blue-900/20 via-blue-600/10 to-blue-50/0 p-2 pt-2 pl-2.5 transition-all`}
+        className={` ${showTag ? "flex" : "hidden"} bg-gradient text-main-bg flex w-fit justify-center space-x-1 rounded-full bg-radial from-blue-900/20 via-blue-600/10 to-blue-50/0 p-2 pt-2 pl-2.5 transition-all`}
       >
         <div className="flex">
           <div className={`mt-0.5 flex`}>
@@ -82,12 +92,17 @@ export default function MainPage() {
           <div
             className={` ${tg3 ? "animate-pulse" : "translate-y-[5rem] scale-110"} ${showTag ? "flex" : "hidden"} ml-0.2 mt-[0.00rem] flex transition-all`}
           >
-            {tg1 && tg2 && "."} <span>Grok</span>
+            <span
+              className={` ${tg1 && tg2 ? "" : "absolute bottom-0 scale-150 opacity-0"} transition-all delay-500 duration-500`}
+            >
+              .
+            </span>{" "}
+            <span>Grok</span>
           </div>
         </div>
         <Image
           src={tagLogo}
-          className={` ${tg4 ? "" : "scale-0"} size-6 object-contain transition-all`}
+          className={` ${tg4 ? "" : "scale-0"} mt-0.5 size-5 object-contain transition-all`}
           alt="creator"
         />
       </main>
