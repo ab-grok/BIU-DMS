@@ -905,7 +905,8 @@ export async function deleteTbData(dbName, tbName, whereArr) {
   const col2 = whereArr[1][0];
   const val2 = whereArr[1][1];
 
-  const res = main`delete from ${main(dbName)}.${main(tbName)} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+  const res =
+    await main`delete from ${main(dbName)}.${main(tbName)} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
   if (!metaAdded) throw { customMessage: "Meta not added" };
 
@@ -948,7 +949,8 @@ export async function makeRequests({ dbName, tbName, ReqEdit }) {
   if (!createdBy)
     throw { customMessage: "Couldn't get the database or table's creator" };
 
-  const res = auth`update "metadata" set "edit_requests" = "edit_requests" || ${[uData]} where dbName = ${dbName} ${tbName ? auth`and tbName = ${tbName}` : auth``}`;
+  const res =
+    await auth`update "metadata" set "edit_requests" = "edit_requests" || ${[uData]} where dbName = ${dbName} ${tbName ? auth`and tbName = ${tbName}` : auth``}`;
 
   return { error: null };
   // let col = auth`${auth(dbName)}`
@@ -965,7 +967,7 @@ export async function getRequests({ path }) {
 
   if (!userId) throw { customMessage: "Unauthorized" };
 
-  const res = auth`select view_request, edit_request from `;
+  const res = await auth`select view_request, edit_request from `;
   return { error: false };
 }
 
