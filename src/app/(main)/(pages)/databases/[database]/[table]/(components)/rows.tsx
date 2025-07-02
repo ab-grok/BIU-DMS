@@ -276,7 +276,6 @@ export function RowItem({
   const [expandCard, setExpandCard] = useState(false);
   const [itemHovered, setItemHovered] = useState(false);
   const [val, setVal] = useState<val>(null);
-  const isPgFileCount = useRef(0);
   const [fileDrag, setFileDrag] = useState(false);
   const { editMode } = useRcConfig();
   const { rcSize, setRcSize } = useRcConfig();
@@ -297,12 +296,16 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
-    const v = JSON.parse(val);
-    console.log("v[2] from pg: ", v[2]);
-    console.log("isPgFileCount :", isPgFileCount.current);
-    // console.log("v from pg: ", v);
-
-    return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
+    if (typeof val !== "string") return false;
+    try {
+      const v = JSON.parse(val);
+      console.log("v[2] from pg: ", v[2]);
+      // console.log("v from pg: ", v);
+      return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
+    } catch (e) {
+      console.log("isPgFile, got error: ", e);
+      return false;
+    }
   }
 
   useEffect(() => {});
