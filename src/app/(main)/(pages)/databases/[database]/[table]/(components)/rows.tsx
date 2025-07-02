@@ -276,6 +276,7 @@ export function RowItem({
   //import schema to get col types to handle layout for instances where val is null
   const [expandCard, setExpandCard] = useState(false);
   const [itemHovered, setItemHovered] = useState(false);
+  const { setCreated } = useSelection();
   const [val, setVal] = useState<val>(null);
   const thisFile = useRef({} as file);
   const [fileDrag, setFileDrag] = useState(false);
@@ -395,6 +396,7 @@ export function RowItem({
         valChanged.current = false;
       })();
       revalidate("tbData", "path", tbPath);
+      setCreated((p) => ({ ...p, rc: JSON.stringify(ri) }));
     }
   }
 
