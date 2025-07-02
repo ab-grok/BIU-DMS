@@ -296,12 +296,13 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
-    console.log("isPgFile, val: ", val);
+    // console.log("isPgFile, val: ", val);
 
     const v = val.split(",");
 
     console.log("v[0]/fileName from pg: ", v[0]);
     console.log("v[1]/fileData from pg: ", v[1]);
+    console.log("indexof v[1]/fileData from pg: ", v[1].indexOf("x"));
     console.log("v[2]/fileType from pg: ", v[2]);
     // console.log("v from pg: ", v);
     return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
