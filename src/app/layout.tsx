@@ -9,10 +9,11 @@ dotenv.config();
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | BIU ",
-    default: "Department Records Management",
+    template: "%s | BIU-DMS ",
+    default: "Department Management System",
   },
-  description: "Computer Science records management system",
+  description:
+    "A records management system for the Computer Science Department, BIU",
   icons: { icon: "/biu-trans.png" },
 };
 

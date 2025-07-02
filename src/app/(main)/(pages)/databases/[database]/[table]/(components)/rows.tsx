@@ -298,6 +298,7 @@ export function RowItem({
     if (isDefault && colType.includes("timestamp")) setVal(new Date());
     else if (ri) setVal(ri[1]);
 
+    console.log("canEdit: ", canEdit, "editMode: ", editMode);
     console.log("ri from rowItem: ", ri);
     console.log("isDefault from rowItem: ", isDefault);
     console.log("colType from rowItem: ", colType);
