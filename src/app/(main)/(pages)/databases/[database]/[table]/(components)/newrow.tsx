@@ -51,7 +51,7 @@ type createRcType = {
 
 export function NewRow({
   nRcScroll,
-  tbPath,
+  tbPath, //db/tb???
   ref,
   thisTb,
   nRc,
@@ -138,7 +138,6 @@ export function NewRow({
     }
 
     await insertRow([values]);
-    revalidate("tbData", "path");
     setIsLoading((p) => p.replace("nRc", ""));
   }
 

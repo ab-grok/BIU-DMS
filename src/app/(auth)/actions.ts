@@ -5,8 +5,6 @@ import { deleteSession, revalidate } from "@/lib/sessions";
 
 export async function logOut(): Promise<{ error: string }> {
   try {
-    await revalidate("tbSchema", "all");
-    await revalidate("tbData", "all");
     const { error } = await deleteSession();
     console.log("user logged out, error: ", error);
     if (!error) redirect("/login");

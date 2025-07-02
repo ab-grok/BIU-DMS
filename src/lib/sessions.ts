@@ -132,11 +132,11 @@ type revalidate =
 export async function revalidate(
   name: revalidate,
   type?: "path" | "all",
-  path?: string,
+  path?: string, //dbName, dbName/tbName
 ) {
   const { token32 } = await getCookie();
   if (type == "all") revalidateTag(name);
-  else if (path) revalidateTag(path + "-" + name);
+  else if (path) revalidateTag(name + "-" + path);
   else {
     revalidateTag(`${name}-${token32}`);
   }

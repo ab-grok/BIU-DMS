@@ -31,6 +31,8 @@ export type sideContextState = {
   setEditMode: Dispatch<SetStateAction<boolean>>;
   showToolbar: boolean;
   setShowToolbar: Dispatch<SetStateAction<boolean>>;
+  showTag: boolean;
+  setShowTag: Dispatch<SetStateAction<boolean>>;
 };
 
 export function useRcConfig() {
@@ -56,9 +58,12 @@ export default function LayoutContext({
   const [rcSize, setRcSize] = useState({ w: "md", h: "sm" } as rcDim);
   const [editMode, setEditMode] = useState(false);
   const [showToolbar, setShowToolbar] = useState(true);
+  const [showTag, setShowTag] = useState(false);
   return (
     <sideContext.Provider
       value={{
+        showTag,
+        setShowTag,
         showToolbar,
         setShowToolbar,
         editMode,

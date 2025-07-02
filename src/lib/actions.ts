@@ -167,8 +167,8 @@ export async function getTableSchema(
         };
       }
     },
-    [`${dbName}-${tbName}-schema`],
-    { tags: ["tbSchema", `${dbName}-${tbName}-schema`], revalidate: 86400 },
+    [`tbSchema-${dbName}/${tbName}`],
+    { tags: ["tbSchema", `tbSchema-${dbName}/${tbName}`], revalidate: 86400 },
   );
   const sch = await getSchemas();
   return sch;
@@ -211,8 +211,8 @@ export async function getTableData(
         return { error: e.customMessage || "Something went wrong!" };
       }
     },
-    [`${dbName}/${tbName}-tbData`],
-    { tags: ["tbData", `${dbName}/${tbName}-tbData`], revalidate: 36000 },
+    [`tbData-${dbName}/${tbName}`],
+    { tags: ["tbData", `tbData-${dbName}/${tbName}`], revalidate: 36000 },
   );
   return await tbData();
 }

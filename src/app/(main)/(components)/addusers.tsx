@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import UserTag from "@/components/usertag";
 import { getUsers, allUsers } from "@/lib/actions";
 import { changeUsers } from "@/lib/server";
+import { revalidate } from "@/lib/sessions";
 import { UIEvent, useEffect, useState } from "react";
 
 export default function AddUsers({ height }: { height?: string }) {
@@ -25,7 +26,7 @@ export default function AddUsers({ height }: { height?: string }) {
     } else {
       setDbTb({ db: dbRTb[0], tb: dbRTb[1] });
     }
-  }, []);
+  }, [addUsers.type]);
 
   function handleClickOut(e: UIEvent<HTMLDivElement>) {
     const currId = (e.target as HTMLDivElement).id;
@@ -44,10 +45,14 @@ export default function AddUsers({ height }: { height?: string }) {
     const isE = addUsers.category == "editors";
     const vArr = addUsers.viewers?.split(",").filter(Boolean);
     const eArr = addUsers.editors.split(",").filter(Boolean);
-    const dbTb = addUsers.type.split(",")[0].split("/");
+    if (dbTb.tb) {
+      revalidate("tables", "path", dbTb.db);
+      revalidate("tbSchema", "path", dbTb.tb);
+      revalidate("tbData", "path", dbTb.tb);
+    } else if (dbTb.db) revalidate("databases");
     const { error } = await changeUsers({
-      dbName: dbTb[0],
-      tbName: dbTb[1],
+      dbName: dbTb.db,
+      tbName: dbTb.tb,
       viewers: vArr,
       editors: eArr,
       remove: "",
@@ -60,9 +65,8 @@ export default function AddUsers({ height }: { height?: string }) {
     else
       setNotify({
         message: isE
-          ? `Changed ${dbTb[1] ? "table" : " database"} editors`
-          : `Changed ${dbTb[1] ? "table" : " database"} viewers`,
-        danger: true,
+          ? `Changed ${dbTb.tb ? "table" : " database"} editors`
+          : `Changed ${dbTb.tb ? "table" : " database"} viewers`,
       });
   }
 
