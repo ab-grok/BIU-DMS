@@ -276,6 +276,7 @@ export function RowItem({
   const [expandCard, setExpandCard] = useState(false);
   const [itemHovered, setItemHovered] = useState(false);
   const [val, setVal] = useState<val>(null);
+  const [thisFile, setThisFile] = useState({} as file);
   const [fileDrag, setFileDrag] = useState(false);
   const { editMode } = useRcConfig();
   const { rcSize, setRcSize } = useRcConfig();
@@ -297,20 +298,22 @@ export function RowItem({
 
   function isPgFile(val: any): val is pgFile {
     // console.log("isPgFile, val: ", val);
-    if (!val?.startsWith("(")) return false; // for a postgres file output of "(fileName, "\\x...", image/jpeg)"
+    if (!val?.startsWith("(")) return false; // for a postgres file output of "(fileName, "\\x...", image/jpeg)" : indexof("x") is 3
     const v = val?.split(",");
 
-    let fileName = v[0].replace("(", "");
-    fileName = v[0].replaceAll('"', "");
-    const fileData = v[1].slice(v[1].indexOf("x"), v[1].length - 1);
-    const fileType = v[2].replace(")", "");
+    const currFile = {} as file;
+    currFile.fileName = v[0].replace("(", "");
+    currFile.fileName = currFile["fileName"]?.replaceAll('"', "");
+    currFile.fileData = v[1].slice(v[1].indexOf("x") + 1, v[1].length - 1);
+    currFile.fileType = v[2].replace(")", "");
 
-    console.log("v[1]/fileData from pg: ", fileName);
-    console.log("v[1]/fileData from pg: ", fileData);
-    console.log("v[2]/fileType from pg: ", fileType);
+    // console.log("v[1]/fileData from pg: ", fileData);
+    // console.log("v[1]/fileData from pg: ", currFile.fileData);
+    // console.log("v[2]/fileType from pg: ", currFile.fileType);
 
+    setThisFile(currFile);
     // console.log("v from pg: ", v);
-    return fileType.includes("/");
+    return currFile.fileType.includes("/");
   }
 
   useEffect(() => {});
@@ -319,9 +322,7 @@ export function RowItem({
   }
 
   function hexToUint8Array(hex: string) {
-    if (hex.startsWith("\\\\x")) hex = hex.slice(3);
-    if (hex.startsWith("\\x")) hex = hex.slice(2);
-    const bytes = new Uint8Array(hex.length / 2);
+    const bytes = new Uint8Array((thisFile.fileData as string)?.length / 2);
     for (let i = 0; i < bytes.length; i++) {
       bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
     }
@@ -333,18 +334,15 @@ export function RowItem({
     else if (ri && ri[1]) {
       console.log("in RowItem's useEffect before isPgFile");
       if (isPgFile(ri[1])) {
-        console.log("~~~~~~fileData: ", ri[1][2]);
+        // console.log("~~~~~~fileData: ", thisFile.fileData);
+        const fileFromHex = hexToUint8Array(thisFile?.fileData as string);
+        // If you need an ArrayBuffer:
+        const arrayBuffer = fileFromHex.buffer;
         console.log(
-          "~~~~~~fileData.indexof(`x`): ",
-          (ri[1][1] as string).indexOf(`x`),
+          "setting buffer in useEffect, fileName: ",
+          thisFile.fileName,
         );
-
-        // const fileFromHex = hexToUint8Array(ri[1].fileData);
-        // // Usage:
-        // const pgHex = "\x89504e470d0a1a0a0000000d49484452000003840000038";
-        // const uint8 = hexToUint8Array(pgHex);
-        // // If you need an ArrayBuffer:
-        // const arrayBuffer = uint8.buffer;
+        console.log("Array buffer: ", arrayBuffer);
         return;
       }
       setVal(ri[1]);
