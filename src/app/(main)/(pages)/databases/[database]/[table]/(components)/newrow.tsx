@@ -234,6 +234,11 @@ export function NewRow({
                             colType={col.type}
                             tbPath={tbPath}
                             nCol={i}
+                            err={
+                              form.formState.errors[col.colName]?.message as
+                                | string
+                                | undefined
+                            }
                             field={field}
                             isDefault={isDef(col.colName)} //to disable it
                             reset={resetCount}

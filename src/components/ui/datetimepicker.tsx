@@ -692,6 +692,7 @@ type DateTimePickerProps = {
   disabled?: boolean;
   clicked?: boolean;
   tabIndex?: number;
+  err?: string;
   onBlur?: (e?: React.FocusEvent<any>) => void;
   /** showing `AM/PM` or not. */
   hourCycle?: 12 | 24;
@@ -747,6 +748,7 @@ const DateTimePicker = React.forwardRef<
       className,
       tabIndex,
       onBlur,
+      err,
       clicked,
       ...props
     },
@@ -847,6 +849,7 @@ const DateTimePicker = React.forwardRef<
               !displayDate && "text-bw",
               !disabled && "cursor-pointer",
               clicked && "scale-95",
+              err && "ring-red-600",
               className,
             )}
             ref={buttonRef}

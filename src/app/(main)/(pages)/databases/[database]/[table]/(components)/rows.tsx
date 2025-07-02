@@ -248,6 +248,7 @@ type rowItem = {
   colType: string;
   uData?: string;
   reset?: number;
+  err?: string;
   isDefault?: boolean;
   field?: ControllerRenderProps<
     {
@@ -268,6 +269,7 @@ export function RowItem({
   isDefault,
   field,
   uData,
+  err,
 }: rowItem) {
   //import schema to get col types to handle layout for instances where val is null
   const [expandCard, setExpandCard] = useState(false);
@@ -408,7 +410,7 @@ export function RowItem({
               onDrop={fileDropped}
               tabIndex={0}
               onBlur={field?.onBlur || clickedOut}
-              className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} hover:text-bw text-bw/80 rounded-xl transition-all`}
+              className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} ${err && "ring-2 ring-red-600"} hover:text-bw text-bw/80 rounded-xl transition-all`}
             >
               {(canEdit && editMode) || field ? (
                 <Label className="text-[10px]">
@@ -427,6 +429,7 @@ export function RowItem({
         ) : colType.includes("timestamp") || val instanceof Date ? (
           <div onClick={() => setPressAnim("nrcdt")} className="">
             <DateTimePicker
+              err={err}
               onBlur={field?.onBlur || clickedOut}
               tabIndex={0}
               value={val as Date}
