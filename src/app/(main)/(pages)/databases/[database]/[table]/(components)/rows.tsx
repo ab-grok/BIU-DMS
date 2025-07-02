@@ -661,7 +661,7 @@ function RenderFile({
     if (editMode) return;
     const url = createBlobUrl();
     if (url) {
-      if (renderTypes.some((p) => fileType.startsWith(p)))
+      if (renderTypes.some((p) => fileType?.startsWith(p)))
         window.open(url, "_blank");
       else {
         const a = document.createElement("a");
