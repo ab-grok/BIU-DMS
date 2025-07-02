@@ -330,7 +330,7 @@ export function RowItem({
 
   function isPgFile(val: any): val is pgFile {
     // console.log("isPgFile, val: ", val);
-    if (!val?.startsWith("(")) return false; // for a postgres file output of "(fileName, "\\x...", image/jpeg)" : indexof("x") is 3
+    if (typeof val != "string" || !val?.startsWith("(")) return false; // for a postgres file output of "(fileName, "\\x...", image/jpeg)" : indexof("x") is 3
     const v = val?.split(",");
 
     const currFile = {} as file;
