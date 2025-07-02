@@ -140,7 +140,7 @@ export async function revalidate(
   else {
     revalidateTag(`${name}-${token32}`);
   }
-  console.log("revalidated '", name, "'");
+  console.log("revalidated, name + '-' + path: '", name + "-" + path, "'");
   return true;
 }
 
