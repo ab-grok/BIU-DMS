@@ -232,7 +232,7 @@ export function Rows({
 }
 
 export type file = {
-  fileData: Uint8Array | ArrayBuffer;
+  fileData: Uint8Array | ArrayBuffer | string;
   fileName: string;
   fileType: string;
   fileSize?: number;
@@ -300,13 +300,39 @@ export function RowItem({
     return val instanceof Date && !isNaN(val.getTime());
   }
 
+  function hexToUint8Array(hex: string) {
+    if (hex.startsWith("\\\\x")) hex = hex.slice(2);
+    if (hex.startsWith("\\x")) hex = hex.slice(2);
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return bytes;
+  }
+
   useEffect(() => {
     if (isDefault && colType.includes("timestamp")) setVal(new Date());
-    else if (ri) setVal(ri[1]);
+    else if (ri) {
+      if (isFile(ri[1])) {
+        console.log("~~~~~~fileData: ", ri[1].fileData);
+        console.log(
+          "~~~~~~fileData.indexof(`x`): ",
+          (ri[1].fileData as string).indexOf(`x`),
+        );
+
+        // const fileFromHex = hexToUint8Array(ri[1].fileData);
+        // // Usage:
+        // const pgHex = "\x89504e470d0a1a0a0000000d49484452000003840000038";
+        // const uint8 = hexToUint8Array(pgHex);
+        // // If you need an ArrayBuffer:
+        // const arrayBuffer = uint8.buffer;
+      }
+      setVal(ri[1]);
+    }
 
     console.log("canEdit: ", canEdit, "editMode: ", editMode);
     console.log("ri from rowItem: ", ri);
-    console.log("isDefault from rowItem: ", isDefault);
+    // console.log("isDefault from rowItem: ", isDefault);
     console.log("colType from rowItem: ", colType);
   }, []);
 
