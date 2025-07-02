@@ -693,7 +693,7 @@ type DateTimePickerProps = {
   clicked?: boolean;
   tabIndex?: number;
   err?: string;
-  onBlur?: (e?: React.FocusEvent<any>) => void;
+  // onBlur?: (e?: React.FocusEvent<any>) => void;
   /** showing `AM/PM` or not. */
   hourCycle?: 12 | 24;
   placeholder?: string;
@@ -747,7 +747,7 @@ const DateTimePicker = React.forwardRef<
       placeholder = "Pick a date",
       className,
       tabIndex,
-      onBlur,
+      // onBlur,
       err,
       clicked,
       ...props
@@ -870,7 +870,7 @@ const DateTimePicker = React.forwardRef<
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent onBlur={onBlur} className="w-auto p-0">
+        <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
             selected={displayDate}

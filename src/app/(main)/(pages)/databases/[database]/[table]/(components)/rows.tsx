@@ -394,9 +394,9 @@ export function RowItem({
       initRender.current = false;
       return;
     }
+    valChanged.current = true;
     field?.onChange(val);
     clickedOut();
-    valChanged.current = true;
   }, [val]);
 
   function delVal() {
@@ -529,7 +529,7 @@ export function RowItem({
           <div onClick={(e) => itemClicked(e, "nrcdt")} className="">
             <DateTimePicker
               err={err}
-              onBlur={field?.onBlur || clickedOut}
+              // onBlur={field?.onBlur || clickedOut}
               tabIndex={0}
               value={val as Date}
               onChange={(e) => setVal(e as Date)}
