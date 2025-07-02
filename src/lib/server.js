@@ -404,13 +404,13 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     tbName,
     asString: true,
   });
-  // console.log("got past getMetadata in getUserAccess, meta: ", meta);
+  console.log("got past getMetadata in getUserAccess, meta: ", meta);
   let edit = false;
   let view = false;
   if (meta) {
     const { createdBy, viewers, editors } = meta;
     if (createdBy?.includes(userId)) {
-      edit = true; //change to creator
+      edit = true; //change to creator = true?
     } else if (editors?.includes(userId)) {
       edit = true;
     } else if (viewers?.includes(userId)) {
@@ -418,14 +418,15 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     }
   } else if (level > 1) edit = true;
 
-  // console.log(
-  //   "data from get access: edit: ",
-  //   edit,
-  //   "view: ",
-  //   view,
-  //   "level: ",
-  //   level,
-  // );
+  console.log(
+    "data from get access: edit: ",
+    edit,
+    "view: ",
+    view,
+    "level: ",
+    level,
+  );
+
   return { edit, view, level, udata };
 }
 
