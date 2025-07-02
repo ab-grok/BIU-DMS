@@ -409,7 +409,7 @@ export function RowItem({
                   <Input
                     onChange={uploadClicked}
                     type="file"
-                    className="w-fit truncate bg-green-600 px-1 text-center shadow-sm hover:ring-2"
+                    className="w-[4rem] truncate bg-green-600 px-1 text-center text-[8px] shadow-sm hover:ring-2"
                   />
                 </Label>
               ) : (
