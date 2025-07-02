@@ -149,7 +149,7 @@ function HeaderItem({ name, type, keys, i, tbPath }: headerItem) {
           : { col: name, order: "desc", new: true },
     }));
     //trigger rc dependency
-    //revalidate tbpath-tbData
+    revalidate("tbSchema", "path", tbPath);
   }
 
   return (

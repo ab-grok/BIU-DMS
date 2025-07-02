@@ -854,18 +854,6 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
 export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const { token32 } = await getCookie();
   const { edit, udata } = await getUserAccess({ dbName, tbName, token32 });
-  console.log(
-    "in updateTbData, whereArr: ",
-    whereArr,
-    " col: ",
-    col,
-    " val: ",
-    val,
-    " edit: ",
-    edit,
-    " uData: ",
-    udata,
-  );
   if (!edit) throw { customMessage: "Unauthorized" };
 
   const col1 = whereArr[0][0];
@@ -873,7 +861,34 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
   const col2 = whereArr[1][0];
   const val2 = whereArr[1][1];
 
-  const res = main`update ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
+  console.log(
+    "in updateTbData, whereArr: ",
+    whereArr,
+    " col1: ",
+    col1,
+    " val1: ",
+    val1,
+    " col2: ",
+    col2,
+    " val2: ",
+    val2,
+  );
+
+  // console.log(
+  //   "in updateTbData, whereArr: ",
+  //   whereArr,
+  //   " col: ",
+  //   col,
+  //   " val: ",
+  //   val,
+  //   " edit: ",
+  //   edit,
+  //   " uData: ",
+  //   udata,
+  // );
+
+  const res =
+    await main`update ${main(dbName)}.${main(tbName)} set ${main(col)} = ${val} where ${main(col1)} = ${val1} and ${main(col2)} = ${val2}`;
   const metaAdded = await addMetadata({ dbName, tbName, updatedBy: udata });
   if (!metaAdded) throw { customMessage: "Meta not added" };
 
