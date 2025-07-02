@@ -307,7 +307,7 @@ export function RowItem({
   }
 
   function hexToUint8Array(hex: string) {
-    if (hex.startsWith("\\\\x")) hex = hex.slice(2);
+    if (hex.startsWith("\\\\x")) hex = hex.slice(3);
     if (hex.startsWith("\\x")) hex = hex.slice(2);
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < bytes.length; i++) {
@@ -319,6 +319,7 @@ export function RowItem({
   useEffect(() => {
     if (isDefault && colType.includes("timestamp")) setVal(new Date());
     else if (ri && ri[1]) {
+      console.log("in RowItem's useEffect before isPgFile");
       if (isPgFile(ri[1])) {
         console.log("~~~~~~fileData: ", ri[1][2]);
         console.log(
