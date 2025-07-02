@@ -427,7 +427,7 @@ export async function getUserAccess({ dbName, tbName, token32, uid }) {
     level,
   );
 
-  return { edit, view, level, udata };
+  return { edit: edit, view: view, level: level, udata: udata };
 }
 
 export async function createDb({
@@ -867,14 +867,6 @@ export async function updateTbData(dbName, tbName, whereArr, col, val) {
     udata,
   );
   if (!edit) throw { customMessage: "Unauthorized" };
-  console.log(
-    "in updateTbData, whereArr: ",
-    whereArr,
-    " col: ",
-    col,
-    " val: ",
-    val,
-  );
 
   const col1 = whereArr[0][0];
   const val1 = whereArr[0][1];
