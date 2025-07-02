@@ -400,7 +400,7 @@ export function RowItem({
               onDrop={fileDropped}
               tabIndex={0}
               onBlur={field?.onBlur || clickedOut}
-              className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "bg-bw/10 shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
+              className={`group/fd flex p-1 ${fileDrag ? "animate-logoExit bg-red-600/30 shadow-xs" : "shadow-sm"} ${pressAnim.includes("uplc") && "scale-95"} rounded-xl transition-all`}
             >
               {canEdit && editMode ? (
                 <Label className="group-hover/fd:text-bw text-bw/80 text-[10px]">
