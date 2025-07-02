@@ -118,9 +118,9 @@ function HeaderItem({ name, type, keys, i, tbPath }: headerItem) {
   ).toLowerCase();
   const [isId, setIsId] = React.useState(t.includes("serial"));
   const tNum =
-    t == "DEFAULT"
+    t == "default"
       ? 6
-      : t == "file"
+      : t == "file" || t == "user-defined"
         ? 5
         : t == "timestamp"
           ? 4

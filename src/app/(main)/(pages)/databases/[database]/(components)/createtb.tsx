@@ -121,8 +121,8 @@ export default function CreateTb({ i, uData, db }: tbType) {
       if (checkOrDelCol(columns.name)) return;
       else setCreateTbCol((p) => [...p, columns]);
     }
-    const { reset } = form;
-    reset();
+    form.reset();
+    form.setValue("type", typeChange);
     // currColInput.current
     //   ? currColInput.current.focus()
     //   : currDesc.current?.focus();
