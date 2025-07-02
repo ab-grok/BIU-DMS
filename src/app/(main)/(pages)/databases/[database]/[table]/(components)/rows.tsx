@@ -276,6 +276,7 @@ export function RowItem({
   const [expandCard, setExpandCard] = useState(false);
   const [itemHovered, setItemHovered] = useState(false);
   const [val, setVal] = useState<val>(null);
+  const isPgFileCount = useRef(0);
   const [fileDrag, setFileDrag] = useState(false);
   const { editMode } = useRcConfig();
   const { rcSize, setRcSize } = useRcConfig();
@@ -296,6 +297,12 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
+    console.log("val from pg: ", val);
+    isPgFileCount.current += 1;
+    console.log("isPgFileCount :", isPgFileCount.current);
+    console.log("val from pg: ", val);
+    if (isPgFileCount.current > 2) return false;
+
     return (
       val && Array.isArray(val) && val[2] == "string" && val[2].includes("/")
     );
@@ -311,7 +318,7 @@ export function RowItem({
     if (hex.startsWith("\\x")) hex = hex.slice(2);
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < bytes.length; i++) {
-      bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+      bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
     }
     return bytes;
   }
