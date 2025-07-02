@@ -598,7 +598,7 @@ function RenderFile({
       {fileHovered ? (
         <FaDownload
           size={25}
-          className={`${pressAnim.includes("ftbn") && "translate-y-1"} fill-blue-700/70 transition-all`}
+          className={`${pressAnim.includes("ftbn") && "translate-y-1"} fill-blue-700 transition-all`}
         />
       ) : fileType.startsWith("image") ? (
         <Image

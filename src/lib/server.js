@@ -777,7 +777,7 @@ export async function insertTbData({ dbName, tbName, colVals, token32 }) {
     Object.entries(a).forEach((b) => {
       if (b[1].fileData) {
         updA[b[0]] =
-          main`ROW(fileName: ${b[1].fileName},fileData: ${b[1].fileData},fileType: ${b[1].fileType} ) :: file`;
+          main`ROW(${b[1].fileName}, ${b[1].fileData}, ${b[1].fileType} ) :: file`;
       } else updA[b[0]] = b[1];
     });
     return {
