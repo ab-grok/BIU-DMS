@@ -32,7 +32,7 @@ export default function TableRows() {
   const [canEdit, setCanEdit] = React.useState(false);
   const nrcRef = React.useRef<HTMLDivElement | null>(null);
   const { showToolbar } = useSideContext().context;
-  const thisTb = rc.find((a) => a.tbPath == tbPath);
+  const thisTb = rc?.find((a) => a.tbPath == tbPath);
 
   console.log("in TableRows, dbName: ", dbName, " ...tbName: ", tbName);
 
@@ -49,7 +49,7 @@ export default function TableRows() {
         setNotify({ message: error1 || error, danger: true });
         return;
       }
-      let currTb: tbRcs | undefined = rc.find((a) => (a.tbPath = tbPath));
+      let currTb: tbRcs | undefined = rc?.find((a) => (a.tbPath = tbPath));
       const placeTb = {
         tbPath: tbPath,
         tbRows: [] as rowData[],
