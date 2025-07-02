@@ -363,6 +363,7 @@ export function RowItem({
       return;
     }
     field?.onChange(val);
+    clickedOut();
     valChanged.current = true;
   }, [val]);
 
