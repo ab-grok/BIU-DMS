@@ -231,10 +231,11 @@ export function Rows({
   );
 }
 
-type file = {
+export type file = {
   fileData: Uint8Array | ArrayBuffer;
   fileName: string;
   fileType: string;
+  fileSize?: number;
 };
 type val = string | boolean | number | null | Date | file | File;
 type rowItem = {
@@ -340,29 +341,35 @@ export function RowItem({
     }
   }
 
-  function fileDropped(e: React.DragEvent<HTMLDivElement>) {
+  async function fileDropped(e: React.DragEvent<HTMLDivElement>) {
     const file = e.dataTransfer.files[0];
     if (file) {
-      if (field) {
-        setVal(file);
-        return;
-      }
-      file.arrayBuffer().then((b) => {
-        setVal({ fileData: b, fileName: file.name, fileType: file.type });
+      const data = await file.arrayBuffer();
+      setVal({
+        fileData: data,
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
       });
     }
   }
 
-  function uploadClicked(e: React.ChangeEvent<HTMLInputElement>) {
+  async function uploadClicked(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      if (field) {
-        setVal(file);
-        return;
-      }
-      file.arrayBuffer().then((b) => {
-        setVal({ fileData: b, fileName: file.name, fileType: file.type });
+      const data = await file.arrayBuffer();
+      setVal({
+        fileData: data,
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
       });
+      //   if (field) {
+      //     setVal(file);
+      //     return;
+      //   }
+      //   file.arrayBuffer().then((b) => {
+      // });
     }
   }
 

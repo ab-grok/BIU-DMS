@@ -1,5 +1,6 @@
 import { number, z, ZodTypeAny } from "zod";
 import { colSchema } from "./actions";
+import { file } from "@/app/(main)/(pages)/databases/[database]/[table]/(components)/rows";
 
 const reqString = z.string().trim().min(2, "Too short.");
 export const createTbSchema = z.object({
@@ -63,9 +64,12 @@ export const createRcSchema = (tbHeader: colSchema[]) => {
     else if (checkType(cT) == "date") validator = z.date();
     else if (checkType(cT) == "file")
       validator = z
-        .custom<File>((val) => val instanceof File, "File Required")
+        .custom<file>(
+          (val) => val.fileData instanceof ArrayBuffer,
+          "File Required",
+        )
         .refine(
-          (val) => val.size <= 5 * 1024 * 1024,
+          (val) => val.fileSize && val.fileSize <= 5 * 1024 * 1024,
           "Size should be less than 5mb",
         );
     else validator = z.string().min(1, "Field is not nullable"); //if (c == "text")

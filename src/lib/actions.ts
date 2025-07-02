@@ -175,7 +175,12 @@ export async function getTableSchema(
 }
 
 export type rcVal = string | boolean | number | null | Date | file | File;
-type file = { fileData: Uint8Array; fileName: string; fileType: string };
+type file = {
+  fileData: Uint8Array;
+  fileName: string;
+  fileType: string;
+  fileSize?: number; //a quick fix for zod in file input, not a parameter in database
+};
 export type rowData = {
   [column: string]: rcVal; //file is custom type. File is js type used for zod check
 };
