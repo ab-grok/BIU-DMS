@@ -156,7 +156,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRow)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-0`}
+                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl bg-red-600 p-0`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -208,7 +208,7 @@ export function Rows({
             selected={rcs?.rows.includes("fillerRow")}
           />
           <div
-            className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-0`}
+            className={`${rcs?.rows.includes("fillerRow") ? "bg-bw/30 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
           >
             {thisTb?.tbHeader?.map((b, j) => {
               if (b.colName !== "ID")
@@ -297,15 +297,20 @@ export function RowItem({
 
   function isPgFile(val: any): val is pgFile {
     // console.log("isPgFile, val: ", val);
+    if (!val?.startsWith("(")) return false; // for a postgres file output of "(fileName, "\\x...", image/jpeg)"
+    const v = val?.split(",");
 
-    const v = val.split(",");
+    let fileName = v[0].replace("(", "");
+    fileName = v[0].replaceAll('"', "");
+    const fileData = v[1].slice(v[1].indexOf("x"), v[1].length - 1);
+    const fileType = v[2].replace(")", "");
 
-    console.log("v[0]/fileName from pg: ", v[0]);
+    console.log("v[1]/fileData from pg: ", fileName);
     console.log("v[1]/fileData from pg: ", v[1]);
-    console.log("indexof v[1]/fileData from pg: ", v[1]?.indexOf("x"));
     console.log("v[2]/fileType from pg: ", v[2]);
+
     // console.log("v from pg: ", v);
-    return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
+    return fileType.includes("/");
   }
 
   useEffect(() => {});
@@ -424,7 +429,7 @@ export function RowItem({
   }
   return (
     <div
-      className={`${nCol % 2 == 0 ? "bg-tb-row2/50" : "bg-tb-row2/5"} ${expandCard && !field ? "" : `${hVal(rcSize, "max")}`} ${hVal(rcSize)} ${wVal(rcSize)} flex items-center justify-center p-0.5`}
+      className={`${nCol % 2 == 0 ? "bg-tb-row2/50" : "bg-tb-row2/5"} ${expandCard && !field ? "" : `${hVal(rcSize, "max")}`} ${hVal(rcSize)} ${wVal(rcSize)} flex items-center justify-center p-0`}
     >
       <div
         id="row item"
@@ -434,7 +439,7 @@ export function RowItem({
         }}
         onMouseEnter={() => setItemHovered(true)}
         onMouseLeave={() => setItemHovered(false)}
-        className={`group/x w-full ${expandCard && !field ? "h-fit min-h-full bg-green-800/50" : "h-full min-h-full hover:bg-green-700/10 hover:shadow-black"} shadow-shadow-bw relative flex h-full items-center justify-center overflow-hidden px-1 text-sm shadow-sm`}
+        className={`group/x w-full ${expandCard && !field ? "bg-green-800/50" : "hover:bg-green-700/10 hover:shadow-black"} shadow-shadow-bw relative flex h-full items-center justify-center overflow-hidden px-1 text-sm shadow-sm`}
       >
         {colType == "USER-DEFINED" || colType == "file" ? (
           isFile(val) ? (
