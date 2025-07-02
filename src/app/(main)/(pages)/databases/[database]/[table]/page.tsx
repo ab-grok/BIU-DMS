@@ -41,7 +41,7 @@ export default function TableRows() {
       setIsLoading((p) => p + "tbData");
       const { tbSchema, error1 } = await getTableSchema(dbName, tbName);
       const { tbData, error } = await getTableData(dbName, tbName, orderBy.rc);
-      console.log("in getTb rowHeader currTb,: ", tbPath);
+      console.log("in getTb rc currTb,: ", tbPath);
       // console.log("in [table] got tbSchema: ", tbSchema, " . Error1: ", error1);
       // console.log("in [table] got tbData: ", tbData, " . Error: ", error);
 
@@ -102,6 +102,7 @@ export default function TableRows() {
     if (!currUA) {
       (async () => {
         const { edit, view, level } = await getUA(dbName, tbName);
+        console.log("in getTb rc, UA.edit: ", edit);
         const UA = { tbPath, edit };
 
         setUAccess((p) => {
