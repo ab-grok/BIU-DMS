@@ -146,7 +146,7 @@ export function Rows({
             <div
               key={i}
               onClick={() => rcClicked(thisRow)}
-              className={`group ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg1/50"} hover:bg-bw/20 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
+              className={`group ${i % 2 == 0 ? "bg-row-bg1" : "bg-row-bg1/50"} hover:bg-bw/10 relative my-0.5 flex min-h-[3rem] w-fit min-w-full`}
             >
               <Index
                 i={i + 1}
@@ -156,7 +156,7 @@ export function Rows({
                 selected={rcs?.rows.includes(thisRow)}
               />
               <div
-                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/10 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
+                className={`${rcs?.rows.includes(thisRow) ? "bg-bw/5 ring-2" : ""} ring-shadow-bw/50 ml-[0.1rem] flex h-full w-fit items-center overflow-hidden rounded-xl p-1`}
               >
                 {Object.entries(a).map((b, j) => {
                   if ((b[0] as string) !== "ID")
@@ -282,6 +282,7 @@ export function RowItem({
   const initRender = useRef(true);
   const valChanged = useRef(false);
   const { pressAnim, setPressAnim } = useButtonAnim();
+  console.log("error state from RowItem, err: ", err);
 
   function isFile(val: any): val is file {
     return (
