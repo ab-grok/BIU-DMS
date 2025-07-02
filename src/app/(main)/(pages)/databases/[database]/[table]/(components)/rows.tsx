@@ -645,7 +645,7 @@ function RenderFile({
     <div
       onClick={() => {
         setPressAnim("fbtn");
-        fileClicked();
+        !editMode && fileClicked();
       }}
       tabIndex={tabIndex}
       onBlur={onBlur}
