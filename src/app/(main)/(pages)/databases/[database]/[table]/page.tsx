@@ -100,7 +100,7 @@ export default function TableRows() {
   React.useEffect(() => {
     const d = tbPath.split("/")[0];
     const t = tbPath.split("/")[1];
-    const currUA = uAccess.find((a) => a.db == d && a.tb == t);
+    const currUA = uAccess?.find((a) => a.db == d && a.tb == t);
     if (!currUA) {
       (async () => {
         const { edit, view, level } = await getUA(dbName, tbName);
