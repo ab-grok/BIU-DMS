@@ -297,13 +297,12 @@ export function RowItem({
   }
 
   function isPgFile(val: any): val is pgFile {
-    console.log("val[2] from pg: ", val[2]);
+    const v = JSON.parse(val);
+    console.log("v[2] from pg: ", v[2]);
     console.log("isPgFileCount :", isPgFileCount.current);
-    // console.log("val from pg: ", val);
+    // console.log("v from pg: ", v);
 
-    return (
-      val && Array.isArray(val) && val[2] == "string" && val[2].includes("/")
-    );
+    return v && Array.isArray(v) && v[2] == "string" && v[2].includes("/");
   }
 
   useEffect(() => {});
