@@ -671,7 +671,7 @@ function RenderFile({
     const url = createBlobUrl();
     setUrlRef(url);
     return () => URL.revokeObjectURL(urlRef);
-  }, [createBlobUrl, fileData, urlRef]);
+  }, [createBlobUrl, fileData]);
 
   const fileClicked = useCallback(() => {
     if (editMode) return;
