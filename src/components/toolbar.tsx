@@ -129,9 +129,10 @@ export function Toolbar() {
     if (page.tb) {
       if (currSelRc && currSelRc.rows?.length > 1)
         setCount(currSelRc.rows.length);
+      else setCount(0);
     } else {
       if (page.db) {
-        if (selectedTb.length > 1) setCount(selectedTb.length);
+        setCount(selectedTb.length > 1 ? selectedTb.length : 0);
       }
     }
   }, [currSelRc?.rows?.length, selectedTb]);
