@@ -314,7 +314,7 @@ export function RowItem({
   const { editMode } = useRcConfig();
   const { rcSize, setRcSize } = useRcConfig();
   const { setNotify } = useNotifyContext();
-  const initRender = useRef(true);
+  const [initRender, setInitRender] = useState(true);
   const valChanged = useRef(false);
   const { pressAnim, setPressAnim } = useButtonAnim();
   console.log("error state from RowItem, err: ", err);
@@ -390,8 +390,8 @@ export function RowItem({
   }, []);
 
   useEffect(() => {
-    if (initRender.current) {
-      initRender.current = false;
+    if (initRender) {
+      setInitRender(false);
       return;
     }
     valChanged.current = true;
@@ -410,7 +410,7 @@ export function RowItem({
   function clickedOut() {
     if (field) return;
     console.log(
-      "in clickedout after before conditions, canEdit: ",
+      "in clickedout before conditions, canEdit: ",
       canEdit,
       " valChanged.current: ",
       valChanged.current,
@@ -660,7 +660,7 @@ function RenderFile({
     const blob = new Blob([fileData], { type: fileType });
     const url = URL.createObjectURL(blob);
     return url;
-  }, [fileName, fileData]);
+  }, [fileData]);
 
   useEffect(() => {
     if (urlRef) {
@@ -670,7 +670,7 @@ function RenderFile({
     const url = createBlobUrl();
     setUrlRef(url);
     return () => URL.revokeObjectURL(urlRef);
-  }, [createBlobUrl, fileData]);
+  }, [createBlobUrl, fileData, urlRef]);
 
   const fileClicked = useCallback(() => {
     if (editMode) return;
