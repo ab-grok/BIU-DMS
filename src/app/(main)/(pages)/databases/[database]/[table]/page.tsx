@@ -84,7 +84,7 @@ export default function TableRows() {
               updRc = [...p.filter((rc) => rc.tbPath != tbPath), currTb].filter(
                 Boolean,
               );
-              setUpdatedRc(JSON.parse(created.rc));
+              created.rc && setUpdatedRc(JSON.parse(created.rc));
               setCreated((p) => ({ ...p, rc: "" }));
               setOrderBy((p) => ({ ...p, rc: { ...p.rc, new: false } }));
             }

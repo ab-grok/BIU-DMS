@@ -154,8 +154,8 @@ export function NewRow({
       return;
     }
     revalidate("tbData", "path", tbPath);
-    setCreated((p) => ({ ...p, rh: JSON.stringify(Object.values(colVals)) }));
-    form.reset();
+    setCreated((p) => ({ ...p, rc: JSON.stringify(Object.values(colVals)) }));
+    resetForm();
   }
 
   function resetForm() {
