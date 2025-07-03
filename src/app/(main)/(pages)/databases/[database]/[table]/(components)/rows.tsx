@@ -340,9 +340,9 @@ export function RowItem({
     currFile.fileData = v[1].slice(v[1].indexOf("x") + 1, v[1].length - 1);
     currFile.fileType = v[2].replace(")", "");
 
-    // console.log("v[1]/fileData from pg: ", fileData);
-    // console.log("v[1]/fileData from pg: ", currFile.fileData);
-    // console.log("v[2]/fileType from pg: ", currFile.fileType);
+    console.log("isPgFile local fileName: ", currFile.fileName);
+    console.log("isPgFile local fileData ", currFile.fileData);
+    console.log("isPgFile local fileType ", currFile.fileType);
 
     thisFile.current = currFile;
     // console.log("v from pg: ", v);
@@ -367,16 +367,15 @@ export function RowItem({
     else if (ri && ri[1]) {
       console.log("in RowItem's useEffect before isPgFile");
       if (isPgFile(ri[1])) {
-        // console.log("~~~~~~fileData: ", thisFile.fileData);
+        console.log(
+          "~~ useEffect() after isPgFile, thisFile.current.fileData: ",
+          thisFile.current.fileData,
+        );
         const fileFromHex = hexToUint8Array(
           thisFile.current?.fileData as string,
         );
         // If you need an ArrayBuffer:
         const arrayBuffer = fileFromHex.buffer;
-        console.log(
-          "setting buffer in useEffect, fileName: ",
-          thisFile.current?.fileName,
-        );
         console.log("Array buffer: ", arrayBuffer);
         setVal(thisFile.current);
         return;
@@ -385,9 +384,9 @@ export function RowItem({
     }
 
     console.log("canEdit: ", canEdit, "editMode: ", editMode);
-    console.log("ri from rowItem: ", ri);
+    // console.log("ri from rowItem: ", ri);
     // console.log("isDefault from rowItem: ", isDefault);
-    console.log("colType from rowItem: ", colType);
+    // console.log("colType from rowItem: ", colType);
   }, []);
 
   useEffect(() => {
