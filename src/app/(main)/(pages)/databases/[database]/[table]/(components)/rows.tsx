@@ -367,16 +367,16 @@ export function RowItem({
     else if (ri && ri[1]) {
       console.log("in RowItem's useEffect before isPgFile");
       if (isPgFile(ri[1])) {
-        console.log(
-          "~~ useEffect() after isPgFile, thisFile.current.fileData: ",
-          thisFile.current.fileData,
-        );
+        // console.log(
+        //   "~~ useEffect() after isPgFile, thisFile.current.fileData: ",
+        //   thisFile.current.fileData,
+        // );
         const fileFromHex = hexToUint8Array(
           thisFile.current?.fileData as string,
         );
         // If you need an ArrayBuffer:
         const fileBuffer = fileFromHex.buffer;
-        thisFile.current.fileData = fileBuffer;
+        thisFile.current.fileData = fileFromHex;
         console.log("thisFile.current: ", thisFile.current);
         setVal(thisFile.current);
         return;
