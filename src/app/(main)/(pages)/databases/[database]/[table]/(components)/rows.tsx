@@ -340,9 +340,9 @@ export function RowItem({
     currFile.fileData = v[1].slice(v[1].indexOf("x") + 1, v[1].length - 1);
     currFile.fileType = v[2].replace(")", "");
 
-    console.log("isPgFile local fileName: ", currFile.fileName);
-    console.log("isPgFile local fileData ", currFile.fileData);
-    console.log("isPgFile local fileType ", currFile.fileType);
+    // console.log("isPgFile local fileName: ", currFile.fileName);
+    // console.log("isPgFile local fileData ", currFile.fileData);
+    // console.log("isPgFile local fileType ", currFile.fileType);
 
     thisFile.current = currFile;
     // console.log("v from pg: ", v);
@@ -375,8 +375,9 @@ export function RowItem({
           thisFile.current?.fileData as string,
         );
         // If you need an ArrayBuffer:
-        const arrayBuffer = fileFromHex.buffer;
-        console.log("Array buffer: ", arrayBuffer);
+        const fileBuffer = fileFromHex.buffer;
+        thisFile.current.fileData = fileBuffer;
+        console.log("thisFile.current: ", thisFile.current);
         setVal(thisFile.current);
         return;
       }
